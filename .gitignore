@@ -1,7 +1,8 @@
-# Internal workspace notes & docs (excluded from da_ontology repository)
+# Internal workspace notes, docs, and hands-on (excluded from da_ontology repository)
 second_brain/
 docs/
 design_reference/
+hands-on/
 AGENTS.md
 ontology_arch.html
 
