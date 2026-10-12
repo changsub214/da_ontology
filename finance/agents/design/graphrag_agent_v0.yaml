@@ -1,0 +1,697 @@
+# ============================================================================
+# GraphRAG Agent (ADK) — 설계 매니페스트 v0.3.0 (ACCEPTED · 단일 통합 GQL 파이프라인 & BQ Dry-Run)
+#   - 코드 작성 및 리팩토링의 단일 진실 원천(SSOT)이며 docs/viewer.html §07 로 직결된다 (AGENTS 규칙 0·1).
+#   - 핵심 아키텍처 정립 (v0.3.0):
+#     1) product vs eval_arm 인위적 분리 제거 → 단일 통합 GraphRAG 에이전트(starlight_graphrag)
+#     2) GraphRAG 에서 별도 bigquery_sql 제거 → Module 04 와 동일하게 finance_graph(Spanner 연합 ont_* 및
+#        ObjectRef 내장) 위에서 단일 통합 GQL(GRAPH / GRAPH_TABLE) 한 번으로 다중홉 규정 탐색 + 정량 집계 완결
+#     3) 흐름: Input → Alias(438행) & BQG KC Aspect(고정 gql_match_template) 바인딩 → GQL Planner 쿼리 생성
+#        → BigQuery Dry-Run(dry_run=True) 검증 → KC OKF 유효성 검증(kc_lookup: 실패 시 답변 불가·신속 조치 안내 /
+#        통과 시 통합 GQL 실행 & ObjectRef 원문 조회로 최종 답변)
+#   - v0.3.1 (2026-09-28, ADR 0013): 자유 질의 경로 수정 4건 — (a) 사전작성 CQ 답변은 사이드바 클릭에만,
+#     (b) OUT_OF_DOMAIN 문구 규칙, (c) 플래너에 라이브 조문 카탈로그 + 슬롯 검증, (d) 브리핑에 조문 본문 전체.
+#     구조(토폴로지·도구 3종·게이트 순서)는 v0.3.0 과 같다 → 아래 free_question_path · D8 참조.
+#   - v0.3.2 (2026-09-29, ADR 0015): 그림 SSOT — 스튜디오 01 Intro · viewer §07/§11 의 Mermaid 그림 원천을
+#     아래 `diagrams` 블록으로 옮김 (tools/export_intro_arch.py → okf_veri_web/data/intro_arch.json). 옛
+#     sequence_lifelines · sequence_scenarios("LLM 이 도구를 고르는" 모델)는 삭제하고 결정론 엔진 기준 그림으로 교체.
+#     측정 블록 412/1,442 → 416/1,446 (doc05 재분절 ADR 0014 이후) · 개념 184 → 188 정정. KC 엔트리 · GCS md 는
+#     export 게이트(G1)가 잡은 대로 시연 고정물 포함 총계로 정정: KC 233 (번들 229 + 고정물 4) · md 232 (로컬 229 + 고정물 3).
+#     에이전트 코드·토폴로지 변경 없음.
+#   - v0.3.3 (2026-09-29, ADR 0016): Step 1 = 검증(정적 검사 + BigQuery dry-run) → 통과할 때까지 _gemini_repair_gql
+#     교정(최대 app/config.py max_gql_repairs = 3, 실패 GQL · 오류 · 이전 시도 전달) → 통과한 GQL 만 graph_query 1회.
+#     한도 소진 · 같은 GQL 반복 → 답변 거절(GQL 미실행 · kc_lookup · fetch_provision 안 함). ADR 0006 · 0007 의
+#     "Dry-Run 실패 시 교정 1회" 를 대체. 원인: 가드는 실패 시 status "invalid" 를 돌려주는데 옛 분기는 다른 문자열을
+#     비교해 교정이 한 번도 불리지 않았다(EQ10 · EQ16, 2026-09-29 08:22Z 수집). 그림 3-1 · 3-2 · 3-3 갱신.
+# ============================================================================
+meta:
+  id: graphrag_agent
+  version: 0.3.3
+  status: accepted
+  created: 2026-09-27
+  updated: 2026-09-29
+  adr: second_brain/decisions/0006-graphrag-agent-adk-architecture.md
+  amended_by: [second_brain/decisions/0013-eq-post-run-revision-and-graphrag-free-path.md, second_brain/decisions/0015-intro-figure-ssot-mermaid.md,
+               second_brain/decisions/0016-gql-validate-repair-execute-once.md]
+  scaffold_root: agents/starlight-graphrag
+  role_in_eval: "단일 통합 GraphRAG 에이전트 (product/eval_arm 분리 없음 · RAG 에이전트[Vertex AI RAG Engine + bigquery_sql]와 패러다임 직접 비교)"
+
+# ----------------------------------------------------------------------------
+# 0. RAG Agent vs GraphRAG Agent 패러다임 비교 (왜 나누지 않고 GQL 로 일원화하는가)
+# ----------------------------------------------------------------------------
+paradigm_comparison:
+  summary: "RAG 에이전트와 GraphRAG 에이전트는 각자의 고유 패러다임으로 동일한 원장·규정 문제를 풀며, GraphRAG 내부를 product 용과 eval 용으로 인위적으로 쪼개지 않는다. 또한 finance_graph 안에 Spanner 연합 원장(ont_*)과 BQ 마스터 원장 8종이 이미 노드·엣지로 들어가 있으므로 GraphRAG 는 별도 bigquery_sql 없이 통합 GQL 한 번으로 그래프 순회와 정량 집계를 함께 수행한다."
+  rag_agent:
+    name: "RAG Agent (Baseline · starlight_rag)"
+    badge: "Vertex AI RAG Engine + BigQuery SQL"
+    tools: [vertex_rag_search, bigquery_sql]
+    steps:
+      - "1. 비정형 검색 (vertex_rag_search): GCP Vertex AI RAG Engine 에서 원본 PDF 10종(142쪽) 벡터 청크 검색"
+      - "2. 정형 조회 (bigquery_sql): starlight_bank.* 및 Spanner 연합 뷰(ont_*)에 대해 일반 관계형 SQL(SELECT/JOIN) 실행"
+      - "3. 한계: PDF 청크(규정)와 SQL 테이블(원장) 사이에 명시적 엣지나 부서 맥락(BusinessContext)·단서 분기·KC 유효성 게이트가 없어 LLM 이 추론으로만 연결해야 함"
+  graphrag_agent:
+    name: "GraphRAG Agent (Ours · starlight_graphrag — 단일 통합 아키텍처)"
+    badge: "Alias & KC Template ➔ GQL Planner + BQ Dry-Run ➔ KC Gate ➔ Unified GQL & ObjectRef"
+    tools: [graph_query, kc_lookup, fetch_provision]
+    steps:
+      - "1. Input ➔ Alias & BQG KC Aspect 바인딩 (before_agent, <1ms): ont_entity_aliases(438행) 최장일치 탐색 + finance_graph 의 KC Aspect(ontology-class-anchors v1.2.0)에 고정된 gql_match_template($CANONICAL_ID) 및 11C·15E 스키마 카드 로드"
+      - "2. GQL Planner ➔ 통합 GQL 생성 & BigQuery Dry-Run 검증: 고정 앵커 템플릿을 GQL 플래너에 넘겨 다중홉 규정 순회 + Spanner 연합 원장 정량 집계를 단일 GQL(GRAPH / GRAPH_TABLE, Module 04 방식)로 작성하고, 실행 전 BigQuery Dry-Run(dry_run=True)으로 문법·스키마·스캔 바이트를 검증"
+      - "3. KC 유효성 게이트 (kc_lookup): OKF 조문(kc_entry_id)을 참조할 때 Dataplex KC 의 okf Aspect(status ∈ {'stable','verified'} vs 'deprecated', superseded_by ≤3-hop)를 검증"
+      - "4-A. [KC 통과 못함 · BLOCKED_DEPRECATED]: 즉시 답변 불가 처리 — 추측 답변을 차단하고 고객 신속 조치 안내문(접수번호 INC-...) 반환 + IncidentSinkPort 발행"
+      - "4-B. [KC 통과 · ALLOW / SUPERSEDED_RESOLVED]: Dry-Run 검증을 마친 통합 GQL 실행 결과 + BigQuery ObjectRef 서명 URL(OBJ.GET_ACCESS_URL(gcs_obj_ref,'r')) 원문(fetch_provision)으로 인용 기반 최종 답변 생성"
+
+# ----------------------------------------------------------------------------
+# 1. 에이전트가 보는 3개 표면 (실측값 — 추측 아님)
+# ----------------------------------------------------------------------------
+surfaces:
+  bigquery:
+    dataset: finance-ontology-changseop.starlight_bank_ontology   # us-central1
+    property_graph: finance_graph            # 11 node views + 15 edge views (8종 원장 + 부서맥락 + 조문 통합)
+    node_labels: [BusinessContext, SourceDocument, Provision, LoanContract, Customer,
+                  FinancialProduct, WorkoutHistory, Collateral, DelinquencyEvent,
+                  RateCutRequest, ExceptionApproval]
+    edge_labels: [SCOPES_PORTFOLIO, INVOKES_PROVISION, GOVERNED_BY_CRITERIA,
+                  EVALUATED_UNDER_PROVISION, PART_OF_DOCUMENT, HAS_EXCEPTION_PROVISO,
+                  DELEGATES_TO_INTERNAL, CONFLICTS_BY_SECTOR, BORROWED_BY, OF_PRODUCT,
+                  HAS_COLLATERAL, HAS_DELINQUENCY, HAS_RATE_CUT_REQUEST,
+                  HAS_EXCEPTION_APPROVAL, HAS_WORKOUT_HISTORY]
+    alias_table: starlight_bank_ontology.ont_entity_aliases   # 438 rows (11개 전체 노드 클래스 + Glossary 7종 바인딩 완료)
+    objectref: "v_node_provision.gcs_obj_ref / v_node_source_document.gcs_obj_ref (connection us-central1.okf-gcs-conn)"
+    ledger_via_federation: "finance_graph 내부 LDM 노드 뷰(v_node_*)가 starlight_bank.ont_* (Spanner Data Boost) 및 BQ 마스터 테이블을 직접 래핑 → 별도 bigquery_sql 없이 GQL 로 원장 집계 완결"
+  knowledge_catalog:
+    graph_entry: "@bigquery/.../propertyGraphs/finance_graph + aspect ontology-class-anchors (v1.2.0 · 11/11 고정 gql_match_template)"
+    okf_entry_group: finance-okf          # 233 entries = 번들 229 + Q21 고정물 4 (tools/okf_fixtures.yaml, 2026-09-29 실측), aspect `okf` (status ∈ {stable, verified} vs deprecated, superseded_by, verified[])
+    glossary: starlight-finance-glossary  # 7 terms → INVOKES_PROVISION.term_key
+  gcs:
+    bundle: gs://finance_okf/okf/          # 188 concepts (문서 10 + 조문 178) · 로컬 md 229 (index · log · versions/ · distractors/ 포함) + 원격 전용 고정물 md 3 = md 232 + locations.yaml
+    read_path: "OBJ.GET_ACCESS_URL(gcs_obj_ref,'r') → signed URL (BigQuery Graph ObjectRef 경유 · 에이전트 SA 에 GCS 직접 권한 불필요)"
+
+# tools/export_intro_arch.py 가 매 실행마다 라이브로 다시 세어 이 블록과 비교한다 (어긋나면 exit 1 · 파일 안 씀).
+measured:
+  as_of: "2026-09-29T08:57Z"
+  source: "tools/export_intro_arch.py — BigQuery GRAPH_TABLE LABELS() 라벨별 COUNT · Dataplex entries / glossary terms / anchor aspect · Cloud Storage objects list"
+  nodes: {BusinessContext: 6, SourceDocument: 10, Provision: 178, LoanContract: 100, Customer: 100,
+          FinancialProduct: 4, WorkoutHistory: 3, Collateral: 3, DelinquencyEvent: 7,
+          RateCutRequest: 2, ExceptionApproval: 3}
+  edges: {SCOPES_PORTFOLIO: 596, INVOKES_PROVISION: 21, GOVERNED_BY_CRITERIA: 418,
+          EVALUATED_UNDER_PROVISION: 4, PART_OF_DOCUMENT: 178, HAS_EXCEPTION_PROVISO: 4,
+          DELEGATES_TO_INTERNAL: 4, CONFLICTS_BY_SECTOR: 3, BORROWED_BY: 100, OF_PRODUCT: 100,
+          HAS_COLLATERAL: 3, HAS_DELINQUENCY: 7, HAS_RATE_CUT_REQUEST: 2,
+          HAS_EXCEPTION_APPROVAL: 3, HAS_WORKOUT_HISTORY: 3}
+  totals: {nodes: 416, edges: 1446}
+  aliases: 438
+  kc_anchor_aspect: {class_anchors: 11, key_bound_anchors: 11, ontology_version: "1.2.0", keys: [graph_id, ontology_version, alias_table_fqn, kc_glossary_resource, governance_rule, class_anchors, edge_definitions_json, glossary_terms_json]}
+  kc_okf_entries: 233        # entry group 전체 (시스템 self-entry 제외) = 번들 229 + Q21 고정물 4
+  gcs_md_objects: 232        # okf/ 아래 .md = 로컬 번들 229 + 원격 전용 고정물 3 (tools/okf_fixtures.yaml)
+  measured_before: {as_of: "2026-09-27", totals: {nodes: 412, edges: 1442}, Provision: 174, PART_OF_DOCUMENT: 174, kc_okf_entries: 225, note: "doc05 재분절(ADR 0014) 전 · 225 는 번들만 센 값"}
+
+findings_before_build:
+  - id: F1
+    severity: resolved
+    resolved: true
+    text: "[해결 완료 · CQ-G8 20/20 PASS] CQ 20개의 graph_path 를 구 라벨(DecisionCriteria·ExceptionRule 등)에서 배포된 finance_graph 의 11 Node Classes · 15 Edge Views 라벨로 전수 재작성하고 tools/verify_cq.py 에 CQ-G8_graph_labels 게이트 및 NC4 음성 대조를 추가하여 통과 확인."
+  - id: F2
+    severity: resolved
+    resolved: true
+    text: "[해결 완료 · KC v1.2.0 반영] ontology/l1.yaml 및 tools/build_ontology_graph.py 의 KC governance_rule 문구를 실제 OKF 번들 기준인 status ∈ {'stable', 'verified'}(유효) vs 'deprecated'(만료)로 정정하고 라이브 Dataplex KC 에 반영 완료."
+  - id: F3
+    severity: resolved
+    resolved: true
+    text: "[해결 완료 · 11/11 키 바인딩 & 438 aliases] 의도된 설계가 아니었음을 확인하고 하위 원장 5종(WorkoutHistory·Collateral·DelinquencyEvent·RateCutRequest·ExceptionApproval)을 DIRECT_OR_HUB_ANCHOR($CANONICAL_ID 바인딩)로 승격, ont_entity_aliases 를 297 → 438행으로 확장하여 11개 전 클래스 직접 진입 지원."
+
+# ----------------------------------------------------------------------------
+# 2. ADK 토폴로지 (D1 확정: 단일 통합 GraphRAG 파이프라인)
+# ----------------------------------------------------------------------------
+topology:
+  recommended: A_unified_graphrag_pipeline
+  options:
+    A_unified_graphrag_pipeline:
+      summary: "[채택 · v0.3.0 일원화] product vs eval_arm 인위적 분리를 제거한 단일 통합 GraphRAG 에이전트. Alias & KC 고정 템플릿 바인딩 → GQL 플래너 + BQ Dry-Run 검증 → KC 유효성 게이트 → 통합 GQL(graph_query) & ObjectRef(fetch_provision) 3대 도구로 고객 데모와 벤치마크 평가를 동일하게 수행."
+      pros: [데모 에이전트와 평가 에이전트 100% 일치, 별도 bigquery_sql 없이 GQL 한 번으로 그래프+원장 통합 질의, BigQuery Dry-Run 으로 실행 전 문법·스키마 100% 검증]
+      cons: [향후 결정론적 StateGraph 전환 시 app/assemblies/__init__.py 의 build() 만 교체]
+    B_adk2_graph_workflow:
+      summary: "ADK 2.0 Workflow: resolve → plan_and_dry_run_gql → kc_govern → execute_gql_and_fetch → compose 결정론 노드 (assemblies/__init__.py 의 차기 교체 후보)"
+      pros: [감사 가능성 최상, 게이트 생략 불가]
+      cons: [프로토타입 1차 검증 후 assemblies 레이어에서 무수정 전환 가능]
+    C_multi_agent:
+      summary: "Router + Context/LEX/Ledger 서브에이전트"
+      pros: [역할 분리]
+      cons: [12 tool-call 예산 내 오버헤드, 현 규모(11 class)에 과잉]
+
+agent:
+  name: starlight_graphrag
+  model: "gemini-3.8-flash (agents-cli scaffold 확정 · app/agent.py MODEL 상수)"
+  generate_content_config: {temperature: 0, seed: 20260927}
+  instruction_blocks:
+    - common_skeleton      # 공통 원칙 (역할·인용 형식·수치 계산·폐기 조문 추측 금지)
+    - graph_tools          # 단일 통합 GQL 파이프라인 지침 (KC 고정 템플릿 + BQ Dry-Run + KC 유효성 게이트)
+    - schema_card          # KC ontology-class-anchors (v1.2.0, 11/11 키 바인딩) → {app:schema_card}
+    - blocked_notice       # [D5] KC 유효성 검증 실패(BLOCKED_DEPRECATED) 시 답변 불가 및 신속 조치 안내 템플릿
+
+# ----------------------------------------------------------------------------
+# 3. 도구 3종 (eval_questions.yaml v1.2.0 protocol.arms.graphrag.tools 와 1:1 고정 — v1.1.0 과 동일)
+#    ※ bigquery_sql 은 RAG 에이전트 전용이며, GraphRAG 는 GQL 한 번으로 원장까지 통합 조회함
+# ----------------------------------------------------------------------------
+tools:
+  graph_query:
+    plane: "BigQuery Property Graph (Unified GQL Planner + BQ Dry-Run)"
+    input: "gql: str  — 'GRAPH starlight_bank_ontology.finance_graph MATCH ... RETURN ...' 또는 'SELECT ... FROM GRAPH_TABLE(starlight_bank_ontology.finance_graph MATCH ... COLUMNS (...))'"
+    output: "dry_run_bytes, rows[], touched_ids{provision_slot_id[], kc_entry_id[], contract_id[]}"
+    guards:
+      - "KC ontology-class-anchors 의 고정 gql_match_template($CANONICAL_ID) 시작 노드 앵커링"
+      - "Stage A 정적 검증 (gql_composer.validate): GRAPH / GRAPH_TABLE 접두, 읽기 전용, 11C·15E 라벨, 단일 체인 ≤12-hop · 스타스키마 멀티 브랜치 ≤24-edge · 무제한 Kleene(*) 차단, LIMIT≤200"
+      - "Stage B BigQuery Dry-Run 검증 (GraphPort.dry_run_gql, dry_run=True): 실행 전 GQL 문법·속성명·타입·바이트 예산(≤2GB) 사전 검증"
+      - "Module 04 방식 단일 통합 실행: 부서 맥락·조문 순회 + Spanner 연합 원장(ont_*) 정량 계산 + OBJ.GET_ACCESS_URL 서명 URL 추출을 GQL 한 번에 처리"
+  kc_lookup:
+    plane: "Dataplex Knowledge Catalog (OKF 유효성 게이트)"
+    input: "kc_entry_id: str"
+    output: "verdict ALLOW | SUPERSEDED_RESOLVED(active_entry_id) | BLOCKED_DEPRECATED , status(stable/verified vs deprecated), version, chain[]"
+    impl_seed: "app/services/governance.py (status ∈ {'stable', 'verified'} → 통과 / deprecated → superseded_by ≤3-hop 추적 / 대체본 없음 → BLOCKED_DEPRECATED 답변 불가)"
+  fetch_provision:
+    plane: "GCS via BigQuery ObjectRef (D4 서명 URL 원문 조회)"
+    input: "provision_slot_id: str"
+    output: "verbatim_body, section_number, source_page, doc_id, sha256_ok, gcs_uri"
+    precondition: "동일 세션에서 해당 kc_entry_id 의 kc_lookup verdict ∈ {ALLOW, SUPERSEDED_RESOLVED} 통과 필수 + OBJ.GET_ACCESS_URL(gcs_obj_ref, 'r') 서명 URL 경유"
+
+pre_grounding:
+  entity_resolution: "[D3 확정: before_agent 콜백 채택] Input 유입 즉시 ont_entity_aliases(438 rows) 최장일치 해석 + BQG KC Aspect(ontology-class-anchors v1.2.0)의 고정 gql_match_template($CANONICAL_ID) 바인딩 (<1ms, 도구 예산 0 소모, 결정론 100%) → {temp:resolved_entities} 및 {app:schema_card} 주입"
+  decision_criteria_d3:
+    latency: "콜백(<1ms 인메모리 매칭) vs 별도 도구(+1.5~3.0초 추가 LLM 왕복 1회)"
+    determinism: "콜백(100% 결정론적 최장일치 — '별빛' 접두어가 '별빛 프라임 중견기업 운전자금'을 가리는 현상 원천 차단 + KC 고정 GQL 템플릿 즉시 결합) vs 별도 도구(LLM 인자 변형 위험)"
+    budget_and_protocol: "콜백(12회 도구 예산 소모 0) vs 별도 도구(예산 1회 차감)"
+
+# ----------------------------------------------------------------------------
+# 4. 콜백 가드레일 & D5 거버넌스 차단 대응 아키텍처
+# ----------------------------------------------------------------------------
+callbacks:
+  before_agent: [load_schema_card_from_kc, load_alias_cache, pre_ground_user_query_with_kc_template]
+  before_tool:
+    - tool_budget_12          # 초과 시 도구 차단 + 현재 증거로 답변 지시
+    - gql_dry_run_guard       # graph_query 실행 전 정적 검증 + BigQuery QueryJobConfig(dry_run=True) 사전 검증
+    - governance_gate         # fetch_provision 은 kc_lookup verdict ∈ {ALLOW, SUPERSEDED_RESOLVED} 선행 필수
+  after_tool:
+    - evidence_ledger         # temp:evidence[] ← node/edge/provision/kc verdict/gcs uri 기록
+    - emit_governance_incident # [D5] kc_lookup 결과 BLOCKED_DEPRECATED 발생 시 IncidentSinkPort.emit(GovernanceIncident) 호출 및 temp:blocked 마킹
+  after_model:
+    - blocked_notice_policy   # [D5] KC 유효성 검증 실패(temp:blocked) 시 답변 불가 처리 — 추측 답변을 폐기하고 접수번호(INC-...) 포함 고객 신속 조치 안내문 반환
+    - citation_check          # 문서 id(01~10) + 쪽/조문 표기 누락 시 1회 재작성
+  non_blocking_policy: "distractor(09) 문서는 차단하지 않고 authority 라벨만 부착 (EQ13 과잉차단 방지)"
+
+# ----------------------------------------------------------------------------
+# 5. 검증 게이트 (주장하지 말고 측정)
+# ----------------------------------------------------------------------------
+gates:
+  CQ_G8_labels: "[PASS 20/20 · NC4 PASS] CQ 20개 graph_path 의 모든 노드·엣지 라벨이 ontology/l1.yaml (11C·15E)와 100% 정합"
+  EQ_G1_G6_eval: "[PASS 6/6 · NC1~NC4 PASS · 2026-09-28 재측정] eval_questions.yaml v1.2.0 (RAG=RAG Engine+SQL vs GraphRAG=Unified GQL+KC+ObjectRef) 사전등록 검증 통과 — G2 10/10 (EQ01 정답 쿼리 1개 추가). v1.2.0 의 사후 수정은 ADR 0013 에 공개"
+  U1_unit_arch: "[PASS 12/12 · 2026-09-28] agents/starlight-graphrag/tests/unit — 3대 도구 시그니처(graph_query/kc_lookup/fetch_provision), 최장일치 별칭 해석, KC 고정 템플릿 바인딩, GQL 정적+BigQuery Dry-Run 검증, D5 인시던트 싱크 검증 등"
+  T1_alias: "에이펙스세미콘→CUST_0008, 연체율→term_key delinquency-rate 등 438개 별칭 기준값 재현"
+  T2_reach: "CQ 20개 graph_path 를 단일 통합 GQL(graph_query + BQ Dry-Run)로 실제 도달 및 정량 산출"
+  T3_kc: "art_029 ALLOW (status: stable), superseded_by 체인(≤3-hop) 해석 및 BLOCKED_DEPRECATED 차단"
+  T4_fetch: "fetch_provision ObjectRef 서명 URL 본문 sha256 = frontmatter digest (174/174 · 2026-09-27 측정 — doc05 재분절 ADR 0014 이후 조문 178개 기준 재측정 안 함)"
+  T5_guard_nc: "DML·미등록 라벨·Dry-Run 실패·예산 13회차·kc 미검증 fetch·BLOCKED_DEPRECATED 강행이 모두 차단되어야 PASS (음성 대조)"
+  T6_eval: "agents-cli eval 로 transcript 생성 → tools/verify_eval.py 결정론 정규식 채점"
+
+# ----------------------------------------------------------------------------
+# 6. 확정된 의사결정 (D1~D7 — v0.3.0 단일 통합 GQL 파이프라인 반영 완료)
+# ----------------------------------------------------------------------------
+open_decisions:
+  D1: "[확정 · 단일 통합 GraphRAG 에이전트] product 와 eval_arm 의 인위적 분리를 제거. RAG 에이전트는 (GCP Vertex AI RAG Engine PDF + BigQuery SQL)로, 우리의 GraphRAG 에이전트는 (Alias & KC 고정 GQL 템플릿 → GQL 플래너 + BQ Dry-Run → KC 유효성 게이트 → 통합 GQL & ObjectRef) 단일 구조로 데모와 평가를 모두 수행."
+  D2: "[확정 · 통합 GQL 플래너 + BigQuery Dry-Run 검증 (별도 bigquery_sql 제거)] finance_graph 내부에 Spanner 연합 원장(ont_*)과 BQ 원장 8종이 모두 노드·엣지로 통합되어 있으므로 별도 bigquery_sql 도구를 두지 않고 Module 04 처럼 GQL 한 번(GRAPH / GRAPH_TABLE)으로 다중홉 규정 탐색과 정량 집계를 함께 처리. 생성된 GQL 은 실행 전 정적 검증 + BigQuery Dry-Run(dry_run=True)으로 검증."
+  D3: "[확정 · before_agent 콜백 사전 바인딩] Input 유입 시 ont_entity_aliases(438행) 최장일치 탐색과 BQG KC Aspect(ontology-class-anchors v1.2.0) 고정 gql_match_template($CANONICAL_ID) 바인딩을 before_agent 콜백에서 <1ms(예산 0 소모)로 수행하여 GQL 플래너에 전달."
+  D4: "[확정 · BigQuery ObjectRef 서명 URL 경유] v_node_provision.gcs_obj_ref 에 대해 OBJ.GET_ACCESS_URL(gcs_obj_ref, 'r') 서명 URL 을 발급받아 원문을 조회함으로써 BigQuery Graph 가 정형·비정형 접근을 단일 중개."
+  D5: "[확정 · KC 유효성 검증 실패 시 답변 불가 + 신속 조치 안내 + 비동기 통지 포트] OKF 조문 참조 시 kc_lookup 으로 KC 유효성을 검증하여 통과 못하면(BLOCKED_DEPRECATED) 즉시 답변 불가 처리 후 고객 신속 조치 안내문(접수번호 포함)을 출력하고, IncidentSinkPort(현재 LogIncidentSink → 차기 Pub/Sub → BQ → 배치 알림)로 비동기 이벤트를 발행."
+  D6: "[확정 · 로컬 프로토타입 우선] agents-cli scaffold create --prototype 으로 로컬 검증을 먼저 완료한 뒤 추후 Agent Runtime 배포로 확장."
+  D7: "[확정 · 리팩토링 가능한 헥사고날 디렉터리 구조] agents/starlight-graphrag/ 아래 domain · ports(5종) · services(5종) · adapters · tools(3종) · callbacks · prompts · assemblies 레이어로 분리하여 교체 지점(Swap Points)을 모듈화."
+  D8: "[확정 · 2026-09-28 · ADR 0013 · v0.3.1] 자유 질의 경로 수정 4건 (사용자 승인 00:49Z·00:51Z·01:16Z). (a) 사전작성 CQ 브리핑·CQ 근거 인용은 수정하지 않은 사이드바 클릭(requested_num)에만 쓴다. (b) OUT_OF_DOMAIN 거절은 '업무 범위 밖'으로만 설명하고 자료 보유 여부를 단정하지 않는다. (c) 플래너에 v_node_provision 라이브 조문 카탈로그(kc_entry_id | title)를 주고, 목록에 없는 슬롯 ID 는 버리며 최대 4개만 쓴다. (d) 브리핑에 조문 본문 전체(verbatim_body)를 넘긴다 (이전 900자 절단). 관련 데이터 수정: 본문과 어긋난 OKF 조문 제목 6건 정정(ID 불변, data/review/okf_title_fixes_v1.yaml)."
+
+# ----------------------------------------------------------------------------
+# 6-1. 자유 질의 경로 (v0.3.1 · D8) — 사이드바 CQ 클릭과 자유 질의가 갈리는 지점
+# ----------------------------------------------------------------------------
+free_question_path:
+  code: agents/starlight-graphrag/app/orchestrator/engine.py
+  sidebar_cq_click: "requested_num 이 있고 질문을 고치지 않은 경우 → CQ 사전검증 자산(브리핑·근거 인용) 사용 (use_cq_assets=True)"
+  free_question: "requested_num 없음 → 플래너가 모드·조문 슬롯·GQL 을 정하고 매 턴 라이브 도구로 답한다 (use_cq_assets=False)"
+  changes:
+    a_canned_assets_sidebar_only: "use_cq_assets = cq_obj is not None and bool(requested_num)"
+    b_out_of_domain_wording: "거절 사유 = 업무 범위 밖. '보유하고 있지 않다' 류 표현 금지 (플래너 지침)"
+    c_live_provision_catalog: "_load_provision_catalog: v_node_provision 의 kc_entry_id·title 을 실행 중 읽음 (캐시 600초) → 플래너 입력 provision_catalog. 목록 밖 슬롯 ID 는 버림, 최대 _MAX_PLANNER_PROVISION_SLOTS=4"
+    d_full_body_briefing: "_gemini_synthesize_briefing 에 verbatim_body 전체 전달 (2026-09-28 측정 당시 조문 174개 모두 900자 초과 — 중앙값 1,790자, 최대 5,661자)"
+  trace_fields: [dropped_provision_slots, used_canned_cq_assets]
+  unchanged:
+    - "Q21 만료 조문 거절 경로 · score==100 경로"
+    - "CQ 로 매핑된 자유 질의(score ≥45)의 검증된 GQL 템플릿 재사용 — 답이 아니라 쿼리를 재사용 (ADR 0013 에 공개)"
+  residuals:
+    - "ID slug 가 본문과 어긋나는 경우는 남는다 (예: annex3_item_06_07_workout_special_rules) — ID 는 불변 위상 키"
+    - "제목–본문 일치 여부를 검사하는 lint 는 제안만 됨 (미구현)"
+  measured_local_2026_09_28: "로컬 20-EQ (scratch/eq_graphrag_local_v2.py): 버린 슬롯 0/20 · 사전작성 답변 0/20 · 도구 호출 ≤11 (예산 12) · unit 12 passed"
+
+# ----------------------------------------------------------------------------
+# 7. 리팩토링 가능한 디렉터리 구조 및 교체 지점 (D7 · agents/starlight-graphrag)
+# ----------------------------------------------------------------------------
+directory_architecture:
+  root: agents/starlight-graphrag
+  pattern: "Ports & Adapters (Hexagonal) — Unified Single-Pipeline GraphRAG"
+  layers:
+    - path: "app/config.py"
+      role: "환경변수 기반 Settings (프로젝트·데이터셋·그래프·KC·Dry-Run 바이트 상한 등 단일 관리, 하드코딩 0)"
+      swap_point: "환경변수(.env) 변경만으로 개발/스테이징/프로덕션 및 STARLIGHT_INCIDENT_SINK 전환"
+    - path: "app/domain/ (models.py, state_keys.py)"
+      role: "순수 도메인 값 객체(ResolvedEntity, SchemaCard, GqlDryRunResult, KcVerdict, ProvisionText, GovernanceIncident) 및 세션 상태 키 상수"
+      swap_point: "GCP/ADK 의존성 0 — 모든 레이어가 공유하는 불변 계약"
+    - path: "app/ports.py"
+      role: "5대 외부 경계 Protocol 인터페이스 (GraphPort[dry_run_gql + run_gql], ObjectRefPort, CatalogPort, AliasSourcePort, IncidentSinkPort)"
+      swap_point: "단위 테스트 시 In-Memory Fake 주입 · 운영 시 GCP 어댑터 주입"
+    - path: "app/services/ (alias_resolver, gql_composer, governance, provision_reader, schema_card)"
+      role: "순수 비즈니스 정책 로직 (최장일치 별칭 해석, KC 고정 템플릿 바인딩 + GQL 정적/Dry-Run 검증, KC 유효성/대체 체인 판정, ObjectRef 원문 파싱)"
+      swap_point: "ADK 버전을 올리거나 에이전트 토폴로지를 바꿔도 수정 불필요"
+    - path: "app/adapters/ (bigquery.py, dataplex.py, incident_sinks.py)"
+      role: "GCP SDK 구현체 (BigQuery Graph Dry-Run/Execute/ObjectRef, Dataplex KC, LogIncidentSink / PubSubIncidentSink)"
+      swap_point: "D5 후속 작업 시 incident_sinks.py 의 PubSubIncidentSink 만 구현 후 STARLIGHT_INCIDENT_SINK=pubsub 로 전환"
+    - path: "app/tools/ (graph_query, kc_lookup, fetch_provision)"
+      role: "ADK 도구 얇은 래퍼 3종 (별도 bigquery_sql 없음 — 모든 정형·비정형 그래프 질의는 graph_query 로 일원화)"
+      swap_point: "도구 시그니처 3종 불변 유지"
+    - path: "app/callbacks/ (grounding.py, guards.py, answer.py)"
+      role: "before_agent(Alias + KC 고정 템플릿 바인딩), before_tool(12회 예산·GQL Dry-Run 검증·KC 선행 게이트), after_tool(증거 원장·D5 인시던트 발행), after_model(D5 답변 불가 안내문·인용 검사)"
+      swap_point: "가드레일 정책 독립 조합"
+    - path: "app/assemblies/ (__init__.py)"
+      role: "단일 통합 GraphRAG 에이전트 조립소 (product/eval_arm 분리 없이 하나의 starlight_graphrag 생성)"
+      swap_point: "향후 ADK 2.0 결정론 그래프 워크플로 도입 시 app/assemblies/__init__.py 의 build() 만 교체"
+    - path: "app/agent.py"
+      role: "ADK 엔트리포인트 (MODEL='gemini-3.8-flash', root_agent_name='starlight_graphrag' 고정)"
+      swap_point: "agents-cli manifest 불변 계약 준수"
+
+# ----------------------------------------------------------------------------
+# 8. 설계 시뮬레이션 트레이스 (EQ01 기준 · 단일 통합 GQL + BQ Dry-Run + KC Gate · 도구 3회 완결)
+# ----------------------------------------------------------------------------
+design_trace_example:
+  question_id: EQ01
+  question: "그랜드하모니호텔 대출을 150억 증액하려고 해. 정상 분류 유지된다고 치면 최소 충당금이 얼마 더 필요해?"
+  executed: false
+  note: "구현 전(v0.3.0) 설계 시뮬레이션 — 바이트 수 등은 측정값이 아님. 실제 실행 기록은 ontology/eval_question/compare_run.json (09-29 재수집), 구현 기준 그림은 아래 diagrams (v0.3.2)"
+  steps:
+    - n: 0
+      kind: callback
+      name: "before_agent · Alias + BQG KC Aspect 바인딩 (D3)"
+      detail: "ont_entity_aliases(438 rows) 최장일치 → '그랜드하모니호텔' → KC 고정 템플릿 (c:Customer {customer_id:'CUST_0016'}) 바인딩 + 스키마 카드(11C·15E) 주입"
+      budget_used: 0
+    - n: 1
+      kind: tool
+      name: "graph_query (GQL Planner 생성 + BQ Dry-Run 검증 + 단일 통합 GQL 실행)"
+      detail: "GRAPH starlight_bank_ontology.finance_graph MATCH (c:Customer {customer_id:'CUST_0016'})<-[:BORROWED_BY]-(l:LoanContract)-[:GOVERNED_BY_CRITERIA]->(pr:Provision)-[:HAS_EXCEPTION_PROVISO]->(px:Provision) RETURN c.ksic_section_code, l.asset_classification, px.provision_slot_id, px.kc_entry_id, DIV(15000000000 * 90, 10000) AS added_min_provision_krw — Dry-Run(8,192B, ok=True) 통과 후 GQL 한 번으로 업종('H')·단서 조문(art_029_1_1_a_proviso)·추가 충당금(1.35억) 동시 확보!"
+      budget_used: 1
+    - n: 2
+      kind: tool
+      name: "kc_lookup (OKF 조문 KC 유효성 검증)"
+      detail: "kc_entry_id = 01-fsc-bank-reg-art-029-1-1-a-proviso → verdict ALLOW (status: stable ∈ {stable, verified}) 통과!"
+      budget_used: 2
+    - n: 3
+      kind: tool
+      name: "fetch_provision (D4 ObjectRef 서명 URL 원문 조회)"
+      detail: "KC ALLOW 통과 확인 후 OBJ.GET_ACCESS_URL(gcs_obj_ref, 'r') 서명 URL → art_029_1_1_a_proviso.md 원문 '숙박 및 음식점업(H)… 100분의 0.9 이상' (01번 PDF 20쪽, sha256 일치)"
+      budget_used: 3
+    - n: 4
+      kind: answer
+      name: "compose (after_model · citation_check)"
+      detail: "1억 3,500만 원 (150억 × 0.9%, KSIC H 단서) — 별도 bigquery_sql 없이 GQL 한 번 + KC 검증 + ObjectRef 원문으로 총 3회 도구 호출 만에 완결 · 인용 [01 · 제29조 · p.20]"
+      budget_used: 3
+
+# ----------------------------------------------------------------------------
+# 9. 그림 원천 (v0.3.2 · ADR 0015) — 스튜디오 01 Intro · docs/viewer.html §07 / §11 은 이 블록만 렌더한다.
+#    tools/export_intro_arch.py → okf_veri_web/data/intro_arch.json  (tools/export_agent_design.py 도 같은 블록을 검사)
+#    · «key» 자리표시자 = export 시점 라이브 실측(BigQuery · Dataplex · GCS) 또는 코드 상수. 못 채우면 exit 1.
+#    · 그림 · 캡션 속 식별자(snake_case · 점 표기 · 파일명/경로 · CamelCase · temp:키)는 figure.sources 파일,
+#      ontology/l1.yaml, 또는 conventions.vocabulary 에 실제로 있어야 한다. 하나라도 없으면 exit 1 (파일 안 씀).
+#    · 2-1 은 손으로 그리지 않는다 — ontology/l1.yaml + 라이브 라벨 건수로 생성.
+#    · 옛 sequence_lifelines · sequence_scenarios(LLM 이 도구를 고르는 모델, v0.3.1 까지)는 삭제됨.
+# ----------------------------------------------------------------------------
+diagrams:
+  conventions:
+    renderer: "Mermaid 11 (CDN ESM) · theme base · 흐름도는 자연 폭의 0.8 배 아래로 줄이지 않고 가로 스크롤"
+    min_scale: 0.8
+    legend: "범례 — 원통: 저장소 · 파랑: Gemini 호출 · 빨강: 차단/거절 · 점선: 연합/참조 · 둥근 끝: 시작/끝"
+    vocabulary: [BigQuery, GraphRAG]   # CamelCase 이지만 코드 심볼이 아닌 제품 · 방식 이름
+    mermaid:
+      font: "'Google Sans','Noto Sans KR',sans-serif"
+      flowchart: {htmlLabels: true, curve: basis, nodeSpacing: 26, rankSpacing: 44, padding: 10, useMaxWidth: true}
+      sequence: {useMaxWidth: true, mirrorActors: false, width: 110, actorMargin: 26, boxMargin: 8, noteMargin: 8, messageMargin: 26}
+      theme_variables:
+        light: {background: "#ffffff", fontSize: "13px", primaryColor: "#f1f3f4", primaryTextColor: "#202124", primaryBorderColor: "#9aa0a6",
+                secondaryColor: "#f8f9fa", tertiaryColor: "#ffffff", mainBkg: "#f1f3f4", nodeBorder: "#9aa0a6", lineColor: "#5f6368",
+                textColor: "#202124", titleColor: "#3c4043", clusterBkg: "#fbfbfc", clusterBorder: "#dadce0", edgeLabelBackground: "#ffffff",
+                actorBkg: "#f1f3f4", actorBorder: "#9aa0a6", actorTextColor: "#202124", actorLineColor: "#bdc1c6", signalColor: "#5f6368",
+                signalTextColor: "#202124", labelBoxBkgColor: "#f8f9fa", labelBoxBorderColor: "#9aa0a6", labelTextColor: "#202124",
+                loopTextColor: "#3c4043", noteBkgColor: "#f8f9fa", noteBorderColor: "#dadce0", noteTextColor: "#3c4043",
+                activationBkgColor: "#e8eaed", activationBorderColor: "#9aa0a6", sequenceNumberColor: "#ffffff"}
+        dark: {darkMode: true, background: "#28292a", fontSize: "13px", primaryColor: "#303134", primaryTextColor: "#e3e3e3", primaryBorderColor: "#70757a",
+               secondaryColor: "#28292a", tertiaryColor: "#1f1f1f", mainBkg: "#303134", nodeBorder: "#70757a", lineColor: "#9aa0a6",
+               textColor: "#e3e3e3", titleColor: "#bdc1c6", clusterBkg: "#242526", clusterBorder: "#3c4043", edgeLabelBackground: "#28292a",
+               actorBkg: "#303134", actorBorder: "#70757a", actorTextColor: "#e3e3e3", actorLineColor: "#5f6368", signalColor: "#9aa0a6",
+               signalTextColor: "#e3e3e3", labelBoxBkgColor: "#303134", labelBoxBorderColor: "#70757a", labelTextColor: "#e3e3e3",
+               loopTextColor: "#bdc1c6", noteBkgColor: "#303134", noteBorderColor: "#5f6368", noteTextColor: "#e3e3e3",
+               activationBkgColor: "#3c4043", activationBorderColor: "#70757a", sequenceNumberColor: "#202124"}
+      # 90-8-2 규칙: 노드는 중립, 파랑 = Gemini 호출, 빨강 = 차단 · 거절. 흐름도(flowchart)에만 덧붙인다.
+      class_defs:
+        light: ["classDef store fill:#ffffff,stroke:#80868b,color:#202124", "classDef llm fill:#e8f0fe,stroke:#1a73e8,color:#174ea6",
+                "classDef stop fill:#fce8e6,stroke:#c5221f,color:#a50e0e", "classDef term fill:#3c4043,stroke:#3c4043,color:#ffffff"]
+        dark: ["classDef store fill:#1f1f1f,stroke:#9aa0a6,color:#e3e3e3", "classDef llm fill:#233044,stroke:#8ab4f8,color:#d2e3fc",
+               "classDef stop fill:#3b2524,stroke:#f28b82,color:#f6aea9", "classDef term fill:#e3e3e3,stroke:#e3e3e3,color:#202124"]
+
+  intro_tabs:
+    - id: sys
+      title: "시스템 아키텍처"
+      # 첫 화면 히어로 (사용자 2026-09-30 00:40Z): '왜 Knowledge Graph 인가' 관점 · 안 2 구성 + 안 1 제목.
+      # 버튼 · EQ 점수(20/20 · 15/20)는 넣지 않는다 — 점수는 06 에서 보여 줄 내용.
+      # example 은 06 저장 리포트(okf_veri_web/data/eq_compare.json)의 실제 한 문항 — export_intro_arch.py G9 가
+      # 질문 원문 · 판정 · 답 금액이 리포트와 같은지 확인한다 (다르면 파일 안 씀).
+      hero:
+        eyebrow: "왜 Knowledge Graph 인가"
+        title: "여신 판단의 답은 문서 한 곳에 있지 않습니다.<br><em>조문 · 단서 · 부서 맥락 · 원장의 연결</em> 속에 있습니다."
+        sub: "문서 검색은 비슷한 문장을 찾아 줍니다. 하지만 심사 · 리스크 · 준법 판단에는 어느 조문이 · 어떤 예외와 함께 · 누구의 기준으로 · 어떤 계약에 적용되는지가 필요합니다. 이 관계는 문장 안에 쓰여 있지 않고 문서 사이에 흩어져 있습니다. 같은 질문을 두 방식에 던져 보면 차이가 보입니다."
+        example:
+          eq: EQ01
+          question: "그랜드하모니호텔 대출을 150억 증액하려고 해. 정상 분류 유지된다고 치면 최소 충당금이 얼마 더 필요해?"
+          arms:
+            - arm: rag
+              label: "문서 검색 (Vector RAG)"
+              verdict: incorrect
+              answer: "1억 2,750만 원"
+              steps:
+                - "'정상 여신 충당금' 청크 검색 → 원칙 <b>0.85%</b> 발견"
+                - "같은 조문 뒤에 붙은 업종 단서(F·G·H·L)와 호텔업(H)을 잇지 못함"
+                - "150억 × 0.85% 로 계산"
+            - arm: graphrag
+              label: "Knowledge Graph (Graph)"
+              verdict: correct
+              answer: "1억 4,000만 원"
+              steps:
+                - "계약 → 차주 업종 <b>H (숙박 및 음식점업)</b> <span class=\"edge\">BORROWED_BY</span>"
+                - "제29조 본칙 → 업종 단서 <b>0.9%</b> <span class=\"edge\">HAS_EXCEPTION_PROVISO</span> · Knowledge Catalog 유효 확인"
+                - "원장: 기존 100억 · 기적립 8,500만 → 증액 후 250억 × 0.9% − 8,500만"
+        reasons_title: "이 차이가 생기는 이유 — 문서 사이의 관계를 그래프에 명시합니다"
+        reasons:
+          - title: "업무 맥락"
+            text: "같은 원장의 '연체율'도 리스크위원회 보고 · 금감원 공시 · 여신관리팀 조기경보마다 1.51% · 2.26% · 4.00%. 부서 × 표준 용어 → 조문 <span class=\"edge\">INVOKES_PROVISION</span>"
+          - title: "단서 · 특례 · 위임"
+            text: "원칙과 예외, 감독규정과 내규를 엣지로 연결 <span class=\"edge\">HAS_EXCEPTION_PROVISO</span> <span class=\"edge\">DELEGATES_TO_INTERNAL</span>"
+          - title: "업권 · 효력"
+            text: "저축은행 기준(요주의 2% ≠ 은행 7%) · 폐기 조문은 따라가지 않음 <span class=\"edge\">CONFLICTS_BY_SECTOR</span> · Knowledge Catalog 판정"
+        foot: "사실은 한 곳에만 둡니다 — 관계는 <b>그래프</b>, 유효성 · 폐기는 <b>Knowledge Catalog</b>, 조문 본문은 <b>Cloud Storage</b> (3-Plane). 아래 그림이 이 구성을 보여 줍니다."
+      figures: ["1"]
+    - id: graph
+      title: "그래프 아키텍처"
+      figures: ["2-1", "2-2", "2-3"]
+    - id: agent
+      title: "에이전트 아키텍처"
+      legend: true
+      figures: ["3-1", "3-2"]
+      toggle: {label: "시퀀스 다이어그램", options: [{label: "Graph", figure: "3-3"}, {label: "Vector RAG", figure: "3-4"}]}
+
+  figures:
+    - id: "1"
+      kind: mermaid
+      title: "전체 시스템 구성도"
+      caption: "왼쪽은 원천 규정과 여신 원장을 적재하는 구축 파이프라인, 오른쪽은 질의를 처리하는 런타임 경로이며, 가운데 3-Plane 이 두 경로를 잇습니다. 두 에이전트는 같은 원천을 서로 다른 방식으로 읽습니다 — Graph Agent 는 위상 그래프(GQL 1회) · Knowledge Catalog(조문 유효성) · Cloud Storage(OKF 원문)를 연결해 읽고, RAG Agent 는 RAG Engine 의 PDF 청크 검색과 SQL 1회로 답합니다."
+      sources: [data/build_okf_bundle.py, tools/sync_gcs.py, tools/push_catalog.py, tools/load_stores.py, tools/setup_federation.py, tools/build_ontology_graph.py, tools/studio_server.py]
+      mermaid: |
+        ---
+        config:
+          flowchart:
+            nodeSpacing: 16
+            rankSpacing: 22
+        ---
+        flowchart LR
+          subgraph SRC["원천"]
+            PDF["규정 PDF «pdf:count»종"]
+            CSV["여신 원장 «ledger:tables»종 · «ledger:rows»행"]
+          end
+          subgraph BUILD["구축 파이프라인"]
+            B1["OKF 번들 생성"]
+            B2["원문 적재 · KC 등록"]
+            B3["원장 적재 · 연합 구성"]
+            B4["개념 · 용어집 · 앵커 구성"]
+          end
+          subgraph PL["3-Plane"]
+            GCS[("원문 Plane<br/>Cloud Storage<br/>OKF")]
+            KC[("거버넌스 Plane<br/>Knowledge Catalog<br/>엔트리 · 용어 · 앵커")]
+            TOPO[("위상 Plane<br/>BigQuery Graph + Spanner 원장<br/>노드 «total:nodes» · 엣지 «total:edges»")]
+          end
+          RCP[("비교군 전용<br/>RAG Engine<br/>PDF «rag:files»")]
+          subgraph RT["Agent Runtime"]
+            GA["Graph Agent"]
+            RA["RAG Agent"]
+          end
+          WEB["Studio"]
+          PDF --> B1
+          B1 --> B2
+          B1 --> B4
+          CSV --> B3
+          B2 --> GCS
+          B2 --> KC
+          B4 -->|"용어 · 앵커"| KC
+          B4 --> TOPO
+          B3 --> TOPO
+          PDF -.->|"직접 업로드"| RCP
+          B2 ~~~ RCP
+          GCS <-->|"서명 URL 원문"| GA
+          KC <-->|"조문 유효성"| GA
+          TOPO <-->|"GQL 1회"| GA
+          TOPO <-->|"SQL 1회"| RA
+          RCP <-->|"검색 top-«rag:top_k»"| RA
+          GA <--> WEB
+          RA <--> WEB
+          class GCS,KC,TOPO,RCP store
+
+    - id: "2-1"
+      kind: mermaid
+      title: "물리 배치"
+      caption: "트랜잭션 원장 5종은 Spanner 가 원본이고 BigQuery 는 external dataset(Data Boost)으로 복제 없이 읽습니다. 그래프는 <code>v_node_*</code> · <code>v_edge_*</code> 뷰 위에 선언된 PROPERTY GRAPH 라 원장 변경이 바로 보입니다. 조문 · 문서 노드는 <code>gcs_obj_ref</code>(ObjectRef)로 원문을 가리킵니다."
+      sources: [tools/setup_federation.py, tools/load_stores.py, tools/build_ontology_graph.py]
+      table: l1_physical     # 클래스 · 노드 뷰 · 원천 테이블 · 저장소 · 라이브 건수 (physical_table COUNT)
+      node_order: [BusinessContext, LoanContract, Customer, FinancialProduct, Collateral, DelinquencyEvent, RateCutRequest, ExceptionApproval, WorkoutHistory, Provision, SourceDocument]
+      mermaid: |
+        ---
+        config:
+          flowchart:
+            nodeSpacing: 22
+            rankSpacing: 30
+        ---
+        flowchart TB
+          subgraph SP["Spanner · 원장 원본"]
+            S5["loan_contracts · collaterals · delinquency_events<br/>rate_cut_requests · exception_approvals"]
+          end
+          subgraph BQ1["BigQuery · starlight_bank"]
+            EXT["starlight_bank_ext<br/>Spanner external dataset · Data Boost"]
+            V5["ont_* 연합 뷰 «bq:ont_views»"]
+            M3["customers · financial_products<br/>workout_histories"]
+          end
+          subgraph BQ2["BigQuery · starlight_bank_ontology"]
+            LEX["ctx_business_contexts · lex_source_documents<br/>lex_provisions · edge_* 테이블 «bq:edge_tables»"]
+            VW["v_node_* «bq:v_node_views» · v_edge_* «bq:v_edge_views»"]
+            PG{{"PROPERTY GRAPH finance_graph"}}
+          end
+          OBJ[("Cloud Storage · OKF 원문")]
+          S5 -.->|"복제 없음"| EXT
+          EXT --> V5 --> VW
+          M3 --> VW
+          LEX --> VW --> PG
+          LEX -.->|"OBJ.MAKE_REF"| OBJ
+          class S5,OBJ store
+
+    - id: "2-2"
+      kind: mermaid
+      title: "3-Plane 불변식 — 한 사실은 한 곳에만"
+      caption: "그래프 노드(<code>v_node_provision</code>)에는 status · superseded_by 컬럼이 없습니다. 조문 유효성은 질의할 때마다 Knowledge Catalog 에서 판정하고, 원문은 ObjectRef 서명 URL 로만 읽습니다."
+      sources: [tools/okf-aspect.json, agents/starlight-graphrag/app/orchestrator/bq_io.py, agents/starlight-graphrag/app/callbacks/guards.py, agents/starlight-graphrag/app/tools/kc_lookup.py, agents/starlight-graphrag/app/services/governance.py]
+      plane_check:             # export 가 l1 Provision 속성 + 라이브 뷰 컬럼(INFORMATION_SCHEMA)으로 검사
+        has: [provision_slot_id, kc_entry_id, article_no, title, target_columns, gcs_obj_ref]
+        lacks: [status, superseded_by, content_class, verified, license]
+      mermaid: |
+        flowchart LR
+          subgraph T["위상 Plane · BigQuery Graph"]
+            PV["Provision 노드 · v_node_provision<br/>provision_slot_id · kc_entry_id · article_no<br/>title · target_columns · gcs_obj_ref"]
+          end
+          subgraph G["거버넌스 Plane · Knowledge Catalog"]
+            KE["KC 엔트리 · okf aspect<br/>status · superseded_by · content_class<br/>verified · license"]
+          end
+          subgraph E["원문 Plane · Cloud Storage"]
+            MD["조문 md · OKF<br/>frontmatter + 원문 본문"]
+          end
+          PV -->|"kc_entry_id"| KE
+          PV -->|"gcs_obj_ref → OBJ.GET_ACCESS_URL"| MD
+          KE -.->|"superseded_by 체인"| KE
+          class KE,MD store
+
+    - id: "2-3"
+      kind: trap_paths
+      title: "벡터 검색이 놓치는 세 가지를 그래프 경로로"
+      caption: "각 엣지와 속성 값은 BigQuery 실데이터(<code>edge_*</code> 테이블)와 대조했고, 아래 GQL 은 검증된 CQ 템플릿(<code>CQ_GQL_TEMPLATES</code>)의 첫 MATCH 경로를 그대로 옮겼습니다."
+      sources: [agents/starlight-graphrag/app/orchestrator/engine.py, tools/build_ontology_graph.py]
+      panels:
+        - id: "2-3a"
+          title: "① 단서 · 특례 — CQ09"
+          gql_from: CQ09
+          text: "본칙(30일 초과 연체 → EOD 예정 통지)만 읽으면 오답. 단서 엣지 조건: 6개월 정상상환 · 유상증자 · 신보 85% 이상 보증서 중 하나 + 우선변제자산 요건 + 본부심사역 승인 시 EOD 유예."
+          checks:
+            - {edge: INVOKES_PROVISION, ctx: CREDIT_MGMT, term: eod-deferral, dst: "내규 제16조", contains: ["30일"]}
+            - {edge: HAS_EXCEPTION_PROVISO, src: "내규 제16조", dst: "내규 제18조", contains: ["연체 30일 초과", "6개월 정상상환", "유상증자", "신보 85% 이상 보증서", "우선변제자산", "본부심사역 승인"]}
+          mermaid: |
+            ---
+            config:
+              flowchart:
+                rankSpacing: 26
+            ---
+            flowchart TB
+              A["BusinessContext<br/>CREDIT_MGMT · 여신관리팀"] -->|"INVOKES_PROVISION<br/>term_key: eod-deferral"| B["Provision · 내규 제16조<br/>EOD 통지 원칙"]
+              B -->|"HAS_EXCEPTION_PROVISO"| C["Provision · 내규 제18조<br/>EOD 유예 특례"]
+        - id: "2-3b"
+          title: "② 상위 규정 → 내규 위임 — CQ05"
+          gql_from: CQ05
+          text: "감독규정 제27조의 건전성 · 연체 기준을 내규 제14조가 리스크위 보고용(고정이하) · 공시용(30일 이상, 상각 제외) · EWS용(10일 이상, 상각 포함) 3종 지표로 세분화."
+          checks:
+            - {edge: INVOKES_PROVISION, ctx: RISK_MGMT, term: delinquency-rate, dst: "제27조"}
+            - {edge: DELEGATES_TO_INTERNAL, src: "제27조", dst: "내규 제14조", contains: ["리스크위 보고용(고정이하)", "공시용(30일 이상, 상각 제외)", "EWS용(10일 이상, 상각 포함)", "3종 지표"]}
+          mermaid: |
+            ---
+            config:
+              flowchart:
+                rankSpacing: 26
+            ---
+            flowchart TB
+              A["BusinessContext<br/>RISK_MGMT · 리스크관리부"] -->|"INVOKES_PROVISION<br/>term_key: delinquency-rate"| B["Provision · 감독규정 제27조<br/>자산건전성분류"]
+              B -->|"DELEGATES_TO_INTERNAL"| C["Provision · 내규 제14조<br/>연체율 3종 지표"]
+        - id: "2-3c"
+          title: "③ 같은 용어 · 부서별 다른 기준 — CQ06 · CQ07"
+          gql_from: CQ06
+          text: "term_key 는 같아도 부서마다 엣지 속성이 다른 산식을 가리킵니다: 여신관리팀 EWS 4.00% / 대외공시 2.26%. 국회입법조사처 브리프의 거시 가계대출 연체율 0.24% 는 <code>CONFLICTS_BY_SECTOR</code> 로 혼입 금지."
+          checks:
+            - {edge: INVOKES_PROVISION, ctx: CREDIT_MGMT, term: delinquency-rate, dst: "내규 제14조", contains: ["4.00%"]}
+            - {edge: INVOKES_PROVISION, ctx: DISCLOSURE, term: delinquency-rate, dst: "내규 제14조", contains: ["2.26%"]}
+            - {edge: CONFLICTS_BY_SECTOR, src: "내규 제14조", dst_doc: DOC_07_NARS_RATE, contains: ["2.26%", "0.24%", "혼입 인용 금지"]}
+          mermaid: |
+            ---
+            config:
+              flowchart:
+                nodeSpacing: 14
+                rankSpacing: 26
+            ---
+            flowchart TB
+              M["BusinessContext<br/>CREDIT_MGMT"] -->|"delinquency-rate<br/>EWS 4.00%"| P["Provision · 내규 제14조"]
+              D["BusinessContext<br/>DISCLOSURE"] -->|"delinquency-rate<br/>공시 2.26%"| P
+              P -->|"CONFLICTS_BY_SECTOR"| X["Provision · 국회입법조사처 브리프<br/>거시 연체율 0.24% · 혼입 금지"]
+              class X stop
+
+    - id: "3-1"
+      kind: mermaid
+      title: "컴포넌트 설계도"
+      caption: "자율 루프 대신 결정론 오케스트레이터가 실행 순서와 도구 예산(최대 «cfg:tool_budget»회)을 통제합니다. Gemini 는 질의 플래닝 · GQL 교정 · 최종 브리핑 합성 3곳(파란색)에서만 호출되며, 모든 그래프 조회(최대 «cfg:max_graph_hops» hop)와 원문 인출은 가드레일 콜백을 통과해야 실행됩니다."
+      sources: [tools/studio_server.py, tools/agent_remote_client.py, agents/starlight-graphrag/app/agent.py, agents/starlight-graphrag/app/config.py,
+                agents/starlight-graphrag/app/orchestrator/, agents/starlight-graphrag/app/callbacks/, agents/starlight-graphrag/app/tools/,
+                agents/starlight-graphrag/app/services/, agents/starlight-graphrag/app/adapters/, agents/starlight-graphrag/app/domain/]
+      mermaid: |
+        ---
+        config:
+          flowchart:
+            nodeSpacing: 18
+            rankSpacing: 28
+        ---
+        flowchart LR
+          W["Studio"]
+          subgraph AE["Agent Runtime · Graph Agent"]
+            E["결정론 오케스트레이터<br/>실행 순서 · 도구 예산 «cfg:tool_budget»회 통제"]
+            LM["Gemini 3.8 Flash · 호출 3곳<br/>질의 플래닝 · GQL 교정 · 브리핑 합성"]
+            CB["가드레일 · 콜백<br/>엔티티 그라운딩 · Dry-Run 가드<br/>거버넌스 차단 · 인용 검증"]
+            TL["핵심 도구 3종<br/>위상 그래프 조회 · KC 유효성 조회<br/>OKF 원문 인출"]
+          end
+          subgraph ST["3-Plane · 감사 저장소"]
+            BQ[("BigQuery Graph + Spanner 원장<br/>위상 그래프 · 별칭 «aliases»")]
+            KC[("Knowledge Catalog<br/>엔트리 · 용어 · 앵커")]
+            GCS[("Cloud Storage<br/>OKF 원문")]
+            LOG[("Cloud Logging<br/>GovernanceIncident")]
+          end
+          W <-->|"질의 · 단계 스트림"| E
+          E --> LM
+          E --> CB
+          E --> TL
+          TL -->|"GQL 1회"| BQ
+          TL -->|"유효성 판정"| KC
+          TL -->|"서명 URL 원문"| GCS
+          CB -.->|"위반 기록"| LOG
+          class BQ,KC,GCS,LOG store
+          class LM llm
+
+    - id: "3-2"
+      kind: mermaid
+      title: "순서도 — Step 0–3 결정론적 실행 흐름"
+      caption: "에이전트 한 턴의 결정론적 실행 흐름입니다(모듈 05 · 06 의 Step 0–3 실행 내역과 동일). Step 1 은 정적 검사(≤«cfg:max_graph_hops» hop)와 BigQuery Dry-Run 을 통과할 때까지 최대 «cfg:max_gql_repairs»회 자동 교정한 뒤 통과한 GQL 만 딱 1회 실행하며, Step 2 에서 폐기 · 미등록 조문이 감지되면 원문 인출 전에 즉시 답변을 차단합니다."
+      sources: [agents/starlight-graphrag/app/orchestrator/, agents/starlight-graphrag/app/callbacks/, agents/starlight-graphrag/app/services/,
+                agents/starlight-graphrag/app/adapters/, agents/starlight-graphrag/app/domain/, tools/agent_remote_client.py]
+      mermaid: |
+        ---
+        config:
+          flowchart:
+            nodeSpacing: 16
+            rankSpacing: 22
+        ---
+        flowchart LR
+          Q0(["질문 수신"]) --> S0["Step 0 · 그라운딩 · 플래닝<br/>표준 용어 · 차주 앵커 바인딩"]
+          S0 -->|"도메인 외 · 도움말"| R0["안내 응답 · 도구 0회"]
+          S0 -->|"심사 질의"| S1["Step 1 · GQL 검증 · 실행<br/>≤«cfg:max_graph_hops» hop + Dry-Run → GQL 1회"]
+          S1 -->|"Dry-Run 실패 · ≤«cfg:max_gql_repairs»회"| RP["GQL 자동 교정<br/>오류 · 이전 시도 반영"]
+          RP --> S1
+          S1 -->|"«cfg:max_gql_repairs»회 소진 · 반복"| RF["답변 거절 · GQL 미실행"]
+          S1 -->|"검증 통과"| S2["Step 2 · KC 유효성 판정<br/>조문 상태 · 대체 조문 확인"]
+          S2 -->|"폐기 · 미등록"| BN["GovernanceIncident 발행<br/>원문 인출 차단 · 거절 응답"]
+          S2 -->|"유효(ALLOW)"| S3["Step 3 · OKF 원문 인출<br/>ObjectRef 서명 URL → GCS"]
+          S3 --> SB["심사 브리핑 합성<br/>인용 검증 · 최종 답변"]
+          class S0,RP,SB llm
+          class R0,RF,BN stop
+          class Q0 term
+
+    - id: "3-3"
+      kind: mermaid
+      title: "시퀀스 다이어그램 — Graph"
+      caption: "단계가 진행될 때마다 실시간 진행 상태가 Studio 화면으로 스트리밍되고, 마지막에 답변 · 증거 원장 · Knowledge Catalog 판정 · 조문 원문이 함께 반환됩니다. 조문 원문은 BigQuery ObjectRef 서명 URL 을 통해 Cloud Storage 에서 직접 인출합니다."
+      sources: [tools/studio_server.py, tools/agent_remote_client.py, agents/starlight-graphrag/app/agent.py, agents/starlight-graphrag/app/orchestrator/,
+                agents/starlight-graphrag/app/callbacks/, agents/starlight-graphrag/app/services/, agents/starlight-graphrag/app/adapters/, agents/starlight-graphrag/app/domain/]
+      mermaid: |
+        sequenceDiagram
+          autonumber
+          actor U as 사용자
+          participant W as Studio
+          participant O as Graph Agent<br/>결정론 오케스트레이터
+          participant G as Gemini 3.8 Flash
+          participant B as BigQuery Graph
+          participant K as Knowledge Catalog
+          participant C as Cloud Storage (OKF)
+          U->>W: 질문 입력
+          W->>O: 질의 요청 (스트리밍)
+          Note over O: Step 0 · 표준 용어 · 차주 앵커 바인딩
+          O->>G: 질의 플래닝 (모드 · GQL · 조문 슬롯)
+          G-->>O: 실행 계획 반환
+          alt 도메인 외 · 도움말 질의
+            O-->>W: 안내 응답 (도구 0회)
+          else 원장 조회 · Graph 심사 질의
+            O->>B: Step 1 · GQL Dry-Run 검증
+            opt Dry-Run 실패 시 (최대 «cfg:max_gql_repairs»회)
+              O->>G: GQL 교정 요청 (오류 · 이전 시도 전달)
+              G-->>O: 교정된 GQL
+              O->>B: Dry-Run 재검증
+            end
+            O->>B: 통과한 GQL 1회 실행
+            B-->>O: 원장 데이터 · 조문 슬롯 반환
+            opt 규정 조문 포함 심사 질의
+              O->>K: Step 2 · 조문 슬롯별 유효성 조회
+              K-->>O: 상태(ALLOW · DEPRECATED) · 대체 조문
+              alt 폐기 · 미등록 조문 감지
+                O-->>W: GovernanceIncident 발행 및 답변 차단
+              else 유효 조문 (ALLOW)
+                O->>B: Step 3 · ObjectRef 서명 URL 발급
+                B-->>O: 서명 URL
+                O->>C: 정본 조문 원문 인출
+                C-->>O: OKF 조문 전문
+              end
+            end
+            O->>G: 원장 + 조문 전문 기반 심사 브리핑 합성
+            G-->>O: 최종 답변 (인용 검증 완료)
+            O-->>W: 최종 답변 · 단계별 근거 반환
+          end
+          W-->>U: Step 0–3 실행 내역 · 답변 표시

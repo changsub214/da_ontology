@@ -1,0 +1,452 @@
+# ---------------------------------------------------------------------------
+# ontology/eval_question/eval_questions.yaml — RAG vs GraphRAG 평가 질문 20개 (사전등록 v1.1.0 → R4 실행 후 개정 v1.2.0, ADR 0013)
+#
+# 목적: "GraphRAG 가 이기도록 짠 시험"이라는 의심을 받지 않도록 **설계 단계에서** 공정성을 고정한다.
+#
+#  1) Hold-out: CQ 20개(ontology/cq/)는 온톨로지 설계 요구사항(=학습셋)이다. 평가 질문은 CQ 와
+#     질문 문장·정답이 겹치지 않는다. 같은 규정을 쓰는 경우 sibling_cq 로 투명하게 표시한다.
+#  2) 각 암의 고유 패러다임 + 동일 원장 가시성:
+#     - RAG Agent: GCP Vertex AI RAG Engine(원본 PDF 10종 벡터 검색) + BigQuery SQL(starlight_bank + ont_* 관계형 쿼리)
+#     - GraphRAG Agent (단일 통합 아키텍처, product/eval_arm 인위적 분리 없음):
+#       입력 → 별칭(ont_entity_aliases 438행) & KC Aspect(ontology-class-anchors 고정 gql_match_template) 바인딩
+#       → GQL 플래너 + BigQuery Dry-Run(dry_run=True) 검증 → KC 유효성 검증(kc_lookup: 실패 시 답변 불가 안내 /
+#       통과 시 단일 통합 GQL graph_query 실행 + ObjectRef 서명 URL 원문 조회 fetch_provision).
+#       (finance_graph 내부에 Spanner 연합 ont_* 및 BQ 원장 8종이 이미 노드로 통합되어 있으므로 별도 bigquery_sql 미사용)
+#  3) 균형 배분 (사전 가설): GraphRAG 우세 예상 8 · RAG 우세 예상 6 · 동률 예상 6.
+#     RAG 우세 6개는 온톨로지(LEX/브리지)에 모델링되지 않은 서술형 내용 — GraphRAG 가 **질 수 있는** 문항.
+#  4) 사전등록: 각 문항의 expected_winner 와 근거를 실행 전에 고정. 결과가 가설과 다르면 그대로 보고한다.
+#  5) 결정론적 채점: LLM-judge 없이 must_include / must_not_include 정규식 + 인용(문서·쪽) 대조.
+#  6) 정답 근거는 CQ 와 동일한 게이트로 검증: 원본 PDF 원문 인용(verbatim) + 라이브 SQL 실측.
+#     검증: python tools/verify_eval.py  → ontology/eval_question/eval_report.json
+# ---------------------------------------------------------------------------
+meta:
+  version: 1.2.0
+  created: 2026-09-26
+  updated: 2026-09-28
+  status: revised_post_run       # preregistered (v1.1.0) -> executed (R4 2026-09-27) -> revised_post_run (v1.2.0)
+  allocation: {graph_favored: 8, rag_favored: 6, parity: 6}
+  holdout_from: ontology/cq/competency_questions.yaml
+  revisions:
+    - version: 1.2.0
+      date: 2026-09-28
+      decider: user (00:38Z)
+      adr: second_brain/decisions/0013-eq-post-run-revision-and-graphrag-free-path.md
+      changes:
+        - "EQ01: 질문 유지, 정답을 두 해석 모두 인정 (증액분만 1억 3,500만 / 기존 부족분 포함 1억 4,000만)"
+        - "EQ02: 질문을 가정 명시형으로 변경 (회생절차 진행 서술 → 우선변제자산 인정 가정)"
+        - "protocol.scoring.out_of_domain_rule 추가"
+      note: "R4 결과를 본 뒤의 변경이다. v1.1.0 결과(ontology/eval_question/compare_run.json 첫 실행)는 log 2026-09-27 에 그대로 남긴다."
+
+protocol:
+  arms:
+    rag:
+      retrieval: "GCP Vertex AI RAG Engine — data/un_data/*.pdf 10종(142쪽) 벡터 인덱스 검색 + BigQuery 관계형 SQL"
+      tools: [vertex_rag_search, bigquery_sql]
+      note: "비정형 규정은 Vertex AI RAG Engine 으로 PDF 청크를 검색하고, 정형 원장은 bigquery_sql(starlight_bank.*)로 조회"
+    graphrag:
+      retrieval: "단일 통합 GraphRAG 파이프라인 — Alias(438행) & KC Aspect 고정 GQL 템플릿 바인딩 → GQL 플래너 + BQ Dry-Run 검증 → KC 유효성 검증(kc_lookup) → 단일 통합 GQL(graph_query) + ObjectRef 원문 조회(fetch_provision)"
+      tools: [graph_query, kc_lookup, fetch_provision]
+      note: "별도 bigquery_sql 및 벡터 검색 폴백 없음 — finance_graph 내부에 Spanner 연합 뷰(ont_*)와 BQ 원장 8종, 조문 ObjectRef 가 모두 통합되어 있어 GQL 한 번으로 그래프 순회·정량 집계를 완결하며, KC 유효성 실패 시 즉시 답변 불가 처리"
+  shared:
+    llm: "두 암 동일 모델(gemini-3.8-flash)·동일 버전(실행 시 resolved version 기록), temperature 0, seed 고정"
+    system_prompt: "공통 역할·인용·산식 골격 동일. 암별 차이는 고유 패러다임(RAG Engine+SQL vs Unified GQL+KC+ObjectRef) 도구 문단만"
+    tool_budget: "문항당 최대 tool call 12회, 동일"
+    ledger_visibility: "동일 원장 데이터 가시성 보장 — RAG 암은 starlight_bank.* SQL 테이블로, GraphRAG 암은 동일 테이블을 바라보는 finance_graph 의 8대 LDM 노드 뷰(Spanner Data Boost 연합 포함)로 GQL 조회"
+    runs: "문항당 3회 반복, 최빈 점수 채택 + 불일치 건수 공개"
+  scoring:
+    per_question: "2 = must_include 전부 + must_not_include 0 + 필수 인용 충족 / 1 = must_include 절반 이상 & must_not_include 0 / 0 = 그 외"
+    citation: "필수 인용은 문서 id(01~10) 와 쪽(또는 조문) 표기로 판정"
+    judge: "정규식 기반 결정론적 채점 (LLM-judge 미사용)"
+    out_of_domain_rule: "GraphRAG 가 업무 범위 밖(OUT_OF_DOMAIN)으로 거절한 문항은 자동으로 GraphRAG 정답 · RAG 오답 (범위 통제). 사용자 결정 2026-09-28 00:38Z, ADR 0013. 구현: tools/run_eq_compare.py judge"
+  preregistered_hypotheses:
+    H1: "graph_favored 8문항에서 GraphRAG 평균 점수 > RAG 평균 점수 (최소 6/8 문항에서 우위)"
+    H2: "rag_favored 6문항에서 RAG 평균 점수 ≥ GraphRAG 평균 점수"
+    H3: "parity 6문항에서 두 암 점수 차 ≤ 1 인 문항이 5/6 이상"
+    reporting: "H1~H3 가 기각되어도 전 문항·전 transcript 공개. 가설 수정 후 재실행 시 버전 증가 + 변경 사유 기록"
+
+sources:
+  "01": {file: "01_FSC_은행업감독규정_전문_2025_07.pdf", authority: binding}
+  "02": {file: "02_LAW_은행업감독규정_별표3_자산건전성분류기준.pdf", authority: binding}
+  "03": {file: "03_FSC_은행업감독규정_및_시행세칙_개정_규제영향분석서.pdf", authority: advisory}
+  "04": {file: "04_FSC_은행업감독규정_개정안_규정변경예고_거액익스포져.pdf", authority: advisory}
+  "05": {file: "05_FSC_KFB_은행권_대출금리_산정체계_개선방안.pdf", authority: advisory}
+  "06": {file: "06_FSC_제7차_은행권_금리산정체계_정비방향.pdf", authority: advisory}
+  "07": {file: "07_NARS_합리적인_금리산정을_위한_정책동향_및_쟁점.pdf", authority: advisory}
+  "08": {file: "08_KIF_국내은행그룹_대손충당금_적립률_비교와_시사점.pdf", authority: advisory}
+  "09": {file: "09_DISTRACTOR_상호저축은행업감독규정_규제영향분석서.pdf", authority: distractor}
+  "10": {file: "10_SYNTHETIC_별빛은행_기업여신심사_및_금리운영_내규.pdf", authority: internal}
+
+questions:
+# ============================================================================
+# GRAPH-FAVORED (8) — 단서·예외·부서맥락·타업권 차단이 여러 문서/테이블에 흩어져 있음
+# ============================================================================
+- id: EQ01
+  category: graph_favored
+  sibling_cq: CQ01
+  question: "그랜드하모니호텔 대출을 150억 증액하려고 해. 정상 분류 유지된다고 치면 최소 충당금이 얼마 더 필요해?"
+  expected_winner: graphrag
+  rationale: "RAG 는 SQL 로 KSIC 'H' 를 조회해도, 0.85% 원칙 문장과 같은 청크에 붙은 업종 단서를 'H=숙박 및 음식점업' 과 연결해야 한다. 그래프는 Customer.ksic → ExceptionRule(F·G·H·L) 엣지로 직접 도달."
+  evidence:
+    - {doc: "01", page: 20, quote: '한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 100분의 0.9 이상'}
+  answer_queries:
+    - sql: |
+        SELECT c.borrower_name, c.ksic_section_code, DIV(15000000000 * 90, 10000) AS added_min_provision_krw
+        FROM {ds}.customers c WHERE c.borrower_name = '그랜드하모니호텔(주)'
+      expect: {scalar: {ksic_section_code: H, added_min_provision_krw: 135000000}}
+    # v1.2.0: 기존 여신까지 본 해석 — 증액 후 총 잔액 × 0.9% − 기적립 충당금 (기존 100억이 0.85% 로 적립돼 500만 부족)
+    - sql: |
+        SELECT outstanding_amt, booked_provision_krw,
+               DIV((outstanding_amt + 15000000000) * 90, 10000) - booked_provision_krw AS added_incl_shortfall_krw
+        FROM {ds}.ont_loan_contracts WHERE borrower_name = '그랜드하모니호텔(주)'
+      expect: {scalar: {outstanding_amt: 10000000000, booked_provision_krw: 85000000, added_incl_shortfall_krw: 140000000}}
+  gold_answer: "1억 3,500만 원 (증액분 150억 × 0.9%, 숙박 및 음식점업 H 단서) 또는 1억 4,000만 원 (증액 후 250억 × 0.9% = 2억 2,500만 − 기적립 8,500만, 기존 100억이 0.85% 로 적립돼 생긴 부족분 500만 포함). 두 해석 모두 정답. 함정: 원칙 비율 0.85% 적용 금액(1억 2,750만)은 오답."
+  grading:
+    must_include: ['1억\s?3,?500만|135,000,000|1\.35억|1억\s?4,?000만|140,000,000|1\.4억', '0\.9']
+    # 0.85% 금액을 must_not_include 로 두면 "0.85%면 ○○이지만 H 단서로 0.9%" 처럼 함정을 설명하는
+    # 정답까지 감점된다 (verify_eval EQ-G5 가 gold 자기모순으로 검출). 오답은 must_include 에서 이미 탈락.
+    must_not_include: []
+    cite: [{doc: "01", locator: "제29조"}]
+
+- id: EQ02
+  category: graph_favored
+  sibling_cq: CQ02
+  question: "극동철강 채권이 우선변제자산으로 인정된다고 가정하면 법정 최소 충당금이 얼마나 줄어?"
+  # v1.1.0 질문: "극동철강이 회생절차에 들어가서 법원에서 우리 채권 우선변제권이 인정되면, 충당금 부담이 얼마나 줄어?"
+  # v1.2.0: 가정을 명시 (R4 에서 두 암 모두 원장 플래그 N/NONE 을 근거로 판단 보류). 정답은 그대로.
+  expected_winner: graphrag
+  rationale: "고정 20% 원칙 → 다목 단서(회생법 제180조② 우선변제자산 10%) 연결 + 원장 잔액·장부 충당금 결합. 단서가 같은 목 뒤에 이어져 RAG 도 찾을 수는 있으나 '고정' 분류 확인과 잔액 계산이 분산됨."
+  evidence:
+    - {doc: "01", page: 20, quote: '제180조제2항에 따라 은행이 우선하여 변제받을 권리가 인정되는 자산(이하 "우선변제자산"이라 한다)은 100분의 10 이상'}
+  answer_queries:
+    - sql: |
+        SELECT contract_id, asset_classification, outstanding_amt, booked_provision_krw,
+               DIV(outstanding_amt * 10, 100) AS min_if_priority_krw,
+               DIV(outstanding_amt * 20, 100) - DIV(outstanding_amt * 10, 100) AS min_reduction_krw
+        FROM {ds}.ont_loan_contracts WHERE borrower_name = '극동철강산업(주)'
+      expect: {scalar: {asset_classification: SUBSTANDARD, min_if_priority_krw: 1000000000, min_reduction_krw: 1000000000}}
+  gold_answer: "법정 최소 충당금이 20억(20%) → 10억(10%)으로 10억 원 감소. (현재 고정 분류, 잔액 100억)"
+  grading:
+    must_include: ['10억', '10\s?%|100분의\s?10', '20억|20\s?%']
+    must_not_include: ['5억\s?원\s?감소']
+    cite: [{doc: "01", locator: "제29조"}]
+
+- id: EQ03
+  category: graph_favored
+  sibling_cq: CQ07
+  question: "18일째 연체 중인 계좌들 있잖아. 건전성 분류는 뭐로 해야 하고, 여신관리팀 조기경보 대상이야?"
+  expected_winner: graphrag
+  rationale: "같은 '연체' 사실이 리스크(별표3: 1월 미만 → 정상)와 여신관리팀(내규 제14조: 10일 이상 → EWS 포함)에서 다르게 분기. 두 부서 맥락을 동시에 답해야 함."
+  evidence:
+    - {doc: "02", page: 1, quote: '1월 이상 3월 미만 연체대출채권을 보유하고 있는 거래처에 대한 자산'}
+    - {doc: "10", page: 1, quote: '1. 분자: 10일 이상 원리금 연체 기업여신 잔액 + 30일 이상 관리연체 잔액 + 회계상 대손상각 처리되어 특수'}
+  answer_queries:
+    - sql: |
+        SELECT l.contract_id, l.asset_classification, d.overdue_days, l.outstanding_amt
+        FROM {ds}.ont_loan_contracts l JOIN {ds}.ont_delinquency_events d USING (contract_id)
+        WHERE d.overdue_days = 18 ORDER BY l.contract_id
+      expect: {exact_rows: 3, all_rows_equal: {asset_classification: NORMAL}, sum: {outstanding_amt: 15000000000}}
+  gold_answer: "3건(각 50억, 합 150억). 건전성은 '정상' 유지(요주의는 1월 이상 연체부터). 여신관리팀 EWS 실질관리 연체율에는 포함(10일 이상)."
+  grading:
+    must_include: ['정상', '3\s?건|3개', '(EWS|조기경보).{0,30}(포함|대상)']
+    must_not_include: ['요주의로\s?(분류|하향)']
+    cite: [{doc: "02", locator: "별표3"}, {doc: "10", locator: "제14조"}]
+
+- id: EQ04
+  category: graph_favored
+  sibling_cq: CQ06
+  question: "여신관리팀이 관리하는 연체율 숫자를 그대로 금감원 공시 연체율로 내도 돼?"
+  expected_winner: graphrag
+  rationale: "두 정의가 한 조문(내규 제14조) 안에 있어 RAG 도 찾을 수 있으나, 각 정의로 실제 수치를 산출해 차이(4.00% vs 2.26%)와 원인(10일 기준·특수채권 포함)을 제시하려면 정의→컬럼 매핑이 필요."
+  evidence:
+    - {doc: "10", page: 1, quote: '금융감독원 대외공시용 원화대출 연체율(1월 이상 원리금 연체 기준, 대손상각 특수채권 제외)'}
+    - {doc: "10", page: 1, quote: '2. 분모: 대차대조표상 원화 기업여신 총잔액 + 대손상각 특수채권 미회수 원금 잔액'}
+  answer_queries:
+    - sql: |
+        WITH d AS (SELECT contract_id, MAX(overdue_days) od FROM {ds}.ont_delinquency_events WHERE write_off_yn = 'N' GROUP BY contract_id),
+             wo AS (SELECT SUM(overdue_principal_krw) p FROM {ds}.ont_delinquency_events WHERE write_off_yn = 'Y')
+        SELECT ROUND(100 * SUM(IF(d.od >= 30, l.outstanding_amt, 0)) / SUM(l.outstanding_amt), 2) AS official_pct,
+               ROUND(100 * (SUM(IF(d.od >= 10, l.outstanding_amt, 0)) + ANY_VALUE(wo.p)) / (SUM(l.outstanding_amt) + ANY_VALUE(wo.p)), 2) AS ews_pct
+        FROM {ds}.ont_loan_contracts l LEFT JOIN d USING (contract_id) CROSS JOIN wo
+        WHERE l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'
+      expect: {scalar: {official_pct: 2.26, ews_pct: 4.0}}
+  gold_answer: "안 된다. 공시는 1월 이상 연체·특수채권 제외 = 2.26%, 여신관리팀 EWS 는 10일 이상 + 상각 특수채권 포함 = 4.00%. 정의가 다른 지표."
+  grading:
+    must_include: ['안\s?(된다|됨|돼)|불가|부적절', '2\.26', '4\.0']
+    must_not_include: []
+    cite: [{doc: "10", locator: "제14조"}]
+
+- id: EQ05
+  category: graph_favored
+  sibling_cq: CQ12
+  question: "네오바이오텍 금리인하요구를 35bp 승인해준 게 내부 기준상 문제없는 결정이야?"
+  expected_winner: graphrag
+  rationale: "당국 개선방안 ①(신용개선 효과만큼 인하)·④(특허 재량) → 내규 제25조②(재무개선·등급상승 동반 시 인하) → 신청 데이터(등급 BBB→BBB+, 매출 +35%) 3단 연결."
+  evidence:
+    - {doc: "05", page: 4, quote: '신용도가 개선되면 신용개선 효과 만큼 가산금리가 인하되도록 함'}
+    - {doc: "10", page: 2, quote: '감사보고서상 재무상태 개선 또는 회사채 신용등급 상승이 동반된 경우에 한하여 가산금리를 인하한'}
+  answer_queries:
+    - sql: |
+        SELECT r.request_id, r.credit_rating_before, r.credit_rating_after, r.yoy_revenue_growth_pct, r.review_status_code, r.approved_cut_bp
+        FROM {ds}.ont_rate_cut_requests r JOIN {ds}.customers c USING (customer_id)
+        WHERE c.borrower_name = '네오바이오텍(주)'
+      expect: {scalar: {credit_rating_before: BBB, credit_rating_after: BBB+, review_status_code: APPROVED, approved_cut_bp: 35}}
+  gold_answer: "문제없다. 특허 취득에 더해 신용등급 상승(BBB→BBB+)·매출 35% 증가가 동반돼 내규 제25조② 인하 요건 충족, 개선방안 ①의 '신용개선 효과만큼 가산금리 인하' 원칙과도 부합."
+  grading:
+    must_include: ['BBB\+', '제25조|25조', '(등급|신용).{0,10}상승']
+    must_not_include: ['특허.{0,10}(만으로|단독).{0,10}(인하|승인).{0,5}(의무|해야)']
+    cite: [{doc: "10", locator: "제25조"}]
+
+- id: EQ06
+  category: graph_favored
+  sibling_cq: CQ16
+  question: "요주의 여신은 충당금 2%만 쌓으면 된다는 자료를 봤는데, 별빛정밀 건도 2%로 낮춰도 돼?"
+  expected_winner: graphrag
+  rationale: "2% 는 상호저축은행 현행 기준(09 distractor). '요주의 충당금' 벡터 검색은 09 표를 상위로 가져올 가능성이 높음. 그래프는 업권(sector) 속성으로 차단하고 은행 제29조 나목(7%)으로 라우팅."
+  evidence:
+    - {doc: "09", page: 6, quote: '충당금 저축은행 0.5% 2% 20% 75% 100%'}
+    - {doc: "01", page: 20, quote: '"요주의"분류 자산의 100분의 7 이상'}
+  answer_queries:
+    - sql: |
+        SELECT contract_id, asset_classification, DIV(outstanding_amt * 7, 100) AS min_krw, booked_provision_krw
+        FROM {ds}.ont_loan_contracts WHERE borrower_name = '별빛정밀(주)'
+      expect: {scalar: {asset_classification: PRECAUTIONARY, min_krw: 700000000, booked_provision_krw: 700000000}}
+  gold_answer: "안 된다. 2% 는 상호저축은행 기준. 은행업감독규정 제29조①1호나목상 요주의 최소 7% → 별빛정밀 최소 7억(현 장부 7억)."
+  grading:
+    must_include: ['7\s?%|100분의\s?7', '7억', '저축은행']
+    must_not_include: ['2\s?%\s?(로|만)\s?(낮춰도|적립해도)\s?(된다|됨)']
+    cite: [{doc: "01", locator: "제29조"}]
+
+- id: EQ07
+  category: graph_favored
+  sibling_cq: CQ09
+  question: "태성금속이 신용보증기금 보증비율을 85%로 올려오면 기한이익상실 유예 받을 수 있어?"
+  expected_winner: graphrag
+  rationale: "내규 제18조의 1호(보증 85%+ 등)·2호(우선변제자산)·본부 승인 3요건을 담보·워크아웃·원장 플래그·결재 이력과 각각 대조하는 가정형(what-if) 질문."
+  evidence:
+    - {doc: "10", page: 1, quote: '신용보증기금(KODIT) 85% 이상 보증서 담보 제공'}
+    - {doc: "10", page: 1, quote: '본부 여신심사역의 승인(APPROVED)을 득한 경우에는 고정이하'}
+  answer_queries:
+    - sql: |
+        SELECT l.contract_id, l.rehab_priority_claim_yn, c.guarantee_agency_code, c.guarantee_ratio_pct, a.approval_status
+        FROM {ds}.ont_loan_contracts l JOIN {ds}.ont_collaterals c USING (contract_id)
+        LEFT JOIN {ds}.ont_exception_approvals a USING (contract_id)
+        WHERE l.borrower_name = '태성금속공업(주)'
+      expect: {scalar: {rehab_priority_claim_yn: 'Y', guarantee_agency_code: KODIT, guarantee_ratio_pct: 70.0, approval_status: REJECTED}}
+  gold_answer: "요건상 가능해진다. 현재는 1호 불충족(보증 70%)으로 반려. 85% 로 올리면 1호 충족 + 2호(회생법 우선변제자산) 이미 충족 → 본부 여신심사역 재승인을 받으면 유예 가능."
+  grading:
+    must_include: ['85', '(본부|여신심사역).{0,10}승인', '우선변제']
+    must_not_include: ['자동(으로)?\s?유예']
+    cite: [{doc: "10", locator: "제18조"}]
+
+- id: EQ08
+  category: graph_favored
+  sibling_cq: CQ16
+  question: "삼호종합건설 대출은 부동산 PF 성격인데, PF대출 충당금 기준(0.5~3%) 적용하면 되지?"
+  expected_winner: graphrag
+  rationale: "'PF대출 0.5~3%' 는 저축은행 규제영향분석서 표. 은행 기업여신은 제29조 가목 — 건설업(F) 단서 0.9%. 업권 차단 + 업종 단서 두 단계."
+  evidence:
+    - {doc: "09", page: 8, quote: 'PF대출 0.5～3 7～10 30 75'}
+    - {doc: "01", page: 20, quote: '한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 100분의 0.9 이상'}
+  answer_queries:
+    - sql: |
+        SELECT l.contract_id, c.ksic_section_code, l.outstanding_amt, DIV(l.outstanding_amt * 90, 10000) AS min_krw, l.booked_provision_krw
+        FROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)
+        WHERE c.borrower_name = '삼호종합건설(주)'
+      expect: {scalar: {ksic_section_code: F, min_krw: 135000000, booked_provision_krw: 127500000}}
+  gold_answer: "아니다. PF 0.5~3% 는 상호저축은행 기준. 은행은 제29조①1호가목 건설업(F) 단서 0.9% → 최소 1억 3,500만 원(현 장부 1억 2,750만 원, 750만 원 부족)."
+  grading:
+    must_include: ['0\.9', '저축은행', '1억\s?3,?500만|135,000,000|1\.35억']
+    must_not_include: []
+    cite: [{doc: "01", locator: "제29조"}]
+
+# ============================================================================
+# RAG-FAVORED (6) — 온톨로지에 모델링되지 않은 서술형·배경 내용. GraphRAG 가 질 수 있음.
+# ============================================================================
+- id: EQ09
+  category: rag_favored
+  sibling_cq: null
+  question: "KIF 보고서는 국내 은행그룹 대손충당금 적립률이 해외보다 높은 이유를 뭐라고 설명해?"
+  expected_winner: rag
+  rationale: "연구 브리프의 서술형 논증. LEX 층은 조문(Provision) 단위라 이 논증을 노드/엣지로 갖지 않음 → 그래프 암은 본문 fetch 대상 선정부터 불리."
+  graph_risk: "Provision 노드 부재로 '근거 없음' 응답 또는 제29조로 우회 답변 가능성"
+  evidence:
+    - {doc: "08", page: 3, quote: '정상으로 분류한 여신에 대해서도 가계대출은 1%, 기업대출은 0.85%의 충당금을 적립하는 등'}
+    - {doc: "08", page: 3, quote: '해외의 경우 담보대출 비중이 높고, 부실채권 발생 시 내부에서 직접 관리하는 관행'}
+  gold_answer: "① 국내는 정상 여신에도 가계 1%·기업 0.85% 를 쌓는 보수적 접근, ② 해외는 담보대출 비중이 높고 부실채권을 내부에서 직접 관리하는 관행(국내는 조기 매각·상각 경향)."
+  grading:
+    must_include: ['보수적', '담보대출', '0\.85|1\s?%']
+    must_not_include: []
+    cite: [{doc: "08", locator: "p"}]
+
+- id: EQ10
+  category: rag_favored
+  sibling_cq: null
+  question: "제7차 은행권 TF에서 금리산정체계 문제로 어떤 것들이 논의됐어?"
+  expected_winner: rag
+  rationale: "보도참고자료의 회의 논의 요약. 규범 조문이 아니므로 그래프에 없음."
+  graph_risk: "05 개선방안(A+B+C)로 대체 답변하는 주제 이탈 가능성"
+  evidence:
+    - {doc: "06", page: 2, quote: '금리 인상·인하기에 은행권의 대출금리 조정 속도가 일관적이지 않다는 지적'}
+    - {doc: "06", page: 2, quote: '이러한 변동이 대부분 차주의 부담으로 연결되는 문제점'}
+    - {doc: "06", page: 2, quote: '합리적인 사유 없이 은행별로 편차가 크거나 적정수준 보다 과도하게 계상되는 부분'}
+  gold_answer: "① 금리 인상기·인하기 대출금리 조정 속도의 비일관성, ② 시장금리 변동이 대부분 차주의 부담으로 연결(차주에게 전가), ③ 가산금리의 은행별 편차·과다 계상."
+  grading:
+    must_include: ['(조정\s?속도|비대칭|일관)', '차주.{0,10}(부담|전가)', '가산금리.{0,20}(편차|과도)']
+    must_not_include: []
+    cite: [{doc: "06", locator: "p"}]
+
+- id: EQ11
+  category: rag_favored
+  sibling_cq: CQ18
+  question: "거액익스포져 한도 규제에서 적용이 유예되거나 빠지는 은행은 어디야?"
+  expected_winner: rag
+  rationale: "적용 제외·유예 대상은 규정변경예고 보도자료 서술에만 있고, 감독규정 제26조 조문(그래프의 DecisionCriteria)에는 없음."
+  graph_risk: "제26조 노드만 순회하면 '제외 대상 없음'으로 오답"
+  evidence:
+    - {doc: "04", page: 3, quote: '급격한 자금공급 위축이 발생하지 않도록 2년간의 유예기간을'}
+    - {doc: "04", page: 3, quote: '외은지점 및 대기업금융을 취급하지 않아 거액 편중리스크 우려가 낮은 인터넷전문은행은 적용대상'}
+  gold_answer: "한국산업은행 2년 유예. 한국수출입은행·외국은행 지점·인터넷전문은행은 적용 대상에서 제외."
+  grading:
+    must_include: ['산업은행', '2년', '수출입은행', '인터넷전문은행']
+    must_not_include: []
+    cite: [{doc: "04", locator: "p"}]
+
+- id: EQ12
+  category: rag_favored
+  sibling_cq: null
+  question: "국회입법조사처 보고서에서 4대 은행 이자순수익이 얼마나 늘었다고 했어?"
+  expected_winner: rag
+  rationale: "정책 이슈 브리프의 단일 통계. 그래프 모델 범위 밖(은행 수익성 통계 노드 없음)."
+  graph_risk: "해당 노드 부재로 응답 불가"
+  evidence:
+    - {doc: "07", page: 1, quote: '2022년 9월 말 누계 기준 이자순수익은 약 21조 4,500억 원으로 2년 전 동기 대비'}
+  gold_answer: "2020년 9월 말 누계 약 16조 원 → 2022년 9월 말 누계 약 21조 4,500억 원, 약 34% 증가."
+  grading:
+    must_include: ['21조\s?4,?500억', '34\s?%', '16조']
+    must_not_include: []
+    cite: [{doc: "07", locator: "p"}]
+
+- id: EQ13
+  category: rag_favored
+  sibling_cq: null
+  question: "저축은행 건전성 규제 강화할 때 업계 자율에 맡기는 방안은 왜 채택 안 했대?"
+  expected_winner: rag
+  rationale: "09 문서는 '은행 여신 판단'에서는 차단해야 할 distractor 지만, 이 질문은 저축은행 문서 자체에 대한 정당한 질문. 그래프의 타업권 차단(blocked_by_kc_aspect)이 **과차단(over-blocking)** 할 위험을 측정."
+  graph_risk: "CrossSectorRule 차단 로직이 정당한 질의까지 거부"
+  evidence:
+    - {doc: "09", page: 7, quote: '업계 자율로 운용시 제재 근거의 부재 및 자체 감사의 소흘 등으로 이행이 저조할 우려'}
+  gold_answer: "업계 자율로 운용하면 제재 근거가 없고 자체 감사가 소홀해 이행이 저조할 우려가 있기 때문(비규제대안 기각)."
+  grading:
+    must_include: ['제재\s?근거', '(자체\s?)?감사', '이행.{0,5}저조']
+    must_not_include: ['(답변|제공)할\s?수\s?없']
+    cite: [{doc: "09", locator: "p"}]
+
+- id: EQ14
+  category: rag_favored
+  sibling_cq: CQ12
+  question: "금리인하요구권 개선방안 나오기 전에는 소비자 입장에서 뭐가 문제였어?"
+  expected_winner: rag
+  rationale: "개선방안의 '(문제점)' 서술 단락. 그래프는 개선 후 규칙(④ 재량, ② 통보)을 노드화하지만 도입 배경 서술은 없음."
+  graph_risk: "개선 후 규칙(통보 의무)만 답하고 문제점 서술 누락"
+  evidence:
+    - {doc: "05", page: 4, quote: '내부기준이 없는 경우가 많고 그 기록도 잘 관리되지 않음'}
+    - {doc: "05", page: 4, quote: '그 사유에 대해 알 수 없어 소비자 권리행사가 제약'}
+  gold_answer: "① 은행에 금리인하요구 처리 내부기준이 없는 경우가 많고 기록 관리도 부실, ② 수용되지 않아도 소비자가 그 사유를 알 수 없어 권리행사가 제약됨."
+  grading:
+    must_include: ['내부\s?기준', '기록', '사유.{0,15}(알\s?수\s?없|모름)']
+    must_not_include: []
+    cite: [{doc: "05", locator: "p"}]
+
+# ============================================================================
+# PARITY (6) — 단일 문단/단일 SQL 로 해결. 두 암 모두 맞혀야 정상.
+# ============================================================================
+- id: EQ15
+  category: parity
+  sibling_cq: null
+  question: "자산건전성 분류에서 '요주의'는 연체 몇 개월부터 몇 개월까지야?"
+  expected_winner: tie
+  rationale: "별표3 1.나② 한 문장."
+  evidence:
+    - {doc: "02", page: 1, quote: '1월 이상 3월 미만 연체대출채권을 보유하고 있는 거래처에 대한 자산'}
+  gold_answer: "1개월 이상 3개월 미만 연체."
+  grading:
+    must_include: ['1\s?(개)?월\s?이상', '3\s?(개)?월\s?미만']
+    must_not_include: ['2\s?(개)?월\s?[~～-]\s?4']
+    cite: [{doc: "02", locator: "별표3"}]
+
+- id: EQ16
+  category: parity
+  sibling_cq: null
+  question: "기한의 이익을 상실한 대출은 연체기간을 언제부터 계산해?"
+  expected_winner: tie
+  rationale: "별표3 7.나① 한 문장."
+  evidence:
+    - {doc: "02", page: 8, quote: '가①의 경우 : 기한이익 상실일'}
+  gold_answer: "기한이익 상실일부터 기산."
+  grading:
+    must_include: ['기한이익\s?상실일']
+    must_not_include: []
+    cite: [{doc: "02", locator: "별표3"}]
+
+- id: EQ17
+  category: parity
+  sibling_cq: CQ18
+  question: "시스템적으로 중요한 은행(D-SIB)에 대한 거액익스포져 한도는 몇 %야?"
+  expected_winner: tie
+  rationale: "감독규정 제26조 6호 단서 또는 예고문 비교표 한 줄."
+  evidence:
+    - {doc: "01", page: 16, quote: '은행인 경우에는 100분의 20 이하<신설 2024. 1. 18.>'}
+    - {doc: "04", page: 2, quote: 'D-SIB에 대한 한도 : 기본자본의 20%'}
+  gold_answer: "기본자본의 20%."
+  grading:
+    must_include: ['20\s?%|100분의\s?20', '기본자본']
+    must_not_include: ['총자본의\s?20']
+    cite: [{doc: "01", locator: "제26조"}]
+
+- id: EQ18
+  category: parity
+  sibling_cq: null
+  question: "부동산업 차주들한테 나간 대출 잔액이 총 얼마야?"
+  expected_winner: tie
+  rationale: "순수 SQL 집계(KSIC L). 두 암이 같은 SQL 도구를 가짐."
+  evidence:
+    - {doc: "01", page: 20, quote: '한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 100분의 0.9 이상'}
+  answer_queries:
+    - sql: |
+        SELECT SUM(l.outstanding_amt) AS l_outstanding_krw, COUNT(*) AS contracts
+        FROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)
+        WHERE c.ksic_section_code = 'L' AND l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'
+      expect: {scalar: {l_outstanding_krw: 20000000000, contracts: 1}}
+  gold_answer: "200억 원 (1건, 대양피에프개발)."
+  grading:
+    must_include: ['200억|20,000,000,000']
+    must_not_include: []
+    cite: []
+
+- id: EQ19
+  category: parity
+  sibling_cq: CQ15
+  question: "대출금리 모범규준 개선방안에서 대출금리는 어떤 항목들로 구성돼?"
+  expected_winner: tie
+  rationale: "개선방안 한 줄 정의."
+  evidence:
+    - {doc: "05", page: 3, quote: '대출금리 = 기준금리 + 가산금리 + 가감조정금리(우대금리+전결금리)'}
+  gold_answer: "기준금리 + 가산금리 + 가감조정금리(우대금리 + 전결금리)."
+  grading:
+    must_include: ['기준금리', '가산금리', '가감조정금리', '우대금리', '전결금리']
+    must_not_include: []
+    cite: [{doc: "05", locator: "p"}]
+
+- id: EQ20
+  category: parity
+  sibling_cq: CQ09
+  question: "우리 내규상 기업여신 연체가 며칠을 넘으면 기한이익상실 예정 통지 대상이 돼?"
+  expected_winner: tie
+  rationale: "내규 제16조① 한 문장."
+  evidence:
+    - {doc: "10", page: 1, quote: '원리금 연체가 1월(30일)을 초과하는 경우 여신관리시스템은 기한이익상실(EOD) 예정'}
+  gold_answer: "1개월(30일) 초과 시."
+  grading:
+    must_include: ['30\s?일', '초과']
+    must_not_include: ['90\s?일']
+    cite: [{doc: "10", locator: "제16조"}]

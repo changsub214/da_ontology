@@ -1,0 +1,26 @@
+# Internal workspace notes & docs (excluded from da_ontology repository)
+second_brain/
+docs/
+design_reference/
+AGENTS.md
+ontology_arch.html
+
+# Python virtual environments & caches
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.egg-info/
+
+# Environment secrets (keep .env.example)
+**/.env
+!**/.env.example
+
+# Temporary & log files
+*.log
+/tmp*
+.DS_Store

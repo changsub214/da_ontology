@@ -1,0 +1,129 @@
+# 비정형 원본 PDF 매니페스트 (`data/un_data/manifest.yaml`)
+# 모든 파일은 임의 작성된 .md가 아니라 금융위원회·국가법령정보센터·국회입법조사처·한국금융연구원에서
+# 직접 수집한 실제 원본 PDF(Authentic 9종, 140쪽) + PyMuPDF로 렌더링된 당행 내규 PDF(Synthetic 1종, 2쪽)입니다.
+# Vertex AI RAG Engine(베이스라인)과 OKF 추출기(extract_provisions.py) 모두 이 PDF 파일들을 직접 인제스트합니다.
+
+version: "2.0-pdf"
+directory: "data/un_data"
+total_pdfs: 10
+total_pages: 142
+
+documents:
+  - doc_id: "fsc_bank_reg_2025_07"
+    filename: "01_FSC_은행업감독규정_전문_2025_07.pdf"
+    title: "은행업감독규정 전문 (금융위원회고시 제2025-7호, 시행 2025.3.5)"
+    authority: "금융위원회 · 국가법령정보센터"
+    pages: 57
+    bytes: 272804
+    sha256_prefix: "7ec775dc7d09f2ea"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (법제처 국가법령정보센터)"
+    key_provisions:
+      - "제27조(자산건전성분류 등) [p.19]: 정상·요주의·고정·회수의문·추정손실 5단계 분류 및 대손충당금·대손준비금 적립 의무"
+      - "제29조제1항제1호가목 [p.20]: 기업여신 '정상' 분류 최소적립률 0.85% 원칙 vs 건설업(F)·도소매업(G)·숙박음식점업(H)·부동산업(L) 0.90% 단서"
+      - "제29조제1항제1호다~마목 [p.20]: '고정' 20% 원칙 vs 기업구조조정촉진법·채무자회생법 제180조제2항 우선변제자산 10%(1/2 감경) 특례"
+      - "제29조제1항제2호 [p.20]: 가계자금대출금 최소적립률(정상 1.0%, 요주의 10.0%, 회수의문 55.0% — 기업여신과 수치 상이)"
+
+  - doc_id: "law_bank_reg_annex3"
+    filename: "02_LAW_은행업감독규정_별표3_자산건전성분류기준.pdf"
+    title: "[별표 3] 자산건전성 분류기준 (은행업감독규정 공식 별표)"
+    authority: "국가법령정보센터"
+    pages: 8
+    bytes: 131740
+    sha256_prefix: "3fd256a5412a736b"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (법제처 국가법령정보센터)"
+    key_provisions:
+      - "1. 자산건전성 분류단계별 정의 [p.1~2]: 요주의(1월 이상 3월 미만 연체), 고정(3월 이상 연체 중 회수예상가액), 회수의문(3월~12월 연체 중 회수예상가액 초과분)"
+      - "3. 채권재조정여신의 건전성 분류 라목 [p.4~5]: ① 6개월 이상 연속 채무이행 확인 또는 ② 자산매각·임대계약·유상증자(출자전환) 등 상환능력 개선 사건 발생 시 '고정이하'로 분류하지 아니할 수 있는 예외 특례"
+      - "7. 연체대출채권 및 연체기간 기산일 [p.7~8]: 약정기일 익일 vs 기한이익 상실일 vs 한도초과일 익일 vs 지급보증대지급 발생일"
+
+  - doc_id: "fsc_reg_impact_analysis"
+    filename: "03_FSC_은행업감독규정_및_시행세칙_개정_규제영향분석서.pdf"
+    title: "은행업감독규정 및 은행업감독업무시행세칙 등 개정 규제영향분석서"
+    authority: "금융위원회 은행과"
+    pages: 41
+    bytes: 1129526
+    sha256_prefix: "12353a7e830f6af9"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (금융위원회)"
+    key_provisions:
+      - "제26조(경영지도비율) 및 바젤III 거액익스포져 한도규제(기본자기자본의 25%) 신설에 따른 감독규정·시행세칙 개정 조문 대비"
+
+  - doc_id: "fsc_amend_notice_2309"
+    filename: "04_FSC_은행업감독규정_개정안_규정변경예고_거액익스포져.pdf"
+    title: "은행업감독규정 등 개정안 규정변경예고 실시 (바젤기준 거액익스포져 한도규제 도입)"
+    authority: "금융위원회 · 금융감독원"
+    pages: 3
+    bytes: 419489
+    sha256_prefix: "a627f5461a8fbac6"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (금융위원회 보도자료)"
+
+  - doc_id: "fsc_kfb_loan_rate_reform"
+    filename: "05_FSC_KFB_은행권_대출금리_산정체계_개선방안.pdf"
+    title: "합리적이고 투명한 은행권 대출금리 산정을 위한 개선방안 (대출금리 모범규준 개정안)"
+    authority: "금융위원회 · 금융감독원 · 은행연합회 · 금융연구원"
+    pages: 9
+    bytes: 809749
+    sha256_prefix: "3d740fdd564d8dcc"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (금융위원회)"
+    key_provisions:
+      - "Ⅱ-1-나. 금리인하요구권 운영 개선 ④항 [p.4]: 기업대출 금리인하 사유 중 '전문자격증·특허권 등의 신규취득'은 은행이 선택적으로 적용 가능하도록 재량 부여"
+      - "Ⅱ-1-다. 대출금리 비교공시제도 개선 [p.4]: 대출금리(A+B+C) = 기준금리(A) + 가산금리(B) + 가감조정금리(C: 우대금리+전결금리) 분리 공시 의무화"
+
+  - doc_id: "fsc_tf_loan_rate_7th"
+    filename: "06_FSC_제7차_은행권_금리산정체계_정비방향.pdf"
+    title: "제7차 은행권 경영·영업 관행·제도 개선 TF: 금리산정체계 정비방향 및 상생금융 활성화"
+    authority: "금융위원회 · 금융감독원"
+    pages: 6
+    bytes: 380868
+    sha256_prefix: "923d7528c0c55b31"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (금융위원회)"
+
+  - doc_id: "nars_rate_policy_2071"
+    filename: "07_NARS_합리적인_금리산정을_위한_정책동향_및_쟁점.pdf"
+    title: "(이슈와 논점 제2071호) 합리적인 금리산정을 위한 정책 동향 및 쟁점"
+    authority: "국회입법조사처"
+    pages: 4
+    bytes: 465854
+    sha256_prefix: "46c8decdbce9425d"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (국회입법조사처)"
+
+  - doc_id: "kif_provision_intl_compare"
+    filename: "08_KIF_국내은행그룹_대손충당금_적립률_비교와_시사점.pdf"
+    title: "국내 은행그룹의 대손충당금 적립률 국제 비교와 시사점 (금융브리프 34권 05호)"
+    authority: "한국금융연구원 (KIF)"
+    pages: 3
+    bytes: 185620
+    sha256_prefix: "d8b80c8c7d329703"
+    content_class: "authentic"
+    license: "출처표시 인용 (한국금융연구원)"
+
+  - doc_id: "fsc_savings_bank_distractor"
+    filename: "09_DISTRACTOR_상호저축은행업감독규정_규제영향분석서.pdf"
+    title: "[타업권 동명규정 함정(Distractor)] 상호저축은행업 감독규정 규제영향분석서 (제38조 대손충당금 적립기준)"
+    authority: "금융위원회 중소금융과"
+    pages: 9
+    bytes: 273744
+    sha256_prefix: "fb1a1fab56e196e3"
+    content_class: "authentic"
+    license: "공공누리 제1유형 (금융위원회)"
+    key_provisions:
+      - "[RAG 혼동 유도 Distractor]: 시중은행(은행업감독규정 제29조)이 아닌 상호저축은행(제38조 대손충당금 적립기준) 문서를 포함하여, 일반 벡터 검색 RAG가 '대손충당금 적립기준' 검색 시 저축은행 규정을 시중은행 기업여신에 잘못 적용하는지 검증"
+
+  - doc_id: "synthetic_byulbit_internal_policy"
+    filename: "10_SYNTHETIC_별빛은행_기업여신심사_및_금리운영_내규.pdf"
+    title: "[당행 내규 PDF] 별빛은행 기업여신 심사 · 조기경보(EWS) 및 금리운영 내규 (제2026-08호)"
+    authority: "별빛은행 여신관리부 · 기업여신심사부 (PyMuPDF 렌더링)"
+    pages: 2
+    bytes: 24512
+    content_class: "synthetic"
+    license: "Clean-room Demonstration PDF (8-gram overlap = 0)"
+    key_provisions:
+      - "제14조: 여신관리팀 조기경보 실질관리 연체율(10일 이상 연체 + 대손상각 특수채권 포함) 산출식"
+      - "제18조: 별표3 제3호 라목(6개월 성실상환·유상증자) 및 제29조제1항제1호다목(기촉법·회생법 제180조제2항 우선변제자산) 연동 기한이익상실(EOD) 유예 및 충당금 1/2 감경 실행 기준"
+      - "제25조: 별빛 TCB 기술혁신 운전자금 영업점장 우대금리 전결 상한(1.20%p) 및 특허권 단독 취득 시 금리인하요구권 필수 인하 제외(재량 행사) 기준"

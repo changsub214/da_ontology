@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-09-22",
+  "design_mode": "ZERO_ANSWER_LEAKAGE_CORE_BANKING_SCHEMA",
+  "csv_table_count": 8,
+  "scenario_ground_truth_when_combined_with_ontology": {
+    "scen1_contextual_delinquency": {
+      "risk_npl_90d_ratio_pct": 1.51,
+      "fisis_official_1m_ratio_pct": 2.26,
+      "credit_ews_substantial_ratio_pct": 4.0
+    },
+    "scen2_feb13_date_and_rate": {
+      "contract_dt_2026_02_13_count": 8,
+      "avg_applied_rate_pct": 4.82,
+      "top_by_count": "별빛 TCB 기술혁신 운전자금 (5건 / 45억원)",
+      "top_by_amount": "별빛 프라임 중견기업 운전자금 (3건 / 90억원)"
+    },
+    "scen3_statutory_exceptions_art29_and_annex3": {
+      "byulbit_precision_annex3": "별빛정밀(주): workout_histories 상 7개월 연속상환 + 유상증자 50억 확인 → [별표3] 제3호 라목에 따라 고정이하 분류 제외(요주의 7% = 7억 적법)",
+      "taesung_metal_art29_1_c": "태성금속공업(주): 장부상 충당금은 20억(20%)으로 설정되어 있으나, rehab_priority_claim_yn='Y'(회생법 제180조제2항 공익채권) → 제29조1항1호다목 단서에 따라 법정 최소적립액은 10억(10%, 10억 감경 가능)",
+      "kukdong_steel_baseline": "극동철강산업(주): rehab_priority_claim_yn='N' → 제29조1항1호다목 본문 원칙대로 20억(20%) 적립 의무"
+    },
+    "scen4_ksic_industry_provision_caveat": {
+      "exposure_krw": 60000000000,
+      "booked_in_ledger_085_krw": 510000000,
+      "statutory_required_090_krw": 540000000,
+      "provision_shortfall_detected_by_ontology_krw": 30000000
+    },
+    "scen5_rate_cut_patent_discretion": {
+      "rejected_case": "RCR_2026_01 에이펙스세미콘(주) (특허 취득 단독, 신용등급 BBB→BBB 변동 없음, 매출증가율 1.2% → 당행 내규 제25조제2항에 따라 거절 적법)",
+      "approved_case": "RCR_2026_02 네오바이오텍(주) (특허 취득 + 신용등급 BBB→BBB+ 상승 + 매출 35% 증가 → 35bp 인하 승인)"
+    }
+  },
+  "row_counts": {
+    "financial_products.csv": 4,
+    "customers.csv": 100,
+    "loan_contracts.csv": 100,
+    "workout_histories.csv": 3,
+    "delinquency_events.csv": 7,
+    "collaterals.csv": 3,
+    "exception_approvals.csv": 3,
+    "rate_cut_requests.csv": 2
+  }
+}

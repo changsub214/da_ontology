@@ -1,0 +1,92 @@
+{
+  "validated_at": "2026-10-03",
+  "data_dir": "/home/changseop/finance_ontology/finance/data/structured",
+  "total_checks": 9,
+  "passed": 9,
+  "failed": 0,
+  "total_violations": 0,
+  "overall": "PASS",
+  "checks": [
+    {
+      "id": "C00",
+      "title": "Zero Answer-Leakage 게이트 (정형 원장 내 PDF 파일명·법령조항·시나리오태그·사전집계 0건)",
+      "clause": "3-Plane 분리 불변식: 원장=기초사실, 온톨로지/PDF=의사결정기준",
+      "status": "PASS",
+      "records_checked": 224,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C01",
+      "title": "8개 은행 계정계·정보계 CSV 스키마 계약 일치",
+      "clause": "현업 코어뱅킹 원장 스키마 표준",
+      "status": "PASS",
+      "records_checked": 8,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C02",
+      "title": "전 테이블 기본키(PK) 유일성",
+      "clause": "관계형 무결성",
+      "status": "PASS",
+      "records_checked": 222,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C03",
+      "title": "외래키(FK) 참조 무결성 — 고아 레코드 0건 및 차주 ID 일관성",
+      "clause": "관계형 무결성",
+      "status": "PASS",
+      "records_checked": 118,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C04",
+      "title": "표준산업분류(KSIC) 섹션코드 ↔ 업종명 정합 (F·G·H·I·L 오분류 0건)",
+      "clause": "한국표준산업분류 및 은행업감독규정 제29조제1항제1호 가목 단서",
+      "status": "PASS",
+      "records_checked": 100,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C05",
+      "title": "적용금리 산식(base+spread−pref) 및 3대 기준일자 순서(reg_dt≤contract_dt≤disburse_dt)",
+      "clause": "당행 내규 제21조·제22조",
+      "status": "PASS",
+      "records_checked": 100,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C06",
+      "title": "연체원장(delinquency_events) ↔ 계약원장 연체일수 1:1 동기화",
+      "clause": "계정계 원장 정합성",
+      "status": "PASS",
+      "records_checked": 7,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C07",
+      "title": "담보·보증서 평가가액(appraised_collateral_krw = 잔액 × 보증비율) 산술 정합",
+      "clause": "계정계 담보원장 정합성",
+      "status": "PASS",
+      "records_checked": 3,
+      "violation_count": 0,
+      "violations": []
+    },
+    {
+      "id": "C08",
+      "title": "온톨로지 결합 추론 게이트 — 원장 기초 사실에 PDF 조항 적용 시 3대 연체율(1.51/2.26/4.00%) 및 F·G·H·L 충당금 과소적립(3,000만원) 정확히 도출",
+      "clause": "Data(원장) + BusinessContext(l1.yaml) + DecisionCriteria(PDF) 3각 결합 검증",
+      "status": "PASS",
+      "records_checked": 4,
+      "violation_count": 0,
+      "violations": []
+    }
+  ]
+}

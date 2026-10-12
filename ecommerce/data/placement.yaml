@@ -1,0 +1,187 @@
+# ---------------------------------------------------------------------------
+# ecommerce/data/placement.yaml — K마켙(K-Market) 정형 데이터(8종) 저장소 배치 매니페스트
+#
+# 기반 스키마: Google Cloud 공개 데이터셋 `bigquery-public-data.thelook_ecommerce` 호환 뼈대
+#             + K마켙 초개인화 추천·마진 가드레일·판촉정산·반품심사 온톨로지 브릿지 확장
+#
+# 원칙 (AGENTS.md 불변식 계승)
+#   1) 한 사실은 한 곳에만: 주문·재고·행동·승인 트랜잭션 원장(5종)의 SoT는 Spanner 하나.
+#      고객·상품·입점브랜드 마스터(3종)의 SoT는 BigQuery 하나. Spanner → BQ는 무복제 연합(External Dataset).
+#   2) 거버넌스(status/content_class/verified/license)는 Dataplex Knowledge Catalog에만 둔다.
+#   3) Zero Answer-Leakage (G04): 정형 원장에는 기초 거래·행동·재고·계약 사실만 저장하며,
+#      최종 추천 할인율·쿠폰가능여부·정산분담금·환불가부 등 정답 컬럼은 절대 저장하지 않는다.
+# ---------------------------------------------------------------------------
+
+version: 1.0.0
+status: proposed
+domain: ecommerce
+company: "K마켙 (K-Market)"
+project: finance-ontology-changseop
+region: us-central1
+
+targets:
+  spanner:
+    role: "OLTP 커머스 트랜잭션 원장 SoT — 실시간 주문·주문상품·물류재고·장바구니 이벤트·특례승인"
+    instance: finance-cs
+    database: kmarket
+    config: regional-us-central1
+    dialect: GoogleSQL
+    ddl: ecommerce/sql/spanner_kmarket.ddl
+  bigquery:
+    role: "고객·상품·입점브랜드 마스터 원본 + Spanner 무복제 연합 뷰 + 2-Layer Property Graph (ecommerce_graph)"
+    dataset: kmarket
+    external_dataset: kmarket_ext
+    ontology_dataset: kmarket_ontology
+  gcs_kc:
+    role: "K마켙 OKF v0.2 번들 원문 + Dataplex Knowledge Catalog 거버넌스"
+    bucket: gs://finance_okf/okf_ecommerce/
+
+# ---------------------------------------------------------------------------
+# A. Spanner `kmarket` — 실시간 트랜잭션 원장 5종 (TheLook `orders`, `order_items`, `inventory_items`, `events` + `campaign_exceptions`)
+# ---------------------------------------------------------------------------
+spanner_tables:
+  - name: orders
+    source: ecommerce/data/structured/orders.csv
+    pk: [order_id]
+    interleave_in: null
+    logical_ref:
+      user_id: "bigquery:kmarket.users"
+    columns:
+      - { name: order_id, type: STRING, desc: "주문 번호 (예: ORD-2026-0001)" }
+      - { name: user_id, type: STRING, desc: "주문 고객 ID (users.user_id 참조)" }
+      - { name: status, type: STRING, desc: "주문 상태 (Complete / Shipped / Processing / Returned / Cancelled)" }
+      - { name: num_of_item, type: INT64, desc: "주문 내 상품 품목 수 (TheLook 호환)" }
+      - { name: created_at, type: STRING, desc: "주문 결제일시 (ISO-8601)" }
+      - { name: shipped_at, type: STRING, desc: "물류센터 출고일시 (SLA 출고지연 판정 기준)" }
+      - { name: delivered_at, type: STRING, desc: "배송완료일시 (전자상거래법 제17조 7일 청약철회 기산점)" }
+      - { name: returned_at, type: STRING, desc: "반품 회수완료일시" }
+    why: "주문 단위 배송·반품 상태 전이 및 리드타임(created_at -> shipped_at -> delivered_at) 원장."
+
+  - name: order_items
+    source: ecommerce/data/structured/order_items.csv
+    pk: [order_id, item_id]
+    interleave_in: orders
+    logical_ref:
+      user_id: "bigquery:kmarket.users"
+      product_id: "bigquery:kmarket.products"
+    columns:
+      - { name: item_id, type: STRING, desc: "주문상품 상세 ID (예: OIT-2026-0001)" }
+      - { name: order_id, type: STRING, desc: "상위 주문 번호" }
+      - { name: user_id, type: STRING, desc: "고객 ID" }
+      - { name: product_id, type: STRING, desc: "상품 ID (products.product_id 참조)" }
+      - { name: inventory_item_id, type: STRING, desc: "할당된 재고 배치 ID (inventory_items 참조)" }
+      - { name: status, type: STRING, desc: "품목 상태 (Complete / Shipped / Processing / Returned / Cancelled)" }
+      - { name: retail_price_krw, type: INT64, desc: "주문 시점 상품 정가 (원)" }
+      - { name: sale_price_krw, type: INT64, desc: "실결제 금액 (원, 정가 - 쿠폰할인액)" }
+      - { name: coupon_discount_krw, type: INT64, desc: "적용된 프로모션/쿠폰 할인 금액 (원)" }
+      - { name: coupon_type, type: STRING, desc: "쿠폰 유형 (NONE / PLATFORM_TIER / JOINT_PROMO)" }
+      - { name: return_reason_cd, type: STRING, desc: "반품 사유 코드 (NONE / CHANGE_OF_MIND / DEFECTIVE)" }
+      - { name: created_at, type: STRING, desc: "주문 생성일시" }
+      - { name: shipped_at, type: STRING, desc: "출고일시" }
+      - { name: delivered_at, type: STRING, desc: "배송완료일시" }
+      - { name: returned_at, type: STRING, desc: "반품완료일시" }
+    why: "부서별 매출(GMV vs 확정매출)·고객별 반품률·브랜드별 판촉비 정산의 중심 허브(OrderItemContract)."
+
+  - name: inventory_items
+    source: ecommerce/data/structured/inventory_items.csv
+    pk: [inventory_item_id]
+    interleave_in: null
+    logical_ref:
+      product_id: "bigquery:kmarket.products"
+    columns:
+      - { name: inventory_item_id, type: STRING, desc: "재고 배치/개체 ID (예: INV-1001)" }
+      - { name: product_id, type: STRING, desc: "상품 ID" }
+      - { name: distribution_center_id, type: STRING, desc: "물류센터 코드 (DC-ICN 인천 / DC-YIN 용인 / DC-BUS 부산)" }
+      - { name: inbound_date, type: STRING, desc: "물류센터 입고일 (YYYY-MM-DD)" }
+      - { name: age_days, type: INT64, desc: "기준일 대비 입고 경과일수 (90일 초과 시 체화재고 특례 대상, 180일 초과 시 당일출고 제외)" }
+      - { name: avail_qty, type: INT64, desc: "해당 배치 잔여 수량" }
+      - { name: stock_status, type: STRING, desc: "재고 상태 (AVAILABLE / RESERVED / RETURN_INSPECTION)" }
+    why: "초개인화 추천 시 품절/체화재고(age_days > 90) 판정 및 부서별 가용재고 산출의 물리 원천."
+
+  - name: events
+    source: ecommerce/data/structured/events.csv
+    pk: [user_id, event_id]
+    interleave_in: null
+    logical_ref:
+      user_id: "bigquery:kmarket.users"
+      product_id: "bigquery:kmarket.products"
+    columns:
+      - { name: event_id, type: STRING, desc: "행태 이벤트 ID (예: EVT-5001)" }
+      - { name: user_id, type: STRING, desc: "회원 고객 ID (TheLook 원본의 NULL 결함을 해소하여 회원 식별 보장)" }
+      - { name: session_id, type: STRING, desc: "브라우징 세션 ID" }
+      - { name: sequence_number, type: INT64, desc: "세션 내 행동 순서" }
+      - { name: event_type, type: STRING, desc: "이벤트 유형 (product / cart / purchase / cancel)" }
+      - { name: product_id, type: STRING, desc: "대상 상품 ID" }
+      - { name: traffic_source, type: STRING, desc: "유입 채널 (Organic / Instagram / YouTube / Kakao / Email)" }
+      - { name: created_at, type: STRING, desc: "이벤트 발생일시" }
+    why: "장바구니 담기(cart) 후 미결제 이탈 상품 및 반복 조회(product) 상품을 포착하는 초개인화 추천 핵심 시그널."
+
+  - name: campaign_exceptions
+    source: ecommerce/data/structured/campaign_exceptions.csv
+    pk: [approval_id]
+    interleave_in: null
+    columns:
+      - { name: approval_id, type: STRING, desc: "특례 승인 번호 (예: EXC-KM-2026-01)" }
+      - { name: target_kind, type: STRING, desc: "승인 대상 구분 (CLEARANCE_MARGIN / RETURN_HYGIENE / VENDOR_VOLUNTARY_PROMO)" }
+      - { name: product_id, type: STRING, desc: "대상 상품 ID (해당 시)" }
+      - { name: item_id, type: STRING, desc: "대상 주문상품 ID (반품 검수 특례 시)" }
+      - { name: approved_floor_margin_pct, type: FLOAT64, desc: "체화재고 특례 승인 최저 마진율 하한 (예: 10.0%)" }
+      - { name: hologram_tag_intact_yn, type: STRING, desc: "이너웨어/수영복 반품 검수 시 홀로그램 미개봉 택 보존 여부 (Y/N)" }
+      - { name: vendor_voluntary_req_yn, type: STRING, desc: "대규모유통업법 제11조제5항 입점사 자발적 단독 판촉 요청문서 존재 여부 (Y/N)" }
+      - { name: approver_dept, type: STRING, desc: "승인권자 부서 (MD상품본부장 / CS총괄실장)" }
+      - { name: approved_date, type: STRING, desc: "승인일자 (YYYY-MM-DD)" }
+      - { name: status, type: STRING, desc: "유효 상태 (ACTIVE / EXPIRED)" }
+    why: "원칙 규정(마진 25% 하한 · 이너웨어 반품 제한 · 판촉비 50% 상한)의 단서·예외 경로를 여는 실시간 결재 원장."
+
+# ---------------------------------------------------------------------------
+# B. BigQuery `kmarket` — 마스터·기준정보 3종 (TheLook `users`, `products` + `brand_vendor_contracts`)
+# ---------------------------------------------------------------------------
+bigquery_master_tables:
+  - name: users
+    source: ecommerce/data/structured/users.csv
+    pk: [user_id]
+    columns:
+      - { name: user_id, type: STRING, desc: "고객 ID (예: USR-1001)" }
+      - { name: user_name, type: STRING, desc: "고객 성명" }
+      - { name: age, type: INT64, desc: "연령" }
+      - { name: gender, type: STRING, desc: "성별 (F / M)" }
+      - { name: membership_tier, type: STRING, desc: "K마켙 멤버십 등급 (VIP / GOLD / SILVER / WELCOME)" }
+      - { name: city, type: STRING, desc: "거주 지역" }
+      - { name: traffic_source, type: STRING, desc: "최초 가입 유입경로" }
+      - { name: marketing_opt_in_yn, type: STRING, desc: "개인정보보호법 광고성 푸시/알림톡 수신동의 여부 (Y/N)" }
+      - { name: preferred_style, type: STRING, desc: "선호 스타일 태그 (Minimal / Street / Athleisure / Classic / Resort)" }
+      - { name: created_at, type: STRING, desc: "가입일" }
+    why: "초개인화 추천 타겟 고객의 등급·마케팅 수신동의·스타일 선호 마스터."
+
+  - name: products
+    source: ecommerce/data/structured/products.csv
+    pk: [product_id]
+    columns:
+      - { name: product_id, type: STRING, desc: "상품 ID (예: PRD-3001)" }
+      - { name: sku, type: STRING, desc: "표준 SKU 코드" }
+      - { name: product_name, type: STRING, desc: "국문 상품명" }
+      - { name: brand_id, type: STRING, desc: "입점 브랜드 ID (brand_vendor_contracts 참조)" }
+      - { name: brand_name, type: STRING, desc: "입점 브랜드명" }
+      - { name: department, type: STRING, desc: "복종 부문 (Women / Men /Unisex)" }
+      - { name: category, type: STRING, desc: "TheLook 호환 카테고리 (Outerwear / Jeans / Tops & Tees / Intimates / Swim / Accessories / Active)" }
+      - { name: style_tag, type: STRING, desc: "스타일 태그 (Minimal / Street / Athleisure / Classic / Resort)" }
+      - { name: cost_krw, type: INT64, desc: "상품 공급원가 (원) — 정가 대비 기본 마진율 산출 원천" }
+      - { name: retail_price_krw, type: INT64, desc: "상품 기준 정가 (원)" }
+      - { name: coord_product_id, type: STRING, desc: "함께 코디 추천할 호환 상품 ID (COORDINATES_WITH 엣지)" }
+      - { name: substitute_product_id, type: STRING, desc: "품절·저마진 시 대체 추천할 동급 상품 ID (SUBSTITUTES_FOR 엣지)" }
+      - { name: return_policy_tag, type: STRING, desc: "카테고리 반품 분류 태그 (STANDARD / HYGIENE_RESTRICTED / BUNDLE_SET)" }
+      - { name: distribution_center_id, type: STRING, desc: "기본 출고 물류센터 ID" }
+    why: "원가·정가(마진율 원천) 및 초개인화 코디 호환(coord_product_id)·대체 상품(substitute_product_id) 그래프 마스터."
+
+  - name: brand_vendor_contracts
+    source: ecommerce/data/structured/brand_vendor_contracts.csv
+    pk: [brand_id]
+    columns:
+      - { name: brand_id, type: STRING, desc: "입점 브랜드 파트너 ID (예: BRD-01)" }
+      - { name: brand_name, type: STRING, desc: "브랜드명 (예: 아틀리에누아르, 어반트랙, 마린블루 등)" }
+      - { name: trade_type, type: STRING, desc: "거래 형태 (특약매입 / 위수탁 / 직매입)" }
+      - { name: base_commission_pct, type: FLOAT64, desc: "기본 판매수수료율 (%)" }
+      - { name: agreed_promo_share_pct, type: FLOAT64, desc: "계약서상 판촉비 브랜드 분담 약정비율 (%, 예: 40%, 50%, 60% — 법정 50% 상한 대조 대상)" }
+      - { name: written_promo_agreement_yn, type: STRING, desc: "대규모유통업법 제11조 사전 서면약정 체결 여부 (Y/N)" }
+      - { name: sla_ship_hours, type: INT64, desc: "약정 출고 기한 (시간, 예: 24시간 / 48시간)" }
+    why: "대규모유통업법 판촉비 분담 상한(50%)·서면약정 유무 및 출고 SLA 보상 판정의 기준 마스터."

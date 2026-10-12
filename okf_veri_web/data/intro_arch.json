@@ -1,0 +1,671 @@
+{
+ "schema": "intro_arch/1",
+ "generated_at": "2026-09-30T03:33:25Z",
+ "measured": {
+  "from": "2026-09-30T03:32:42Z",
+  "to": "2026-09-30T03:33:25Z",
+  "values": {
+   "pdf:count": 10,
+   "rag:files": 10,
+   "okf:concepts": 188,
+   "ledger:tables": 8,
+   "ledger:rows": 222,
+   "gcs:md": 232,
+   "kc:entries": 233,
+   "kc:anchors": 11,
+   "glossary:terms": 7,
+   "l1:classes": 11,
+   "l1:edges": 15,
+   "total:nodes": 416,
+   "total:edges": 1446,
+   "aliases": 438,
+   "bq:v_node_views": 11,
+   "bq:v_edge_views": 15,
+   "bq:edge_tables": 4,
+   "bq:ont_views": 5,
+   "cfg:tool_budget": 12,
+   "cfg:max_graph_hops": 12,
+   "cfg:max_gql_repairs": 3,
+   "rag:top_k": 8,
+   "planner:max_slots": 4,
+   "cq:top_k": 3,
+   "cq:full_score": 100,
+   "cq:exact_min_score": 45
+  },
+  "nodes": {
+   "WorkoutHistory": 3,
+   "SourceDocument": 10,
+   "Provision": 178,
+   "FinancialProduct": 4,
+   "Customer": 100,
+   "BusinessContext": 6,
+   "DelinquencyEvent": 7,
+   "LoanContract": 100,
+   "RateCutRequest": 2,
+   "ExceptionApproval": 3,
+   "Collateral": 3
+  },
+  "edges": {
+   "CONFLICTS_BY_SECTOR": 3,
+   "HAS_EXCEPTION_PROVISO": 4,
+   "SCOPES_PORTFOLIO": 596,
+   "INVOKES_PROVISION": 21,
+   "OF_PRODUCT": 100,
+   "HAS_EXCEPTION_APPROVAL": 3,
+   "HAS_COLLATERAL": 3,
+   "DELEGATES_TO_INTERNAL": 4,
+   "PART_OF_DOCUMENT": 178,
+   "EVALUATED_UNDER_PROVISION": 4,
+   "HAS_RATE_CUT_REQUEST": 2,
+   "BORROWED_BY": 100,
+   "HAS_WORKOUT_HISTORY": 3,
+   "GOVERNED_BY_CRITERIA": 418,
+   "HAS_DELINQUENCY": 7
+  },
+  "physical_rows": {
+   "Provision": 178,
+   "SourceDocument": 10,
+   "WorkoutHistory": 3,
+   "BusinessContext": 6,
+   "FinancialProduct": 4,
+   "Customer": 100,
+   "DelinquencyEvent": 7,
+   "ExceptionApproval": 3,
+   "Collateral": 3,
+   "LoanContract": 100,
+   "RateCutRequest": 2
+  },
+  "kc": {
+   "entries": 233,
+   "fixture_entries": 4,
+   "glossary_terms": 7,
+   "anchor_aspect": {
+    "class_anchors": 11,
+    "key_bound_anchors": 11,
+    "ontology_version": "1.2.0",
+    "keys": [
+     "alias_table_fqn",
+     "class_anchors",
+     "edge_definitions_json",
+     "glossary_terms_json",
+     "governance_rule",
+     "graph_id",
+     "kc_glossary_resource",
+     "ontology_version"
+    ]
+   }
+  },
+  "gcs": {
+   "objects": 233,
+   "md": 232,
+   "md_fixture": 3,
+   "fixtures_expected": 3
+  },
+  "rag_corpus": {
+   "files": 10,
+   "pdf_files": 10
+  }
+ },
+ "conventions": {
+  "min_scale": 0.8,
+  "legend": "범례 — 원통: 저장소 · 파랑: Gemini 호출 · 빨강: 차단/거절 · 점선: 연합/참조 · 둥근 끝: 시작/끝",
+  "mermaid": {
+   "font": "'Google Sans','Noto Sans KR',sans-serif",
+   "flowchart": {
+    "htmlLabels": true,
+    "curve": "basis",
+    "nodeSpacing": 26,
+    "rankSpacing": 44,
+    "padding": 10,
+    "useMaxWidth": true
+   },
+   "sequence": {
+    "useMaxWidth": true,
+    "mirrorActors": false,
+    "width": 110,
+    "actorMargin": 26,
+    "boxMargin": 8,
+    "noteMargin": 8,
+    "messageMargin": 26
+   },
+   "theme_variables": {
+    "light": {
+     "background": "#ffffff",
+     "fontSize": "13px",
+     "primaryColor": "#f1f3f4",
+     "primaryTextColor": "#202124",
+     "primaryBorderColor": "#9aa0a6",
+     "secondaryColor": "#f8f9fa",
+     "tertiaryColor": "#ffffff",
+     "mainBkg": "#f1f3f4",
+     "nodeBorder": "#9aa0a6",
+     "lineColor": "#5f6368",
+     "textColor": "#202124",
+     "titleColor": "#3c4043",
+     "clusterBkg": "#fbfbfc",
+     "clusterBorder": "#dadce0",
+     "edgeLabelBackground": "#ffffff",
+     "actorBkg": "#f1f3f4",
+     "actorBorder": "#9aa0a6",
+     "actorTextColor": "#202124",
+     "actorLineColor": "#bdc1c6",
+     "signalColor": "#5f6368",
+     "signalTextColor": "#202124",
+     "labelBoxBkgColor": "#f8f9fa",
+     "labelBoxBorderColor": "#9aa0a6",
+     "labelTextColor": "#202124",
+     "loopTextColor": "#3c4043",
+     "noteBkgColor": "#f8f9fa",
+     "noteBorderColor": "#dadce0",
+     "noteTextColor": "#3c4043",
+     "activationBkgColor": "#e8eaed",
+     "activationBorderColor": "#9aa0a6",
+     "sequenceNumberColor": "#ffffff"
+    },
+    "dark": {
+     "darkMode": true,
+     "background": "#28292a",
+     "fontSize": "13px",
+     "primaryColor": "#303134",
+     "primaryTextColor": "#e3e3e3",
+     "primaryBorderColor": "#70757a",
+     "secondaryColor": "#28292a",
+     "tertiaryColor": "#1f1f1f",
+     "mainBkg": "#303134",
+     "nodeBorder": "#70757a",
+     "lineColor": "#9aa0a6",
+     "textColor": "#e3e3e3",
+     "titleColor": "#bdc1c6",
+     "clusterBkg": "#242526",
+     "clusterBorder": "#3c4043",
+     "edgeLabelBackground": "#28292a",
+     "actorBkg": "#303134",
+     "actorBorder": "#70757a",
+     "actorTextColor": "#e3e3e3",
+     "actorLineColor": "#5f6368",
+     "signalColor": "#9aa0a6",
+     "signalTextColor": "#e3e3e3",
+     "labelBoxBkgColor": "#303134",
+     "labelBoxBorderColor": "#70757a",
+     "labelTextColor": "#e3e3e3",
+     "loopTextColor": "#bdc1c6",
+     "noteBkgColor": "#303134",
+     "noteBorderColor": "#5f6368",
+     "noteTextColor": "#e3e3e3",
+     "activationBkgColor": "#3c4043",
+     "activationBorderColor": "#70757a",
+     "sequenceNumberColor": "#202124"
+    }
+   },
+   "class_defs": {
+    "light": [
+     "classDef store fill:#ffffff,stroke:#80868b,color:#202124",
+     "classDef llm fill:#e8f0fe,stroke:#1a73e8,color:#174ea6",
+     "classDef stop fill:#fce8e6,stroke:#c5221f,color:#a50e0e",
+     "classDef term fill:#3c4043,stroke:#3c4043,color:#ffffff"
+    ],
+    "dark": [
+     "classDef store fill:#1f1f1f,stroke:#9aa0a6,color:#e3e3e3",
+     "classDef llm fill:#233044,stroke:#8ab4f8,color:#d2e3fc",
+     "classDef stop fill:#3b2524,stroke:#f28b82,color:#f6aea9",
+     "classDef term fill:#e3e3e3,stroke:#e3e3e3,color:#202124"
+    ]
+   }
+  }
+ },
+ "tabs": [
+  {
+   "id": "sys",
+   "title": "시스템 아키텍처",
+   "figures": [
+    "1"
+   ],
+   "lead": "",
+   "hero": {
+    "eyebrow": "왜 Knowledge Graph 인가",
+    "title": "여신 판단의 답은 문서 한 곳에 있지 않습니다.<br><em>조문 · 단서 · 부서 맥락 · 원장의 연결</em> 속에 있습니다.",
+    "sub": "문서 검색은 비슷한 문장을 찾아 줍니다. 하지만 심사 · 리스크 · 준법 판단에는 어느 조문이 · 어떤 예외와 함께 · 누구의 기준으로 · 어떤 계약에 적용되는지가 필요합니다. 이 관계는 문장 안에 쓰여 있지 않고 문서 사이에 흩어져 있습니다. 같은 질문을 두 방식에 던져 보면 차이가 보입니다.",
+    "example": {
+     "eq": "EQ01",
+     "question": "그랜드하모니호텔 대출을 150억 증액하려고 해. 정상 분류 유지된다고 치면 최소 충당금이 얼마 더 필요해?",
+     "arms": [
+      {
+       "arm": "rag",
+       "label": "문서 검색 (Vector RAG)",
+       "verdict": "incorrect",
+       "answer": "1억 2,750만 원",
+       "steps": [
+        "'정상 여신 충당금' 청크 검색 → 원칙 <b>0.85%</b> 발견",
+        "같은 조문 뒤에 붙은 업종 단서(F·G·H·L)와 호텔업(H)을 잇지 못함",
+        "150억 × 0.85% 로 계산"
+       ]
+      },
+      {
+       "arm": "graphrag",
+       "label": "Knowledge Graph (Graph)",
+       "verdict": "correct",
+       "answer": "1억 4,000만 원",
+       "steps": [
+        "계약 → 차주 업종 <b>H (숙박 및 음식점업)</b> <span class=\"edge\">BORROWED_BY</span>",
+        "제29조 본칙 → 업종 단서 <b>0.9%</b> <span class=\"edge\">HAS_EXCEPTION_PROVISO</span> · Knowledge Catalog 유효 확인",
+        "원장: 기존 100억 · 기적립 8,500만 → 증액 후 250억 × 0.9% − 8,500만"
+       ]
+      }
+     ]
+    },
+    "reasons_title": "이 차이가 생기는 이유 — 문서 사이의 관계를 그래프에 명시합니다",
+    "reasons": [
+     {
+      "title": "업무 맥락",
+      "text": "같은 원장의 '연체율'도 리스크위원회 보고 · 금감원 공시 · 여신관리팀 조기경보마다 1.51% · 2.26% · 4.00%. 부서 × 표준 용어 → 조문 <span class=\"edge\">INVOKES_PROVISION</span>"
+     },
+     {
+      "title": "단서 · 특례 · 위임",
+      "text": "원칙과 예외, 감독규정과 내규를 엣지로 연결 <span class=\"edge\">HAS_EXCEPTION_PROVISO</span> <span class=\"edge\">DELEGATES_TO_INTERNAL</span>"
+     },
+     {
+      "title": "업권 · 효력",
+      "text": "저축은행 기준(요주의 2% ≠ 은행 7%) · 폐기 조문은 따라가지 않음 <span class=\"edge\">CONFLICTS_BY_SECTOR</span> · Knowledge Catalog 판정"
+     }
+    ],
+    "foot": "사실은 한 곳에만 둡니다 — 관계는 <b>그래프</b>, 유효성 · 폐기는 <b>Knowledge Catalog</b>, 조문 본문은 <b>Cloud Storage</b> (3-Plane). 아래 그림이 이 구성을 보여 줍니다."
+   }
+  },
+  {
+   "id": "graph",
+   "title": "그래프 아키텍처",
+   "figures": [
+    "2-1",
+    "2-2",
+    "2-3"
+   ],
+   "lead": ""
+  },
+  {
+   "id": "agent",
+   "title": "에이전트 아키텍처",
+   "legend": true,
+   "figures": [
+    "3-1",
+    "3-2"
+   ],
+   "toggle": {
+    "label": "시퀀스 다이어그램",
+    "options": [
+     {
+      "label": "Graph",
+      "figure": "3-3"
+     },
+     {
+      "label": "Vector RAG",
+      "figure": "3-4"
+     }
+    ]
+   },
+   "lead": ""
+  }
+ ],
+ "figures": {
+  "1": {
+   "id": "1",
+   "kind": "mermaid",
+   "title": "전체 시스템 구성도",
+   "caption": "왼쪽은 원천 규정과 여신 원장을 적재하는 구축 파이프라인, 오른쪽은 질의를 처리하는 런타임 경로이며, 가운데 3-Plane 이 두 경로를 잇습니다. 두 에이전트는 같은 원천을 서로 다른 방식으로 읽습니다 — Graph Agent 는 위상 그래프(GQL 1회) · Knowledge Catalog(조문 유효성) · Cloud Storage(OKF 원문)를 연결해 읽고, RAG Agent 는 RAG Engine 의 PDF 청크 검색과 SQL 1회로 답합니다.",
+   "sources": [
+    "data/build_okf_bundle.py",
+    "tools/sync_gcs.py",
+    "tools/push_catalog.py",
+    "tools/load_stores.py",
+    "tools/setup_federation.py",
+    "tools/build_ontology_graph.py",
+    "tools/studio_server.py"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 16\n    rankSpacing: 22\n---\nflowchart LR\n  subgraph SRC[\"원천\"]\n    PDF[\"규정 PDF 10종\"]\n    CSV[\"여신 원장 8종 · 222행\"]\n  end\n  subgraph BUILD[\"구축 파이프라인\"]\n    B1[\"OKF 번들 생성\"]\n    B2[\"원문 적재 · KC 등록\"]\n    B3[\"원장 적재 · 연합 구성\"]\n    B4[\"개념 · 용어집 · 앵커 구성\"]\n  end\n  subgraph PL[\"3-Plane\"]\n    GCS[(\"원문 Plane<br/>Cloud Storage<br/>OKF\")]\n    KC[(\"거버넌스 Plane<br/>Knowledge Catalog<br/>엔트리 · 용어 · 앵커\")]\n    TOPO[(\"위상 Plane<br/>BigQuery Graph + Spanner 원장<br/>노드 416 · 엣지 1,446\")]\n  end\n  RCP[(\"비교군 전용<br/>RAG Engine<br/>PDF 10\")]\n  subgraph RT[\"Agent Runtime\"]\n    GA[\"Graph Agent\"]\n    RA[\"RAG Agent\"]\n  end\n  WEB[\"Studio\"]\n  PDF --> B1\n  B1 --> B2\n  B1 --> B4\n  CSV --> B3\n  B2 --> GCS\n  B2 --> KC\n  B4 -->|\"용어 · 앵커\"| KC\n  B4 --> TOPO\n  B3 --> TOPO\n  PDF -.->|\"직접 업로드\"| RCP\n  B2 ~~~ RCP\n  GCS <-->|\"서명 URL 원문\"| GA\n  KC <-->|\"조문 유효성\"| GA\n  TOPO <-->|\"GQL 1회\"| GA\n  TOPO <-->|\"SQL 1회\"| RA\n  RCP <-->|\"검색 top-8\"| RA\n  GA <--> WEB\n  RA <--> WEB\n  class GCS,KC,TOPO,RCP store\n",
+   "flowchart": true
+  },
+  "2-1": {
+   "id": "2-1",
+   "kind": "mermaid",
+   "title": "물리 배치",
+   "caption": "트랜잭션 원장 5종은 Spanner 가 원본이고 BigQuery 는 external dataset(Data Boost)으로 복제 없이 읽습니다. 그래프는 <code>v_node_*</code> · <code>v_edge_*</code> 뷰 위에 선언된 PROPERTY GRAPH 라 원장 변경이 바로 보입니다. 조문 · 문서 노드는 <code>gcs_obj_ref</code>(ObjectRef)로 원문을 가리킵니다.",
+   "sources": [
+    "tools/setup_federation.py",
+    "tools/load_stores.py",
+    "tools/build_ontology_graph.py"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 22\n    rankSpacing: 30\n---\nflowchart TB\n  subgraph SP[\"Spanner · 원장 원본\"]\n    S5[\"loan_contracts · collaterals · delinquency_events<br/>rate_cut_requests · exception_approvals\"]\n  end\n  subgraph BQ1[\"BigQuery · starlight_bank\"]\n    EXT[\"starlight_bank_ext<br/>Spanner external dataset · Data Boost\"]\n    V5[\"ont_* 연합 뷰 5\"]\n    M3[\"customers · financial_products<br/>workout_histories\"]\n  end\n  subgraph BQ2[\"BigQuery · starlight_bank_ontology\"]\n    LEX[\"ctx_business_contexts · lex_source_documents<br/>lex_provisions · edge_* 테이블 4\"]\n    VW[\"v_node_* 11 · v_edge_* 15\"]\n    PG{{\"PROPERTY GRAPH finance_graph\"}}\n  end\n  OBJ[(\"Cloud Storage · OKF 원문\")]\n  S5 -.->|\"복제 없음\"| EXT\n  EXT --> V5 --> VW\n  M3 --> VW\n  LEX --> VW --> PG\n  LEX -.->|\"OBJ.MAKE_REF\"| OBJ\n  class S5,OBJ store\n",
+   "table": {
+    "columns": [
+     "클래스",
+     "저장소",
+     "원천 테이블 → 노드 뷰",
+     "행 (원천 · 그래프)"
+    ],
+    "rows": [
+     {
+      "class": "BusinessContext",
+      "korean": "부서·업무목적 맥락",
+      "layer": "CTX",
+      "store": "BigQuery",
+      "physical_table": "starlight_bank_ontology.ctx_business_contexts",
+      "graph_view": "v_node_business_context",
+      "rows_source": 6,
+      "nodes_graph": 6
+     },
+     {
+      "class": "LoanContract",
+      "korean": "기업여신 계약 원장 (단일 중심 허브)",
+      "layer": "LDM",
+      "store": "Spanner → BigQuery 연합",
+      "physical_table": "starlight_bank.ont_loan_contracts",
+      "graph_view": "v_node_loan_contract",
+      "rows_source": 100,
+      "nodes_graph": 100
+     },
+     {
+      "class": "Customer",
+      "korean": "기업 차주 마스터",
+      "layer": "LDM",
+      "store": "BigQuery",
+      "physical_table": "starlight_bank.customers",
+      "graph_view": "v_node_customer",
+      "rows_source": 100,
+      "nodes_graph": 100
+     },
+     {
+      "class": "FinancialProduct",
+      "korean": "여신 금융상품 마스터",
+      "layer": "LDM",
+      "store": "BigQuery",
+      "physical_table": "starlight_bank.financial_products",
+      "graph_view": "v_node_financial_product",
+      "rows_source": 4,
+      "nodes_graph": 4
+     },
+     {
+      "class": "Collateral",
+      "korean": "담보 및 신용보증서 원장",
+      "layer": "LDM",
+      "store": "Spanner → BigQuery 연합",
+      "physical_table": "starlight_bank.ont_collaterals",
+      "graph_view": "v_node_collateral",
+      "rows_source": 3,
+      "nodes_graph": 3
+     },
+     {
+      "class": "DelinquencyEvent",
+      "korean": "연체·대손상각(특수채권) 이벤트 원장",
+      "layer": "LDM",
+      "store": "Spanner → BigQuery 연합",
+      "physical_table": "starlight_bank.ont_delinquency_events",
+      "graph_view": "v_node_delinquency_event",
+      "rows_source": 7,
+      "nodes_graph": 7
+     },
+     {
+      "class": "RateCutRequest",
+      "korean": "금리인하요구권 신청·심사 원장",
+      "layer": "LDM",
+      "store": "Spanner → BigQuery 연합",
+      "physical_table": "starlight_bank.ont_rate_cut_requests",
+      "graph_view": "v_node_rate_cut_request",
+      "rows_source": 2,
+      "nodes_graph": 2
+     },
+     {
+      "class": "ExceptionApproval",
+      "korean": "여신 예외승인 결재 원장",
+      "layer": "LDM",
+      "store": "Spanner → BigQuery 연합",
+      "physical_table": "starlight_bank.ont_exception_approvals",
+      "graph_view": "v_node_exception_approval",
+      "rows_source": 3,
+      "nodes_graph": 3
+     },
+     {
+      "class": "WorkoutHistory",
+      "korean": "채권재조정·워크아웃·회생절차 이력",
+      "layer": "LDM",
+      "store": "BigQuery",
+      "physical_table": "starlight_bank.workout_histories",
+      "graph_view": "v_node_workout_history",
+      "rows_source": 3,
+      "nodes_graph": 3
+     },
+     {
+      "class": "Provision",
+      "korean": "조문·별표·단서·내규 조항",
+      "layer": "LEX",
+      "store": "BigQuery + KC 거버넌스",
+      "physical_table": "starlight_bank_ontology.lex_provisions",
+      "graph_view": "v_node_provision",
+      "rows_source": 178,
+      "nodes_graph": 178
+     },
+     {
+      "class": "SourceDocument",
+      "korean": "법령·감독규정·내규 원본 문서 루트",
+      "layer": "LEX",
+      "store": "BigQuery + KC 거버넌스",
+      "physical_table": "starlight_bank_ontology.lex_source_documents",
+      "graph_view": "v_node_source_document",
+      "rows_source": 10,
+      "nodes_graph": 10
+     }
+    ]
+   },
+   "flowchart": true
+  },
+  "2-2": {
+   "id": "2-2",
+   "kind": "mermaid",
+   "title": "3-Plane 불변식 — 한 사실은 한 곳에만",
+   "caption": "그래프 노드(<code>v_node_provision</code>)에는 status · superseded_by 컬럼이 없습니다. 조문 유효성은 질의할 때마다 Knowledge Catalog 에서 판정하고, 원문은 ObjectRef 서명 URL 로만 읽습니다.",
+   "sources": [
+    "tools/okf-aspect.json",
+    "agents/starlight-graphrag/app/orchestrator/bq_io.py",
+    "agents/starlight-graphrag/app/callbacks/guards.py",
+    "agents/starlight-graphrag/app/tools/kc_lookup.py",
+    "agents/starlight-graphrag/app/services/governance.py"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "flowchart LR\n  subgraph T[\"위상 Plane · BigQuery Graph\"]\n    PV[\"Provision 노드 · v_node_provision<br/>provision_slot_id · kc_entry_id · article_no<br/>title · target_columns · gcs_obj_ref\"]\n  end\n  subgraph G[\"거버넌스 Plane · Knowledge Catalog\"]\n    KE[\"KC 엔트리 · okf aspect<br/>status · superseded_by · content_class<br/>verified · license\"]\n  end\n  subgraph E[\"원문 Plane · Cloud Storage\"]\n    MD[\"조문 md · OKF<br/>frontmatter + 원문 본문\"]\n  end\n  PV -->|\"kc_entry_id\"| KE\n  PV -->|\"gcs_obj_ref → OBJ.GET_ACCESS_URL\"| MD\n  KE -.->|\"superseded_by 체인\"| KE\n  class KE,MD store\n",
+   "flowchart": true
+  },
+  "2-3": {
+   "id": "2-3",
+   "kind": "trap_paths",
+   "title": "벡터 검색이 놓치는 세 가지를 그래프 경로로",
+   "caption": "각 엣지와 속성 값은 BigQuery 실데이터(<code>edge_*</code> 테이블)와 대조했고, 아래 GQL 은 검증된 CQ 템플릿(<code>CQ_GQL_TEMPLATES</code>)의 첫 MATCH 경로를 그대로 옮겼습니다.",
+   "sources": [
+    "agents/starlight-graphrag/app/orchestrator/engine.py",
+    "tools/build_ontology_graph.py"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "panels": [
+    {
+     "id": "2-3a",
+     "title": "① 단서 · 특례 — CQ09",
+     "text": "본칙(30일 초과 연체 → EOD 예정 통지)만 읽으면 오답. 단서 엣지 조건: 6개월 정상상환 · 유상증자 · 신보 85% 이상 보증서 중 하나 + 우선변제자산 요건 + 본부심사역 승인 시 EOD 유예.",
+     "mermaid": "---\nconfig:\n  flowchart:\n    rankSpacing: 26\n---\nflowchart TB\n  A[\"BusinessContext<br/>CREDIT_MGMT · 여신관리팀\"] -->|\"INVOKES_PROVISION<br/>term_key: eod-deferral\"| B[\"Provision · 내규 제16조<br/>EOD 통지 원칙\"]\n  B -->|\"HAS_EXCEPTION_PROVISO\"| C[\"Provision · 내규 제18조<br/>EOD 유예 특례\"]\n",
+     "gql_from": "CQ09",
+     "gql": "MATCH (ctx:BusinessContext {context_id: 'CREDIT_MGMT'})-[inv:INVOKES_PROVISION {term_key: 'eod-deferral'}]->(pr16:Provision {article_no: '내규 제16조'})-[:HAS_EXCEPTION_PROVISO]->(pr18:Provision {article_no: '내규 제18조'})",
+     "checks": 2,
+     "flowchart": true
+    },
+    {
+     "id": "2-3b",
+     "title": "② 상위 규정 → 내규 위임 — CQ05",
+     "text": "감독규정 제27조의 건전성 · 연체 기준을 내규 제14조가 리스크위 보고용(고정이하) · 공시용(30일 이상, 상각 제외) · EWS용(10일 이상, 상각 포함) 3종 지표로 세분화.",
+     "mermaid": "---\nconfig:\n  flowchart:\n    rankSpacing: 26\n---\nflowchart TB\n  A[\"BusinessContext<br/>RISK_MGMT · 리스크관리부\"] -->|\"INVOKES_PROVISION<br/>term_key: delinquency-rate\"| B[\"Provision · 감독규정 제27조<br/>자산건전성분류\"]\n  B -->|\"DELEGATES_TO_INTERNAL\"| C[\"Provision · 내규 제14조<br/>연체율 3종 지표\"]\n",
+     "gql_from": "CQ05",
+     "gql": "MATCH (ctx:BusinessContext {context_id: 'RISK_MGMT'})-[inv:INVOKES_PROVISION {term_key: 'delinquency-rate'}]->(pr:Provision {article_no: '제27조'})-[:DELEGATES_TO_INTERNAL]->(in_pr:Provision {article_no: '내규 제14조'})",
+     "checks": 2,
+     "flowchart": true
+    },
+    {
+     "id": "2-3c",
+     "title": "③ 같은 용어 · 부서별 다른 기준 — CQ06 · CQ07",
+     "text": "term_key 는 같아도 부서마다 엣지 속성이 다른 산식을 가리킵니다: 여신관리팀 EWS 4.00% / 대외공시 2.26%. 국회입법조사처 브리프의 거시 가계대출 연체율 0.24% 는 <code>CONFLICTS_BY_SECTOR</code> 로 혼입 금지.",
+     "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 14\n    rankSpacing: 26\n---\nflowchart TB\n  M[\"BusinessContext<br/>CREDIT_MGMT\"] -->|\"delinquency-rate<br/>EWS 4.00%\"| P[\"Provision · 내규 제14조\"]\n  D[\"BusinessContext<br/>DISCLOSURE\"] -->|\"delinquency-rate<br/>공시 2.26%\"| P\n  P -->|\"CONFLICTS_BY_SECTOR\"| X[\"Provision · 국회입법조사처 브리프<br/>거시 연체율 0.24% · 혼입 금지\"]\n  class X stop\n",
+     "gql_from": "CQ06",
+     "gql": "MATCH (ctx:BusinessContext {context_id: 'DISCLOSURE'})-[inv:INVOKES_PROVISION {term_key: 'delinquency-rate'}]->(pr:Provision {article_no: '내규 제14조'})-[:CONFLICTS_BY_SECTOR]->(dist:Provision)-[:PART_OF_DOCUMENT]->(doc:SourceDocument {doc_id: 'DOC_07_NARS_RATE'})",
+     "checks": 3,
+     "flowchart": true
+    }
+   ]
+  },
+  "3-1": {
+   "id": "3-1",
+   "kind": "mermaid",
+   "title": "컴포넌트 설계도",
+   "caption": "자율 루프 대신 결정론 오케스트레이터가 실행 순서와 도구 예산(최대 12회)을 통제합니다. Gemini 는 질의 플래닝 · GQL 교정 · 최종 브리핑 합성 3곳(파란색)에서만 호출되며, 모든 그래프 조회(최대 12 hop)와 원문 인출은 가드레일 콜백을 통과해야 실행됩니다.",
+   "sources": [
+    "tools/studio_server.py",
+    "tools/agent_remote_client.py",
+    "agents/starlight-graphrag/app/agent.py",
+    "agents/starlight-graphrag/app/config.py",
+    "agents/starlight-graphrag/app/orchestrator/",
+    "agents/starlight-graphrag/app/callbacks/",
+    "agents/starlight-graphrag/app/tools/",
+    "agents/starlight-graphrag/app/services/",
+    "agents/starlight-graphrag/app/adapters/",
+    "agents/starlight-graphrag/app/domain/"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 18\n    rankSpacing: 28\n---\nflowchart LR\n  W[\"Studio\"]\n  subgraph AE[\"Agent Runtime · Graph Agent\"]\n    E[\"결정론 오케스트레이터<br/>실행 순서 · 도구 예산 12회 통제\"]\n    LM[\"Gemini 3.8 Flash · 호출 3곳<br/>질의 플래닝 · GQL 교정 · 브리핑 합성\"]\n    CB[\"가드레일 · 콜백<br/>엔티티 그라운딩 · Dry-Run 가드<br/>거버넌스 차단 · 인용 검증\"]\n    TL[\"핵심 도구 3종<br/>위상 그래프 조회 · KC 유효성 조회<br/>OKF 원문 인출\"]\n  end\n  subgraph ST[\"3-Plane · 감사 저장소\"]\n    BQ[(\"BigQuery Graph + Spanner 원장<br/>위상 그래프 · 별칭 438\")]\n    KC[(\"Knowledge Catalog<br/>엔트리 · 용어 · 앵커\")]\n    GCS[(\"Cloud Storage<br/>OKF 원문\")]\n    LOG[(\"Cloud Logging<br/>GovernanceIncident\")]\n  end\n  W <-->|\"질의 · 단계 스트림\"| E\n  E --> LM\n  E --> CB\n  E --> TL\n  TL -->|\"GQL 1회\"| BQ\n  TL -->|\"유효성 판정\"| KC\n  TL -->|\"서명 URL 원문\"| GCS\n  CB -.->|\"위반 기록\"| LOG\n  class BQ,KC,GCS,LOG store\n  class LM llm\n",
+   "flowchart": true
+  },
+  "3-2": {
+   "id": "3-2",
+   "kind": "mermaid",
+   "title": "순서도 — Step 0–3 결정론적 실행 흐름",
+   "caption": "에이전트 한 턴의 결정론적 실행 흐름입니다(모듈 05 · 06 의 Step 0–3 실행 내역과 동일). Step 1 은 정적 검사(≤12 hop)와 BigQuery Dry-Run 을 통과할 때까지 최대 3회 자동 교정한 뒤 통과한 GQL 만 딱 1회 실행하며, Step 2 에서 폐기 · 미등록 조문이 감지되면 원문 인출 전에 즉시 답변을 차단합니다.",
+   "sources": [
+    "agents/starlight-graphrag/app/orchestrator/",
+    "agents/starlight-graphrag/app/callbacks/",
+    "agents/starlight-graphrag/app/services/",
+    "agents/starlight-graphrag/app/adapters/",
+    "agents/starlight-graphrag/app/domain/",
+    "tools/agent_remote_client.py"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 16\n    rankSpacing: 22\n---\nflowchart LR\n  Q0([\"질문 수신\"]) --> S0[\"Step 0 · 그라운딩 · 플래닝<br/>표준 용어 · 차주 앵커 바인딩\"]\n  S0 -->|\"도메인 외 · 도움말\"| R0[\"안내 응답 · 도구 0회\"]\n  S0 -->|\"심사 질의\"| S1[\"Step 1 · GQL 검증 · 실행<br/>≤12 hop + Dry-Run → GQL 1회\"]\n  S1 -->|\"Dry-Run 실패 · ≤3회\"| RP[\"GQL 자동 교정<br/>오류 · 이전 시도 반영\"]\n  RP --> S1\n  S1 -->|\"3회 소진 · 반복\"| RF[\"답변 거절 · GQL 미실행\"]\n  S1 -->|\"검증 통과\"| S2[\"Step 2 · KC 유효성 판정<br/>조문 상태 · 대체 조문 확인\"]\n  S2 -->|\"폐기 · 미등록\"| BN[\"GovernanceIncident 발행<br/>원문 인출 차단 · 거절 응답\"]\n  S2 -->|\"유효(ALLOW)\"| S3[\"Step 3 · OKF 원문 인출<br/>ObjectRef 서명 URL → GCS\"]\n  S3 --> SB[\"심사 브리핑 합성<br/>인용 검증 · 최종 답변\"]\n  class S0,RP,SB llm\n  class R0,RF,BN stop\n  class Q0 term\n",
+   "flowchart": true
+  },
+  "3-3": {
+   "id": "3-3",
+   "kind": "mermaid",
+   "title": "시퀀스 다이어그램 — Graph",
+   "caption": "단계가 진행될 때마다 실시간 진행 상태가 Studio 화면으로 스트리밍되고, 마지막에 답변 · 증거 원장 · Knowledge Catalog 판정 · 조문 원문이 함께 반환됩니다. 조문 원문은 BigQuery ObjectRef 서명 URL 을 통해 Cloud Storage 에서 직접 인출합니다.",
+   "sources": [
+    "tools/studio_server.py",
+    "tools/agent_remote_client.py",
+    "agents/starlight-graphrag/app/agent.py",
+    "agents/starlight-graphrag/app/orchestrator/",
+    "agents/starlight-graphrag/app/callbacks/",
+    "agents/starlight-graphrag/app/services/",
+    "agents/starlight-graphrag/app/adapters/",
+    "agents/starlight-graphrag/app/domain/"
+   ],
+   "design": "agents/design/graphrag_agent_v0.yaml",
+   "mermaid": "sequenceDiagram\n  autonumber\n  actor U as 사용자\n  participant W as Studio\n  participant O as Graph Agent<br/>결정론 오케스트레이터\n  participant G as Gemini 3.8 Flash\n  participant B as BigQuery Graph\n  participant K as Knowledge Catalog\n  participant C as Cloud Storage (OKF)\n  U->>W: 질문 입력\n  W->>O: 질의 요청 (스트리밍)\n  Note over O: Step 0 · 표준 용어 · 차주 앵커 바인딩\n  O->>G: 질의 플래닝 (모드 · GQL · 조문 슬롯)\n  G-->>O: 실행 계획 반환\n  alt 도메인 외 · 도움말 질의\n    O-->>W: 안내 응답 (도구 0회)\n  else 원장 조회 · Graph 심사 질의\n    O->>B: Step 1 · GQL Dry-Run 검증\n    opt Dry-Run 실패 시 (최대 3회)\n      O->>G: GQL 교정 요청 (오류 · 이전 시도 전달)\n      G-->>O: 교정된 GQL\n      O->>B: Dry-Run 재검증\n    end\n    O->>B: 통과한 GQL 1회 실행\n    B-->>O: 원장 데이터 · 조문 슬롯 반환\n    opt 규정 조문 포함 심사 질의\n      O->>K: Step 2 · 조문 슬롯별 유효성 조회\n      K-->>O: 상태(ALLOW · DEPRECATED) · 대체 조문\n      alt 폐기 · 미등록 조문 감지\n        O-->>W: GovernanceIncident 발행 및 답변 차단\n      else 유효 조문 (ALLOW)\n        O->>B: Step 3 · ObjectRef 서명 URL 발급\n        B-->>O: 서명 URL\n        O->>C: 정본 조문 원문 인출\n        C-->>O: OKF 조문 전문\n      end\n    end\n    O->>G: 원장 + 조문 전문 기반 심사 브리핑 합성\n    G-->>O: 최종 답변 (인용 검증 완료)\n    O-->>W: 최종 답변 · 단계별 근거 반환\n  end\n  W-->>U: Step 0–3 실행 내역 · 답변 표시\n",
+   "flowchart": false
+  },
+  "3-4": {
+   "id": "3-4",
+   "kind": "mermaid",
+   "title": "시퀀스 다이어그램 — Vector RAG",
+   "caption": "비교군 Vector RAG Agent 는 PDF 청크 유사도 검색 1회(top-8)와 BigQuery SQL 조회 1회를 순차 실행합니다. 위상 그래프 탐색 · Knowledge Catalog 유효성 판정 · ObjectRef 정본 인출 단계가 없으며, 원본 PDF 10종을 직접 청킹한 코퍼스를 검색합니다.",
+   "sources": [
+    "agents/starlight-rag-agent/app/agent.py",
+    "agents/starlight-rag-agent/app/data/schema_card.md",
+    "tools/studio_server.py",
+    "tools/rag_remote_client.py"
+   ],
+   "design": "agents/design/rag_agent_v0.yaml",
+   "mermaid": "sequenceDiagram\n  autonumber\n  actor U as 사용자\n  participant S as Studio\n  participant A as RAG Agent<br/>Sequential 파이프라인\n  participant G as Gemini 3.8 Flash\n  participant R as RAG Engine<br/>PDF 10종 코퍼스\n  participant Q as BigQuery<br/>여신 원장 테이블\n  U->>S: 질문 입력\n  S->>A: 질의 요청 (스트리밍)\n  Note over A: Step 1 · 규정 검색 → Step 2 · 원장 SQL → 답변 생성\n  A->>G: 검색 키워드 생성\n  G-->>A: 검색 질의\n  A->>R: Step 1 · PDF 청크 검색 (top-8, 1회)\n  R-->>A: 유사 청크 · 문서 ID · 유사도 점수\n  A->>G: 원장 조회 SQL 생성\n  G-->>A: SELECT SQL\n  A->>Q: Step 2 · 원장 SQL 실행 (1회 · 읽기 전용)\n  Q-->>A: 조회 결과 행\n  A->>G: 청크 + SQL 결과 기반 답변 생성\n  G-->>A: 최종 답변\n  A-->>S: 최종 답변 · 검색 청크 · SQL 반환\n  S-->>U: Step 1–2 실행 내역 · 답변 표시\n",
+   "flowchart": false
+  }
+ },
+ "gates": [
+  {
+   "id": "G1",
+   "name": "design measured == live",
+   "ok": true,
+   "checked": 35,
+   "errors": 0
+  },
+  {
+   "id": "G2",
+   "name": "graph labels · views · layout == ontology/l1.yaml",
+   "ok": true,
+   "checked": 7,
+   "errors": 0
+  },
+  {
+   "id": "G3",
+   "name": "every «key» resolves",
+   "ok": true,
+   "checked": 26,
+   "errors": 0
+  },
+  {
+   "id": "G4",
+   "name": "figure identifiers exist in sources / l1 / vocabulary",
+   "ok": true,
+   "checked": 88,
+   "errors": 0
+  },
+  {
+   "id": "G5",
+   "name": "2-3 trap paths match live edge rows",
+   "ok": true,
+   "checked": 7,
+   "errors": 0
+  },
+  {
+   "id": "G6",
+   "name": "Provision node holds no governance columns",
+   "ok": true,
+   "checked": 16,
+   "errors": 0
+  },
+  {
+   "id": "G7",
+   "name": "no measured value typed by hand",
+   "ok": true,
+   "checked": 71,
+   "errors": 0
+  },
+  {
+   "id": "G9",
+   "name": "hero example == stored 06 report",
+   "ok": true,
+   "checked": 10,
+   "errors": 0
+  },
+  {
+   "id": "G8",
+   "name": "no project / bucket / instance ids in output",
+   "ok": true,
+   "checked": 4,
+   "errors": 0
+  }
+ ],
+ "findings": [
+  "ontology/l1.yaml Provision.expected_rows 174 != live 178",
+  "ontology/l1.yaml meta.counts.lex_provisions 174 != measured 178",
+  "ontology/l1.yaml meta.counts.lex_total_entries 184 != measured 188"
+ ],
+ "sources": {
+  "design": [
+   "agents/design/graphrag_agent_v0.yaml",
+   "agents/design/rag_agent_v0.yaml"
+  ],
+  "l1": "ontology/l1.yaml",
+  "generator": "tools/export_intro_arch.py"
+ }
+}

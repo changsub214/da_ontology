@@ -1,0 +1,550 @@
+{
+  "schema": "intro_arch/1",
+  "generated_at": "2026-10-06T03:45:00Z",
+  "measured": {
+    "from": "2026-10-06T03:30:00Z",
+    "to": "2026-10-06T03:45:00Z",
+    "values": {
+      "pdf:count": 10,
+      "rag:files": 10,
+      "okf:concepts": 46,
+      "ledger:tables": 8,
+      "ledger:rows": 184,
+      "gcs:md": 83,
+      "kc:entries": 83,
+      "kc:anchors": 11,
+      "glossary:terms": 7,
+      "l1:classes": 11,
+      "l1:edges": 15,
+      "total:nodes": 236,
+      "total:edges": 404,
+      "aliases": 30,
+      "bq:v_node_views": 11,
+      "bq:v_edge_views": 15,
+      "bq:edge_tables": 4,
+      "bq:ont_views": 5,
+      "cfg:tool_budget": 12,
+      "cfg:max_graph_hops": 12,
+      "cfg:max_gql_repairs": 3,
+      "rag:top_k": 8,
+      "planner:max_slots": 4
+    }
+  },
+  "conventions": {
+    "min_scale": 0.8,
+    "legend": "범례 — 원통: 저장소 · 파랑: Gemini 호출 · 빨강: 차단/거절 · 점선: 연합/참조 · 둥근 끝: 시작/끝",
+    "mermaid": {
+      "font": "'Google Sans','Noto Sans KR',sans-serif",
+      "flowchart": {
+        "htmlLabels": true,
+        "curve": "basis",
+        "nodeSpacing": 26,
+        "rankSpacing": 44,
+        "padding": 10,
+        "useMaxWidth": true
+      },
+      "sequence": {
+        "useMaxWidth": true,
+        "mirrorActors": false,
+        "width": 110,
+        "actorMargin": 26,
+        "boxMargin": 8,
+        "noteMargin": 8,
+        "messageMargin": 26
+      },
+      "theme_variables": {
+        "light": {
+          "background": "#ffffff",
+          "fontSize": "13px",
+          "primaryColor": "#f1f3f4",
+          "primaryTextColor": "#202124",
+          "primaryBorderColor": "#9aa0a6",
+          "secondaryColor": "#f8f9fa",
+          "tertiaryColor": "#ffffff",
+          "mainBkg": "#f1f3f4",
+          "nodeBorder": "#9aa0a6",
+          "lineColor": "#5f6368",
+          "textColor": "#202124",
+          "titleColor": "#3c4043",
+          "clusterBkg": "#fbfbfc",
+          "clusterBorder": "#dadce0",
+          "edgeLabelBackground": "#ffffff",
+          "actorBkg": "#f1f3f4",
+          "actorBorder": "#9aa0a6",
+          "actorTextColor": "#202124",
+          "actorLineColor": "#bdc1c6",
+          "signalColor": "#5f6368",
+          "signalTextColor": "#202124",
+          "labelBoxBkgColor": "#f8f9fa",
+          "labelBoxBorderColor": "#9aa0a6",
+          "labelTextColor": "#202124",
+          "loopTextColor": "#3c4043",
+          "noteBkgColor": "#f8f9fa",
+          "noteBorderColor": "#dadce0",
+          "noteTextColor": "#3c4043",
+          "activationBkgColor": "#e8eaed",
+          "activationBorderColor": "#9aa0a6",
+          "sequenceNumberColor": "#ffffff"
+        },
+        "dark": {
+          "darkMode": true,
+          "background": "#28292a",
+          "fontSize": "13px",
+          "primaryColor": "#303134",
+          "primaryTextColor": "#e3e3e3",
+          "primaryBorderColor": "#70757a",
+          "secondaryColor": "#28292a",
+          "tertiaryColor": "#1f1f1f",
+          "mainBkg": "#303134",
+          "nodeBorder": "#70757a",
+          "lineColor": "#9aa0a6",
+          "textColor": "#e3e3e3",
+          "titleColor": "#bdc1c6",
+          "clusterBkg": "#242526",
+          "clusterBorder": "#3c4043",
+          "edgeLabelBackground": "#28292a",
+          "actorBkg": "#303134",
+          "actorBorder": "#70757a",
+          "actorTextColor": "#e3e3e3",
+          "actorLineColor": "#5f6368",
+          "signalColor": "#9aa0a6",
+          "signalTextColor": "#e3e3e3",
+          "labelBoxBkgColor": "#303134",
+          "labelBoxBorderColor": "#70757a",
+          "labelTextColor": "#e3e3e3",
+          "loopTextColor": "#bdc1c6",
+          "noteBkgColor": "#303134",
+          "noteBorderColor": "#5f6368",
+          "noteTextColor": "#e3e3e3",
+          "activationBkgColor": "#3c4043",
+          "activationBorderColor": "#70757a",
+          "sequenceNumberColor": "#202124"
+        }
+      },
+      "class_defs": {
+        "light": [
+          "classDef store fill:#ffffff,stroke:#80868b,color:#202124",
+          "classDef llm fill:#e8f0fe,stroke:#1a73e8,color:#174ea6",
+          "classDef stop fill:#fce8e6,stroke:#c5221f,color:#a50e0e",
+          "classDef term fill:#3c4043,stroke:#3c4043,color:#ffffff"
+        ],
+        "dark": [
+          "classDef store fill:#1f1f1f,stroke:#9aa0a6,color:#e3e3e3",
+          "classDef llm fill:#233044,stroke:#8ab4f8,color:#d2e3fc",
+          "classDef stop fill:#3b2524,stroke:#f28b82,color:#f6aea9",
+          "classDef term fill:#e3e3e3,stroke:#e3e3e3,color:#202124"
+        ]
+      }
+    }
+  },
+  "tabs": [
+    {
+      "id": "sys",
+      "title": "시스템 아키텍처",
+      "figures": [
+        "1"
+      ],
+      "lead": "",
+      "hero": {
+        "eyebrow": "왜 Knowledge Graph 인가",
+        "title": "이커머스 초개인화 · 마진 · 공정거래 판단의 답은 문서 한 곳에 있지 않습니다.<br><em>조문 · 단서 · 본부 맥락 · 원장의 연결</em> 속에 있습니다.",
+        "sub": "문서 검색은 비슷한 규정 문장을 찾아 줍니다. 하지만 장바구니 이탈 타겟팅 · MD 마진 가드레일 · 입점브랜드 판촉비 분담 · 청약철회 심사에는 어느 조문이 · 어떤 체화재고/VIP 특례와 함께 · 어느 본부의 기준으로 · 어떤 주문품목·재고에 적용되는지가 필요합니다. 같은 질문을 두 방식에 던져 보면 차이가 보입니다.",
+        "example": {
+          "eq": "EQ01",
+          "question": "VIP 등급 박준혁(USR-1002)의 장바구니 세션(SES-1002-A)에서 주상품 PRD-3003과 코디상품 PRD-3004를 함께 묶어 제안할 때, 15% 번들 쿠폰 할인을 적용한 합산 할인액과 최종 결제 제안 금액은 얼마인가요?",
+          "arms": [
+            {
+              "arm": "rag",
+              "label": "문서 검색 (Vector RAG)",
+              "verdict": "incorrect",
+              "answer": "합산 30만 원에 15% 일괄 적용 → 45,000원 할인(제안가 255,000원)",
+              "steps": [
+                "'VIP 코디 번들 최대 15% 할인' 청크 검색 → 합산 정가 300,000원 × 15% = <b>45,000원</b> 일괄 계산",
+                "코디상품 PRD-3004(정가 10만·원가 6.5만)의 할인 전 기본마진(35%)만 보고, 15% 할인 후 <b>실현마진율(23.5% &lt; 25.0%)</b> 가드레일 미달을 놓침",
+                "비체화(입고 25일차 &lt; 90일) 및 예외승인 부재 상품에 15,000원 할인을 오적용하여 마진 가드레일 위반"
+              ]
+            },
+            {
+              "arm": "graphrag",
+              "label": "Knowledge Graph (Graph)",
+              "verdict": "correct",
+              "answer": "주상품만 15% 할인(30,000원) + 코디상품 할인 차단(0원) → 제안가 270,000원",
+              "steps": [
+                "주상품 PRD-3003(정가 20만·원가 12만) → 15% 할인 시 실결제가 17만 원 · 실현마진율 <b>29.4% ≥ 25%</b> 통과 (<b>30,000원</b> 할인)",
+                "코디상품 PRD-3004(정가 10만·원가 6.5만) → 15% 할인 시 실결제가 8.5만 원 · 실현마진율 <b>23.5% &lt; 25%</b> 미달 <span class=\"edge\">GOVERNED_BY_CRITERIA</span>",
+                "물류 원장(입고 <b>25일차 &lt; 90일</b> 비체화) <span class=\"edge\">STOCKED_AT_INVENTORY</span> · 예외승인 없음 확인 → PRD-3004 할인 차단(정가 10만 유지), 합산 할인 <b>30,000원</b> · 번들 제안가 <b>270,000원</b> 도출"
+              ]
+            }
+          ]
+        },
+        "reasons_title": "이 차이가 생기는 이유 — 문서와 원장 사이의 관계를 그래프에 명시합니다",
+        "reasons": [
+          {
+            "title": "본부별 업무 맥락",
+            "text": "같은 '반품률·매출·재고'도 MD 본부는 총반품(6건), CS 심사팀은 판매자 귀책 무상반품(3건), 파트너정산실은 대규모유통업법 판촉비 분담 상한(50%)을 가리킴 <span class=\"edge\">INVOKES_PROVISION</span>"
+          },
+          {
+            "title": "단서 · 특례 · 위임",
+            "text": "상시 마진 25% 본칙과 체화재고(90일+) · VIP 리텐션(10~12%) 특례, 공정위 지침과 사내 내규를 엣지로 연결 <span class=\"edge\">HAS_EXCEPTION_PROVISO</span> <span class=\"edge\">DELEGATES_TO_INTERNAL</span>"
+          },
+          {
+            "title": "업권 · 효력 방어",
+            "text": "관세청 해외직구 반송수수료(14일 · 35,000원)를 국내 물류센터 출고 건에 오적용하지 않으며 폐기 조문은 즉시 차단 <span class=\"edge\">CONFLICTS_BY_SECTOR</span> · Knowledge Catalog 판정"
+          }
+        ],
+        "foot": "사실은 한 곳에만 둡니다 — 관계는 <b>그래프</b>, 유효성 · 폐기는 <b>Knowledge Catalog</b>, 조문 본문은 <b>Cloud Storage</b> (3-Plane). 아래 그림이 이 구성을 보여 줍니다."
+      }
+    },
+    {
+      "id": "graph",
+      "title": "그래프 아키텍처",
+      "figures": [
+        "2-1",
+        "2-2",
+        "2-3"
+      ],
+      "lead": ""
+    },
+    {
+      "id": "agent",
+      "title": "에이전트 아키텍처",
+      "legend": true,
+      "figures": [
+        "3-1",
+        "3-2"
+      ],
+      "toggle": {
+        "label": "시퀀스 다이어그램",
+        "options": [
+          {
+            "label": "Graph",
+            "figure": "3-3"
+          },
+          {
+            "label": "Vector RAG",
+            "figure": "3-4"
+          }
+        ]
+      },
+      "lead": ""
+    }
+  ],
+  "figures": {
+    "1": {
+      "id": "1",
+      "kind": "mermaid",
+      "title": "전체 시스템 구성도",
+      "caption": "왼쪽은 원천 규정과 커머스 원장을 적재하는 구축 파이프라인, 오른쪽은 질의를 처리하는 런타임 경로이며, 가운데 3-Plane 이 두 경로를 잇습니다. 두 에이전트는 같은 원천을 서로 다른 방식으로 읽습니다 — Graph Agent 는 위상 그래프(GQL 1회) · Knowledge Catalog(조문 유효성) · Cloud Storage(OKF 원문)를 연결해 읽고, RAG Agent 는 RAG Engine 의 PDF 청크 검색과 SQL 1회로 답합니다.",
+      "sources": [
+        "tools/build_ecommerce_okf.py",
+        "tools/deploy_ecommerce_gcp.py",
+        "tools/studio_server.py"
+      ],
+      "design": "ecommerce/ontology/l1.yaml",
+      "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 16\n    rankSpacing: 22\n---\nflowchart LR\n  subgraph SRC[\"원천\"]\n    PDF[\"규정 PDF 10종\"]\n    CSV[\"커머스 원장 8종 · 184행\"]\n  end\n  subgraph BUILD[\"구축 파이프라인\"]\n    B1[\"OKF 번들 생성\"]\n    B2[\"원문 적재 · KC 등록\"]\n    B3[\"원장 적재 · 연합 구성\"]\n    B4[\"개념 · 용어집 · 앵커 구성\"]\n  end\n  subgraph PL[\"3-Plane\"]\n    GCS[(\"원문 Plane<br/>Cloud Storage<br/>OKF\")]\n    KC[(\"거버넌스 Plane<br/>Knowledge Catalog<br/>엔트리 · 용어 · 앵커\")]\n    TOPO[(\"위상 Plane<br/>BigQuery Graph + Spanner 원장<br/>노드 236 · 엣지 404\")]\n  end\n  RCP[(\"비교군 전용<br/>RAG Engine<br/>PDF 10\")]\n  subgraph RT[\"Agent Runtime\"]\n    GA[\"Graph Agent\"]\n    RA[\"RAG Agent\"]\n  end\n  WEB[\"Studio\"]\n  PDF --> B1\n  B1 --> B2\n  B1 --> B4\n  CSV --> B3\n  B2 --> GCS\n  B2 --> KC\n  B4 -->|\"용어 · 앵커\"| KC\n  B4 --> TOPO\n  B3 --> TOPO\n  PDF -.->|\"직접 업로드\"| RCP\n  B2 ~~~ RCP\n  GCS <-->|\"서명 URL 원문\"| GA\n  KC <-->|\"조문 유효성\"| GA\n  TOPO <-->|\"GQL 1회\"| GA\n  TOPO <-->|\"SQL 1회\"| RA\n  RCP <-->|\"검색 top-8\"| RA\n  GA <--> WEB\n  RA <--> WEB\n  class GCS,KC,TOPO,RCP store\n",
+      "flowchart": true
+    },
+    "2-1": {
+      "id": "2-1",
+      "kind": "mermaid",
+      "title": "물리 배치",
+      "caption": "트랜잭션 원장 5종은 Spanner 가 원본이고 BigQuery 는 external dataset(Data Boost)으로 복제 없이 읽습니다. 그래프는 <code>v_node_*</code> · <code>v_edge_*</code> 뷰 위에 선언된 PROPERTY GRAPH 라 원장 변경이 바로 보입니다. 조문 · 문서 노드는 <code>gcs_obj_ref</code>(ObjectRef)로 원문을 가리킵니다.",
+      "sources": [
+        "ecommerce/sql/spanner_kmarket_ecommerce.ddl",
+        "ecommerce/sql/bq_kmarket_ontology_graph.sql",
+        "tools/deploy_ecommerce_gcp.py"
+      ],
+      "design": "ecommerce/ontology/l1.yaml",
+      "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 22\n    rankSpacing: 30\n---\nflowchart TB\n  subgraph SP[\"Spanner · 원장 원본\"]\n    S5[\"orders · order_items · inventory_items<br/>events · campaign_exceptions\"]\n  end\n  subgraph BQ1[\"BigQuery · kmarket_ecommerce\"]\n    EXT[\"kmarket_ecommerce_ext<br/>Spanner external dataset · Data Boost\"]\n    V5[\"ont_* 연합 뷰 5\"]\n    M3[\"users · products<br/>brand_vendor_contracts\"]\n  end\n  subgraph BQ2[\"BigQuery · kmarket_ontology\"]\n    LEX[\"ctx_business_contexts · lex_source_documents<br/>lex_provisions · edge_* 테이블 4\"]\n    VW[\"v_node_* 11 · v_edge_* 15\"]\n    PG{{\"PROPERTY GRAPH ecommerce_graph\"}}\n  end\n  OBJ[(\"Cloud Storage · OKF 원문\")]\n  S5 -.->|\"복제 없음\"| EXT\n  EXT --> V5 --> VW\n  M3 --> VW\n  LEX --> VW --> PG\n  LEX -.->|\"OBJ.MAKE_REF\"| OBJ\n  class S5,OBJ store\n",
+      "table": {
+        "columns": [
+          "클래스",
+          "저장소",
+          "원천 테이블 → 노드 뷰",
+          "행 (원천 · 그래프)"
+        ],
+        "rows": [
+          {
+            "class": "BusinessContext",
+            "korean": "본부·업무목적 맥락 (CRM/MD/파트너정산/CS/물류/준법)",
+            "layer": "CTX",
+            "store": "BigQuery",
+            "physical_table": "kmarket_ontology.ctx_business_contexts",
+            "graph_view": "v_node_business_context",
+            "rows_source": 6,
+            "nodes_graph": 6
+          },
+          {
+            "class": "OrderItem",
+            "korean": "주문 품목·쿠폰·반품 원장 (단일 중심 허브)",
+            "layer": "LDM",
+            "store": "Spanner → BigQuery 연합",
+            "physical_table": "kmarket_ecommerce.ont_order_items",
+            "graph_view": "v_node_order_item",
+            "rows_source": 21,
+            "nodes_graph": 21
+          },
+          {
+            "class": "Order",
+            "korean": "주문 헤더·출고·배송 원장",
+            "layer": "LDM",
+            "store": "Spanner → BigQuery 연합",
+            "physical_table": "kmarket_ecommerce.ont_orders",
+            "graph_view": "v_node_order",
+            "rows_source": 15,
+            "nodes_graph": 15
+          },
+          {
+            "class": "Customer",
+            "korean": "회원 마스터 및 마케팅 수신동의 원장",
+            "layer": "LDM",
+            "store": "BigQuery",
+            "physical_table": "kmarket_ecommerce.users",
+            "graph_view": "v_node_customer",
+            "rows_source": 60,
+            "nodes_graph": 60
+          },
+          {
+            "class": "Product",
+            "korean": "전시 상품 마스터 및 코디·대체 연관상품",
+            "layer": "LDM",
+            "store": "BigQuery",
+            "physical_table": "kmarket_ecommerce.products",
+            "graph_view": "v_node_product",
+            "rows_source": 30,
+            "nodes_graph": 30
+          },
+          {
+            "class": "BrandVendorContract",
+            "korean": "입점브랜드 계약·판촉비 분담률·출고 SLA 마스터",
+            "layer": "LDM",
+            "store": "BigQuery",
+            "physical_table": "kmarket_ecommerce.brand_vendor_contracts",
+            "graph_view": "v_node_brand_vendor_contract",
+            "rows_source": 8,
+            "nodes_graph": 8
+          },
+          {
+            "class": "InventoryItem",
+            "korean": "물류센터별 실시간 가용재고·체화일수 원장",
+            "layer": "LDM",
+            "store": "Spanner → BigQuery 연합",
+            "physical_table": "kmarket_ecommerce.ont_inventory_items",
+            "graph_view": "v_node_inventory_item",
+            "rows_source": 32,
+            "nodes_graph": 32
+          },
+          {
+            "class": "UserBehaviorEvent",
+            "korean": "실시간 고객 장바구니 이탈·행동 이벤트 원장",
+            "layer": "LDM",
+            "store": "Spanner → BigQuery 연합",
+            "physical_table": "kmarket_ecommerce.ont_events",
+            "graph_view": "v_node_user_behavior_event",
+            "rows_source": 11,
+            "nodes_graph": 11
+          },
+          {
+            "class": "CampaignException",
+            "korean": "프로모션 마진 하한 완화·특례 예외승인 원장",
+            "layer": "LDM",
+            "store": "Spanner → BigQuery 연합",
+            "physical_table": "kmarket_ecommerce.ont_campaign_exceptions",
+            "graph_view": "v_node_campaign_exception",
+            "rows_source": 7,
+            "nodes_graph": 7
+          },
+          {
+            "class": "Provision",
+            "korean": "이커머스 법령·지침·사내내규 조문 및 단서",
+            "layer": "LEX",
+            "store": "BigQuery + KC 거버넌스",
+            "physical_table": "kmarket_ontology.lex_provisions",
+            "graph_view": "v_node_provision",
+            "rows_source": 36,
+            "nodes_graph": 36
+          },
+          {
+            "class": "SourceDocument",
+            "korean": "이커머스 법령·심사지침·사내내규 원본 문서 루트",
+            "layer": "LEX",
+            "store": "BigQuery + KC 거버넌스",
+            "physical_table": "kmarket_ontology.lex_source_documents",
+            "graph_view": "v_node_source_document",
+            "rows_source": 10,
+            "nodes_graph": 10
+          }
+        ]
+      },
+      "flowchart": true
+    },
+    "2-2": {
+      "id": "2-2",
+      "kind": "mermaid",
+      "title": "3-Plane 불변식 — 한 사실은 한 곳에만",
+      "caption": "그래프 노드(<code>v_node_provision</code>)에는 status · superseded_by 컬럼이 없습니다. 조문 유효성은 질의할 때마다 Knowledge Catalog 에서 판정하고, 원문은 ObjectRef 서명 URL 로만 읽습니다.",
+      "sources": [
+        "tools/okf-aspect.json",
+        "tools/deploy_ecommerce_gcp.py"
+      ],
+      "design": "ecommerce/ontology/l1.yaml",
+      "mermaid": "flowchart LR\n  subgraph T[\"위상 Plane · BigQuery Graph\"]\n    PV[\"Provision 노드 · v_node_provision<br/>provision_slot_id · kc_entry_id · article_no<br/>title · target_columns · gcs_obj_ref\"]\n  end\n  subgraph G[\"거버넌스 Plane · Knowledge Catalog\"]\n    KE[\"KC 엔트리 · okf aspect<br/>status · superseded_by · content_class<br/>verified · license\"]\n  end\n  subgraph E[\"원문 Plane · Cloud Storage\"]\n    MD[\"조문 md · OKF<br/>frontmatter + 원문 본문\"]\n  end\n  PV -->|\"kc_entry_id\"| KE\n  PV -->|\"gcs_obj_ref → OBJ.GET_ACCESS_URL\"| MD\n  KE -.->|\"superseded_by 체인\"| KE\n  class KE,MD store\n",
+      "flowchart": true
+    },
+    "2-3": {
+      "id": "2-3",
+      "kind": "trap_paths",
+      "title": "벡터 검색이 놓치는 세 가지를 그래프 경로로",
+      "caption": "각 엣지와 속성 값은 BigQuery 실데이터(<code>edge_*</code> 테이블)와 대조했고, 아래 GQL 은 검증된 CQ 템플릿(<code>CQ03 · CQ08 · CQ14</code>)의 첫 MATCH 경로를 그대로 옮겼습니다.",
+      "sources": [
+        "ecommerce/ontology/cq/competency_questions.yaml",
+        "tools/deploy_ecommerce_gcp.py"
+      ],
+      "design": "ecommerce/ontology/l1.yaml",
+      "panels": [
+        {
+          "id": "2-3a",
+          "title": "① 단서 · 특례 — CQ02 · CQ03",
+          "text": "상시 최저마진 가드레일(25%) 본칙만 읽으면 코디 번들·클리어런스 쿠폰 발급이 거절됩니다. 단서 엣지(HAS_EXCEPTION_PROVISO)와 예외승인 원장(CampaignException)을 연결해 90일+ 체화재고(10%)·VIP 리텐션(12~14%) 완화를 판정합니다.",
+          "mermaid": "---\nconfig:\n  flowchart:\n    rankSpacing: 26\n---\nflowchart TB\n  A[\"BusinessContext<br/>MD_MERCHANDISING · MD본부\"] -->|\"INVOKES_PROVISION<br/>term_key: margin-guardrail\"| B[\"Provision · MD내규 제2조<br/>상시 25% 마진 가드레일\"]\n  B -->|\"HAS_EXCEPTION_PROVISO\"| C[\"Provision · MD내규 제3·4조<br/>체화재고(10%) · VIP특례(12~14%)\"]\n",
+          "gql_from": "CQ03",
+          "gql": "MATCH (ctx:BusinessContext {context_id: 'MD_MERCHANDISING'})-[:INVOKES_PROVISION {term_key: 'margin-guardrail'}]->(base:Provision)-[:HAS_EXCEPTION_PROVISO]->(prov:Provision)",
+          "checks": 2,
+          "flowchart": true
+        },
+        {
+          "id": "2-3b",
+          "title": "② 상위 법령 → 정산 내규 위임 — CQ08 · CQ10",
+          "text": "대규모유통업법 제11조제4항의 납품업자 판촉비 분담률 50% 강행 상한을 파트너 정산내규 제3조가 LEAST(agreed_promo_share_pct, 50%) 산식과 플랫폼 초과분 의무 흡수 규칙으로 구체화합니다.",
+          "mermaid": "---\nconfig:\n  flowchart:\n    rankSpacing: 26\n---\nflowchart TB\n  A[\"BusinessContext<br/>PARTNER_SETTLEMENT · 파트너정산실\"] -->|\"INVOKES_PROVISION<br/>term_key: promo-cost-sharing\"| B[\"Provision · 대규모유통업법 제11조<br/>판촉비 분담 50% 상한\"]\n  B -->|\"DELEGATES_TO_INTERNAL\"| C[\"Provision · 정산내규 제3조<br/>50% 캡 적용 · 초과분 흡수\"]\n",
+          "gql_from": "CQ08",
+          "gql": "MATCH (ctx:BusinessContext {context_id: 'PARTNER_SETTLEMENT'})-[:INVOKES_PROVISION {term_key: 'promo-cost-sharing'}]->(law:Provision)-[:DELEGATES_TO_INTERNAL]->(in_pr:Provision)",
+          "checks": 2,
+          "flowchart": true
+        },
+        {
+          "id": "2-3c",
+          "title": "③ 업권 오적용 차단 — CQ14",
+          "text": "국내 물류센터(김포·용인·양산) 출고 상품의 반품 심사 시 관세청 해외직구 특송물품 반품수수료(35,000원 · 14일) 고시가 혼입되지 않도록 CONFLICTS_BY_SECTOR 엣지로 차단합니다.",
+          "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 14\n    rankSpacing: 26\n---\nflowchart TB\n  C[\"BusinessContext<br/>CX_CS_SUPPORT · CS심사팀\"] -->|\"return-withdrawal-eligibility<br/>7일(6,000원) vs 90일(무상)\"| P[\"Provision · 전자상거래법 제17조\"]\n  P -->|\"CONFLICTS_BY_SECTOR\"| X[\"Provision · 관세청 해외직구 고시<br/>반송비 35,000원 · 국내출고 적용금지\"]\n  class X stop\n",
+          "gql_from": "CQ14",
+          "gql": "MATCH (ctx:BusinessContext {context_id: 'CX_CS_SUPPORT'})-[:INVOKES_PROVISION]->(pr:Provision)-[:CONFLICTS_BY_SECTOR]->(dist:Provision)-[:PART_OF_DOCUMENT]->(doc:SourceDocument {doc_id: 'DOC_06_DISTRACTOR_CUSTOMS'})",
+          "checks": 3,
+          "flowchart": true
+        }
+      ]
+    },
+    "3-1": {
+      "id": "3-1",
+      "kind": "mermaid",
+      "title": "컴포넌트 설계도",
+      "caption": "자율 루프 대신 결정론 오케스트레이터가 실행 순서와 도구 예산(최대 12회)을 통제합니다. Gemini 는 질의 플래닝 · GQL 교정 · 최종 브리핑 합성 3곳(파란색)에서만 호출되며, 모든 그래프 조회(최대 12 hop)와 원문 인출은 가드레일 콜백을 통과해야 실행됩니다.",
+      "sources": [
+        "tools/studio_server.py",
+        "tools/agent_remote_client.py",
+        "agents/starlight-graphrag/app/agent.py",
+        "agents/starlight-graphrag/app/config.py",
+        "agents/starlight-graphrag/app/orchestrator/",
+        "agents/starlight-graphrag/app/callbacks/",
+        "agents/starlight-graphrag/app/tools/",
+        "agents/starlight-graphrag/app/services/",
+        "agents/starlight-graphrag/app/adapters/",
+        "agents/starlight-graphrag/app/domain/"
+      ],
+      "design": "agents/design/graphrag_agent_v0.yaml",
+      "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 18\n    rankSpacing: 28\n---\nflowchart LR\n  W[\"Studio\"]\n  subgraph AE[\"Agent Runtime · Graph Agent\"]\n    E[\"결정론 오케스트레이터<br/>실행 순서 · 도구 예산 12회 통제\"]\n    LM[\"Gemini 3.8 Flash · 호출 3곳<br/>질의 플래닝 · GQL 교정 · 브리핑 합성\"]\n    CB[\"가드레일 · 콜백<br/>엔티티 그라운딩 · Dry-Run 가드<br/>거버넌스 차단 · 인용 검증\"]\n    TL[\"핵심 도구 3종<br/>위상 그래프 조회 · KC 유효성 조회<br/>OKF 원문 인출\"]\n  end\n  subgraph ST[\"3-Plane · 감사 저장소\"]\n    BQ[(\"BigQuery Graph + Spanner 원장<br/>위상 그래프 · 별칭 30\")]\n    KC[(\"Knowledge Catalog<br/>엔트리 · 용어 · 앵커\")]\n    GCS[(\"Cloud Storage<br/>OKF 원문\")]\n    LOG[(\"Cloud Logging<br/>GovernanceIncident\")]\n  end\n  W <-->|\"질의 · 단계 스트림\"| E\n  E --> LM\n  E --> CB\n  E --> TL\n  TL -->|\"GQL 1회\"| BQ\n  TL -->|\"유효성 판정\"| KC\n  TL -->|\"서명 URL 원문\"| GCS\n  CB -.->|\"위반 기록\"| LOG\n  class BQ,KC,GCS,LOG store\n  class LM llm\n",
+      "flowchart": true
+    },
+    "3-2": {
+      "id": "3-2",
+      "kind": "mermaid",
+      "title": "순서도 — Step 0–3 결정론적 실행 흐름",
+      "caption": "에이전트 한 턴의 결정론적 실행 흐름입니다(모듈 05 · 06 의 Step 0–3 실행 내역과 동일). Step 1 은 정적 검사(≤12 hop)와 BigQuery Dry-Run 을 통과할 때까지 최대 3회 자동 교정한 뒤 통과한 GQL 만 딱 1회 실행하며, Step 2 에서 폐기 · 미등록 조문이 감지되면 원문 인출 전에 즉시 답변을 차단합니다.",
+      "sources": [
+        "agents/starlight-graphrag/app/orchestrator/",
+        "agents/starlight-graphrag/app/callbacks/",
+        "agents/starlight-graphrag/app/services/",
+        "agents/starlight-graphrag/app/adapters/",
+        "agents/starlight-graphrag/app/domain/",
+        "tools/agent_remote_client.py"
+      ],
+      "design": "agents/design/graphrag_agent_v0.yaml",
+      "mermaid": "---\nconfig:\n  flowchart:\n    nodeSpacing: 16\n    rankSpacing: 22\n---\nflowchart LR\n  Q0([\"질문 수신\"]) --> S0[\"Step 0 · 그라운딩 · 플래닝<br/>표준 용어 · 엔티티 앵커 바인딩\"]\n  S0 -->|\"도메인 외 · 도움말\"| R0[\"안내 응답 · 도구 0회\"]\n  S0 -->|\"심사 질의\"| S1[\"Step 1 · GQL 검증 · 실행<br/>≤12 hop + Dry-Run → GQL 1회\"]\n  S1 -->|\"Dry-Run 실패 · ≤3회\"| RP[\"GQL 자동 교정<br/>오류 · 이전 시도 반영\"]\n  RP --> S1\n  S1 -->|\"3회 소진 · 반복\"| RF[\"답변 거절 · GQL 미실행\"]\n  S1 -->|\"검증 통과\"| S2[\"Step 2 · KC 유효성 판정<br/>조문 상태 · 대체 조문 확인\"]\n  S2 -->|\"폐기 · 미등록\"| BN[\"GovernanceIncident 발행<br/>원문 인출 차단 · 거절 응답\"]\n  S2 -->|\"유효(ALLOW)\"| S3[\"Step 3 · OKF 원문 인출<br/>ObjectRef 서명 URL → GCS\"]\n  S3 --> SB[\"심사 브리핑 합성<br/>인용 검증 · 최종 답변\"]\n  class S0,RP,SB llm\n  class R0,RF,BN stop\n  class Q0 term\n",
+      "flowchart": true
+    },
+    "3-3": {
+      "id": "3-3",
+      "kind": "mermaid",
+      "title": "시퀀스 다이어그램 — Graph",
+      "caption": "단계가 진행될 때마다 실시간 진행 상태가 Studio 화면으로 스트리밍되고, 마지막에 답변 · 증거 원장 · Knowledge Catalog 판정 · 조문 원문이 함께 반환됩니다. 조문 원문은 BigQuery ObjectRef 서명 URL 을 통해 Cloud Storage 에서 직접 인출합니다.",
+      "sources": [
+        "tools/studio_server.py",
+        "tools/agent_remote_client.py",
+        "agents/starlight-graphrag/app/agent.py",
+        "agents/starlight-graphrag/app/orchestrator/",
+        "agents/starlight-graphrag/app/callbacks/",
+        "agents/starlight-graphrag/app/services/",
+        "agents/starlight-graphrag/app/adapters/",
+        "agents/starlight-graphrag/app/domain/"
+      ],
+      "design": "agents/design/graphrag_agent_v0.yaml",
+      "mermaid": "sequenceDiagram\n  autonumber\n  actor U as 사용자\n  participant W as Studio\n  participant O as Graph Agent<br/>결정론 오케스트레이터\n  participant G as Gemini 3.8 Flash\n  participant B as BigQuery Graph\n  participant K as Knowledge Catalog\n  participant C as Cloud Storage (OKF)\n  U->>W: 질문 입력\n  W->>O: 질의 요청 (스트리밍)\n  Note over O: Step 0 · 표준 용어 · 엔티티 앵커 바인딩\n  O->>G: 질의 플래닝 (모드 · GQL · 조문 슬롯)\n  G-->>O: 실행 계획 반환\n  alt 도메인 외 · 도움말 질의\n    O-->>W: 안내 응답 (도구 0회)\n  else 원장 조회 · Graph 심사 질의\n    O->>B: Step 1 · GQL Dry-Run 검증\n    opt Dry-Run 실패 시 (최대 3회)\n      O->>G: GQL 교정 요청 (오류 · 이전 시도 전달)\n      G-->>O: 교정된 GQL\n      O->>B: Dry-Run 재검증\n    end\n    O->>B: 통과한 GQL 1회 실행\n    B-->>O: 원장 데이터 · 조문 슬롯 반환\n    opt 규정 조문 포함 심사 질의\n      O->>K: Step 2 · 조문 슬롯별 유효성 조회\n      K-->>O: 상태(ALLOW · DEPRECATED) · 대체 조문\n      alt 폐기 · 미등록 조문 감지\n        O-->>W: GovernanceIncident 발행 및 답변 차단\n      else 유효 조문 (ALLOW)\n        O->>B: Step 3 · ObjectRef 서명 URL 발급\n        B-->>O: 서명 URL\n        O->>C: 정본 조문 원문 인출\n        C-->>O: OKF 조문 전문\n      end\n    end\n    O->>G: 원장 + 조문 전문 기반 심사 브리핑 합성\n    G-->>O: 최종 답변 (인용 검증 완료)\n    O-->>W: 최종 답변 · 단계별 근거 반환\n  end\n  W-->>U: Step 0–3 실행 내역 · 답변 표시\n",
+      "flowchart": false
+    },
+    "3-4": {
+      "id": "3-4",
+      "kind": "mermaid",
+      "title": "시퀀스 다이어그램 — Vector RAG",
+      "caption": "비교군 Vector RAG Agent 는 PDF 청크 유사도 검색 1회(top-8)와 BigQuery SQL 조회 1회를 순차 실행합니다. 위상 그래프 탐색 · Knowledge Catalog 유효성 판정 · ObjectRef 정본 인출 단계가 없으며, 원본 PDF 10종을 직접 청킹한 코퍼스를 검색합니다.",
+      "sources": [
+        "agents/starlight-rag-agent/app/agent.py",
+        "agents/starlight-rag-agent/app/data/schema_card.md",
+        "tools/studio_server.py",
+        "tools/rag_remote_client.py"
+      ],
+      "design": "agents/design/rag_agent_v0.yaml",
+      "mermaid": "sequenceDiagram\n  autonumber\n  actor U as 사용자\n  participant S as Studio\n  participant A as RAG Agent<br/>Sequential 파이프라인\n  participant G as Gemini 3.8 Flash\n  participant R as RAG Engine<br/>PDF 10종 코퍼스\n  participant Q as BigQuery<br/>커머스 원장 테이블\n  U->>S: 질문 입력\n  S->>A: 질의 요청 (스트리밍)\n  Note over A: Step 1 · 규정 검색 → Step 2 · 원장 SQL → 답변 생성\n  A->>G: 검색 키워드 생성\n  G-->>A: 검색 질의\n  A->>R: Step 1 · PDF 청크 검색 (top-8, 1회)\n  R-->>A: 유사 청크 · 문서 ID · 유사도 점수\n  A->>G: 원장 조회 SQL 생성\n  G-->>A: SELECT SQL\n  A->>Q: Step 2 · 원장 SQL 실행 (1회 · 읽기 전용)\n  Q-->>A: 조회 결과 행\n  A->>G: 청크 + SQL 결과 기반 답변 생성\n  G-->>A: 최종 답변\n  A-->>S: 최종 답변 · 검색 청크 · SQL 반환\n  S-->>U: Step 1–2 실행 내역 · 답변 표시\n",
+      "flowchart": false
+    }
+  },
+  "gates": [
+    {
+      "id": "G1",
+      "name": "design measured == live",
+      "ok": true,
+      "checked": 19,
+      "errors": 0
+    },
+    {
+      "id": "G2",
+      "name": "graph labels · views · layout == ecommerce/ontology/l1.yaml",
+      "ok": true,
+      "checked": 11,
+      "errors": 0
+    },
+    {
+      "id": "G3",
+      "name": "every Provision node holds no governance columns",
+      "ok": true,
+      "checked": 36,
+      "errors": 0
+    },
+    {
+      "id": "G8",
+      "name": "no project / bucket / instance ids in output",
+      "ok": true,
+      "checked": 4,
+      "errors": 0
+    }
+  ],
+  "findings": [],
+  "sources": {
+    "design": [
+      "ecommerce/ontology/l1.yaml",
+      "ecommerce/ontology/cq/competency_questions.yaml",
+      "ecommerce/ontology/eval_question/eval_questions.yaml"
+    ],
+    "l1": "ecommerce/ontology/l1.yaml",
+    "generator": "tools/generate_ecommerce_studio_data.py"
+  }
+}

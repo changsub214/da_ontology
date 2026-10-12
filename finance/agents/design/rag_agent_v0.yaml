@@ -1,0 +1,155 @@
+# ============================================================================
+# RAG Agent (ADK) — 설계 매니페스트 v0.3.1 (ACCEPTED · 구현·로컬 게이트 반영)
+#   - R0 산출물. 평가 문항은 ontology/eval_question/eval_questions.yaml v1.1.0 (ADR 0004).
+#   - 표시: docs/viewer.html §10. 사용자 결정(2026-09-27): 직접 업로드 예외(ADR 0011) ·
+#     코퍼스 starlight-rag-pdfs(us-central1) · agents/starlight-rag-agent · text-multilingual-embedding-002 ·
+#     기본 파서 512/100 · ADK 전용 · RAG 1 + SQL 1 강제 · 모델 global gemini-3.8-flash.
+#   - v0.3.0 변경 (측정 근거): 코퍼스를 에이전트가 REST 로 생성(사용자 14:43Z "너가 그냥 해줘") ·
+#     Serverless 모드 + RagManagedVertexVectorSearch · rag_step 을 함수호출 강제 검색으로 전환 ·
+#     평가 러너를 1회 실행 + Gemini 판정(맞음/틀림)으로 정리.
+#   - v0.3.1 (2026-09-29 · ADR 0015): 6절 diagrams 추가 — 그림 3-4 Vector RAG 시퀀스(01 Intro 에이전트 탭 ·
+#     viewer §07 ② · §11). 수치는 «rag:top_k» · «rag:files» 자리표시자로만 두고 tools/export_intro_arch.py 가 실측으로 채운다.
+#     에이전트 코드 · 배포는 바뀌지 않음.
+# ============================================================================
+meta:
+  id: rag_agent
+  version: 0.3.1
+  status: accepted            # v0.2.0 사용자 지시(14:29Z·14:31Z) · v0.3.0 = 구현 중 측정으로 바뀐 사실 반영 · v0.3.1 = 그림만 추가
+  created: 2026-09-27
+  updated: 2026-09-29
+  adr: [second_brain/decisions/0004-preregistered-balanced-eval-protocol.md, second_brain/decisions/0011-rag-corpus-upload-exception.md, second_brain/decisions/0012-rag-agent-forced-one-rag-one-sql.md, second_brain/decisions/0015-intro-figure-ssot-mermaid.md]
+  scaffold_root: agents/starlight-rag-agent
+  role_in_eval: "RAG 암 (Baseline) — Vertex AI RAG Engine(원본 PDF 10종) + BigQuery 관계형 SQL. GraphRAG 암(starlight-graphrag)과 EQ 20 으로 비교"
+
+# ----------------------------------------------------------------------------
+# 1. GCP 리소스 (이름은 사용자 지정값)
+# ----------------------------------------------------------------------------
+resources:
+  project_id: finance-ontology-changseop        # env STARLIGHT_PROJECT_ID (Agent Runtime 은 GOOGLE_CLOUD_PROJECT 에 번호를 넣음 — DR-07)
+  region: us-central1
+  rag_engine_config: "Serverless 모드 (2026-09-27 14:45Z 전환 — us-central1 신규 프로젝트는 Spanner 모드가 allowlist 전용이라 생성 400). 이전 값 {basic, spanner.basic}"
+  rag_corpus:
+    display_name: starlight-rag-pdfs
+    resource_name: projects/567090080191/locations/us-central1/ragCorpora/6976207764192231424   # env STARLIGHT_RAG_CORPUS
+    region: us-central1
+    vector_db: "RagManagedVertexVectorSearch (Serverless 모드 기본값 — RagManagedDb 는 Serverless 에서 불가). vectorsearch.googleapis.com 활성화 필요"
+    embedding_model: publishers/google/models/text-multilingual-embedding-002
+    parser: default
+    chunking: {chunk_size: 512, chunk_overlap: 100}
+    ingestion: "tools/rag_corpus.sh create → upload (REST 만, GCS 버킷 없음 — ADR 0011). verify 는 읽기 전용 게이트"
+    file_display_name: "원본 파일명 그대로 (예: 01_FSC_은행업감독규정_전문_2025_07.pdf) → 앞 2자리가 인용 문서 id"
+  source_files: data/un_data/*.pdf (10종 · 142쪽, manifest.yaml)
+  agent_runtime:
+    service_name: starlight-rag-agent
+    service_account: 567090080191-compute@developer.gserviceaccount.com   # GraphRAG 와 동일
+    template: "agents-cli scaffold adk (GraphRAG 와 같은 템플릿 옵션: agent_runtime · is_a2a true · cicd skip)"
+    env: [STARLIGHT_PROJECT_ID, STARLIGHT_RAG_CORPUS]
+  bigquery:
+    dataset: starlight_bank          # 원장 + Spanner 연합 ont_* (GraphRAG 의 finance_graph 노드 뷰가 보는 것과 같은 테이블)
+    location: us-central1
+    reservation: "starlight-graph (GraphRAG 와 같은 예약 — 쿼리 조건 동일)"
+
+# ----------------------------------------------------------------------------
+# 2. 에이전트 (ADK · SequentialAgent 로 "RAG 1회 → SQL 1회 → 답변" 강제)
+# ----------------------------------------------------------------------------
+agent:
+  framework: "ADK 만 사용 (에이전트 코드에서 vertexai SDK 직접 호출 없음 — 사용자 지시 14:31Z). 검색은 ADK VertexAiRagRetrieval 의 자체 의존성 경로"
+  root: {class: google.adk.agents.SequentialAgent, name: starlight_rag_agent}
+  model: gemini-3.8-flash
+  model_location: "global (코드에서 GOOGLE_CLOUD_LOCATION=global 고정 — 사용자 지시 14:47Z, Agent Runtime 주입값도 덮어씀)"
+  generate_content_config: {temperature: 0, seed: 20260927}
+  steps:
+    - name: rag_step
+      class: LlmAgent
+      tools: ["ForcedRagRetrieval(VertexAiRagRetrieval 하위클래스, rag_corpora=[STARLIGHT_RAG_CORPUS], similarity_top_k=8)"]
+      forcing: "tool_config mode=ANY(vertex_rag_search) · before_tool_callback 이 2번째 호출 거부 · after_tool_callback 이 청크(문서 id·파일명·점수·쪽)를 state rag_chunks/rag_evidence 에 저장하고 skip_summarization → 검색 정확히 1회"
+      why_not_builtin: "Gemini 내장 Retrieval 은 모델이 검색 여부를 스스로 결정 — 로컬 스모크 14:59Z 에서 4/4 턴 grounding 0 (REST 로 같은 코퍼스 직접 검색은 정상)"
+    - name: sql_step
+      class: LlmAgent
+      tools: ["BigQueryToolset(tool_filter=[execute_sql], write_mode=BLOCKED, maximum_bytes_billed=2GiB, max_query_result_rows=200)"]
+      forcing: "tool_config mode=ANY(execute_sql) · before_tool_callback 이 2번째 호출 거부 · after_tool_callback 이 결과를 state sql_result 에 저장하고 skip_summarization → SQL 정확히 1회"
+      input: "질문 + rag_evidence + starlight_bank 스키마 카드 (include_contents=none, state 주입)"
+    - name: answer_step
+      class: LlmAgent
+      tools: []
+      does: "질문 + rag_evidence + sql_result 로 최종 답변 (인용 [문서 NN p.X] / [문서 NN 제N조])"
+      masking: "after_model_callback 이 프로젝트 ID/번호 치환"
+  instruction_skeleton:
+    shared_with_graphrag: "역할(별빛은행 여신·리스크·준법 심사 보조) · 인용 규칙 · 산식 표기 골격 (ADR 0004 system_prompt)"
+    schema_card: "starlight_bank 테이블·컬럼을 빌드 시 INFORMATION_SCHEMA 에서 뽑아 app/data/schema_card.md 로 고정 (8 테이블 · 74 컬럼)"
+  budget: "도구 호출 = RAG 1 + SQL 1 고정 (ADR 0004 의 '상한 12' 대신 — 사용자 지시, ADR 0012). GraphRAG 는 결정론 오케스트레이터 그대로"
+
+tools:
+  vertex_rag_search: "app.agent.ForcedRagRetrieval — google.adk.tools.retrieval.VertexAiRagRetrieval 하위클래스 (함수 선언 경로 + 출처 보존)"
+  execute_sql: "google.adk.integrations.bigquery.BigQueryToolset 의 execute_sql (ADK 내장, 쓰기 차단)"
+  not_included: ["graph_query", "kc_lookup", "fetch_provision", "Dataplex KC 접근"]   # 패러다임 분리 — 상대 암 도구 폴백 없음
+
+# ----------------------------------------------------------------------------
+# 3. 게이트 (측정으로만 통과)
+# ----------------------------------------------------------------------------
+gates:
+  R1-G1: "코퍼스 파일 10/10 ACTIVE, 표시 이름 = 로컬 파일명 (tools/rag_corpus.sh verify)"
+  R1-G2: "EQ 근거 문서 id 가 rag_step 청크에 나오는 비율 (기준선, 통과 기준 아님)"
+  R1-G3: "청크 쪽 정보(page_span) 유무 실측 — 없으면 인용 판정은 문서 id / 조문 기준"
+  R2-G1: "로컬 4문항 스모크 (EQ01 원장+규정, EQ09 서술형, EQ18 원장 집계, 도메인 밖 1) — 턴당 vertex_rag_search 1 · execute_sql 1"
+  R2-G2: "음성 대조: execute_sql 에 DROP/DELETE/CTAS → 거부(write_mode BLOCKED), SELECT 대조군 성공"
+  R2-G3: "마스킹: 응답에 프로젝트 ID/번호 0건"
+  R3-G1: "원격 = 로컬: 같은 4문항 도구 호출 수·검색 문서·답 비교 (S13-G3 방식)"
+
+# ----------------------------------------------------------------------------
+# 4. 비교 실행·리포트 (R4 · R5 — 사용자 결정 2026-09-27: 라이브 시연용, 점수 없음)
+# ----------------------------------------------------------------------------
+eval_run:
+  arms:
+    rag: "Agent Runtime starlight-rag-agent (REST :streamQuery)"
+    graphrag: "Agent Runtime starlight-graphrag (tools/agent_remote_client.py)"
+  runs_per_question: 1
+  judging: "Gemini 판정기 — 문항별 맞음/틀림 + 틀린 부분 스팬 + 판정 근거 (수치 점수 없음). 결과는 정적 JSON 으로 한 번 고정"
+  scope: "EQ 20 전부 표시 (GraphRAG 가 틀린 문항 포함 — 원인은 EQ 오류·의도적 만료 문서·원천 데이터 부족일 수 있음, 사용자 판단)"
+  ui: "okf_veri_web 06 모듈 (js/mod-benchmark.js) — 기본 화면은 에이전트 2개 분할 라이브 질의(왼쪽 EQ 20 사이드바 · 좌 RAG / 우 GraphRAG 채팅 · 하단 공통 입력창이 /api/rag/chat/stream 과 /api/agent/chat/stream 을 병렬 호출), 우상단 [라이브 질의 | 비교리포트] 메뉴로 정적 비교 리포트(okf_veri_web/data/eq_compare.json: 상단 에이전트별 맞은 개수 대시보드 · 문항별 맞음/틀림 · 범위 규칙 배지 · 틀린 부분 원문 하이라이트 · 공개 메모) 전환 (사용자 결정 2026-09-28 03:32Z)"
+
+# ----------------------------------------------------------------------------
+# 5. 공정성 메모 (리포트에 그대로 표시)
+# ----------------------------------------------------------------------------
+fairness_notes:
+  - "GraphRAG 는 결정론 오케스트레이터(ADR 0007), RAG 는 SequentialAgent 로 검색 1 · SQL 1 이 고정된 파이프라인이다."
+  - "같은 모델(global gemini-3.8-flash)·temperature 0. seed 는 RAG 에 고정값을 주고, GraphRAG 는 현재 엔진 설정을 기록한다."
+  - "원장 가시성 동일: RAG 는 starlight_bank.* 를 SQL 로, GraphRAG 는 같은 테이블 위의 finance_graph 노드 뷰를 GQL 로 본다."
+  - "RAG 코퍼스에는 09_DISTRACTOR(저축은행) 문서도 들어간다 — 사전등록 설계 그대로."
+
+# ----------------------------------------------------------------------------
+# 6. 그림 원천 (ADR 0015) — 스튜디오 01 Intro 의 비교군 시퀀스(그림 3-4). 규칙은
+#    agents/design/graphrag_agent_v0.yaml `diagrams.conventions` 와 같다: «key» = export 시점 실측 · 코드 상수,
+#    식별자는 sources 파일에 실제로 있어야 함. tools/export_intro_arch.py 가 검사 · 생성.
+# ----------------------------------------------------------------------------
+diagrams:
+  figures:
+    - id: "3-4"
+      kind: mermaid
+      title: "시퀀스 다이어그램 — Vector RAG"
+      caption: "비교군 Vector RAG Agent 는 PDF 청크 유사도 검색 1회(top-«rag:top_k»)와 BigQuery SQL 조회 1회를 순차 실행합니다. 위상 그래프 탐색 · Knowledge Catalog 유효성 판정 · ObjectRef 정본 인출 단계가 없으며, 원본 PDF «rag:files»종을 직접 청킹한 코퍼스를 검색합니다."
+      sources: [agents/starlight-rag-agent/app/agent.py, agents/starlight-rag-agent/app/data/schema_card.md, tools/studio_server.py, tools/rag_remote_client.py]
+      mermaid: |
+        sequenceDiagram
+          autonumber
+          actor U as 사용자
+          participant S as Studio
+          participant A as RAG Agent<br/>Sequential 파이프라인
+          participant G as Gemini 3.8 Flash
+          participant R as RAG Engine<br/>PDF «rag:files»종 코퍼스
+          participant Q as BigQuery<br/>여신 원장 테이블
+          U->>S: 질문 입력
+          S->>A: 질의 요청 (스트리밍)
+          Note over A: Step 1 · 규정 검색 → Step 2 · 원장 SQL → 답변 생성
+          A->>G: 검색 키워드 생성
+          G-->>A: 검색 질의
+          A->>R: Step 1 · PDF 청크 검색 (top-«rag:top_k», 1회)
+          R-->>A: 유사 청크 · 문서 ID · 유사도 점수
+          A->>G: 원장 조회 SQL 생성
+          G-->>A: SELECT SQL
+          A->>Q: Step 2 · 원장 SQL 실행 (1회 · 읽기 전용)
+          Q-->>A: 조회 결과 행
+          A->>G: 청크 + SQL 결과 기반 답변 생성
+          G-->>A: 최종 답변
+          A-->>S: 최종 답변 · 검색 청크 · SQL 반환
+          S-->>U: Step 1–2 실행 내역 · 답변 표시

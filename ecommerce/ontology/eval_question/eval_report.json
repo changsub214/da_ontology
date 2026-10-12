@@ -1,0 +1,2504 @@
+{
+ "generated_at": "2026-10-06T11:32:25+00:00",
+ "source": "ontology/eval_question/eval_questions.yaml",
+ "summary": {
+  "EQ-G1_quote": {
+   "pass": 40,
+   "total": 40
+  },
+  "EQ-G2_queries": {
+   "pass": 20,
+   "total": 20
+  },
+  "EQ-G3_allocation": {
+   "pass": 1,
+   "total": 1
+  },
+  "EQ-G4_holdout": {
+   "pass": 20,
+   "total": 20
+  },
+  "EQ-G5_grading": {
+   "pass": 20,
+   "total": 20
+  },
+  "EQ-G6_structure": {
+   "pass": 1,
+   "total": 1
+  }
+ },
+ "negative_controls": {
+  "NC1_fake_quote→EQ-G1": true,
+  "NC2_rigged_allocation→EQ-G3": true,
+  "NC3_holdout_leak→EQ-G4": true,
+  "NC4_wrong_gold→EQ-G5": true
+ },
+ "result": "PASS",
+ "gates": {
+  "EQ-G1_quote": [
+   {
+    "eq": "EQ01",
+    "doc": "07",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조"
+   },
+   {
+    "eq": "EQ01",
+    "doc": "07",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제4조(회원 등급별 타겟팅 쿠폰 할인율 상한 및 마진 가드레일 연동) ① 마케팅 수신동의(`marketing"
+   },
+   {
+    "eq": "EQ01",
+    "doc": "08",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠"
+   },
+   {
+    "eq": "EQ02",
+    "doc": "04",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제3조(실시간 재고 및 품절 표시의 정확성) ① 사업자가 '품절 임박', '잔여 재고 N개' 등의 문구를 노"
+   },
+   {
+    "eq": "EQ02",
+    "doc": "07",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조"
+   },
+   {
+    "eq": "EQ02",
+    "doc": "08",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(체화재고의 정의 및 클리어런스 마진 하한 완화 특례) ① 물류 원장(`inventory_items`)"
+   },
+   {
+    "eq": "EQ03",
+    "doc": "08",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠"
+   },
+   {
+    "eq": "EQ03",
+    "doc": "08",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제4조(캠페인 예외승인 원장 검증 및 우회 기준) ① 체화재고 완화 요건이나 상시 마진율 25% 기준에 대한"
+   },
+   {
+    "eq": "EQ04",
+    "doc": "03",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제17조(청약철회등) ① 통신판매업자와 재화등의 구매에 관한 계약을 체결한 소비자는 다음 각 호의 기간(거래"
+   },
+   {
+    "eq": "EQ04",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청"
+   },
+   {
+    "eq": "EQ05",
+    "doc": "01",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "③ 제1항 및 제2항에 따른 판매촉진비용의 분담비율은 대규모유통업자와 납품업자등이 해당 판매촉진행사를 통하여"
+   },
+   {
+    "eq": "EQ05",
+    "doc": "02",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "4. 납품업자 분담비율 50% 상한선 준수 및 초과분 처리 가. 법 제11조제4항에 따라 납품업자의 판매촉진"
+   },
+   {
+    "eq": "EQ05",
+    "doc": "09",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(납품업자 쿠폰 분담비율 50% 법정 상한 적용 및 초과분 K마켙 흡수 원칙) ① 사전 서면약정(`si"
+   },
+   {
+    "eq": "EQ06",
+    "doc": "01",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "③ 제1항 및 제2항에 따른 판매촉진비용의 분담비율은 대규모유통업자와 납품업자등이 해당 판매촉진행사를 통하여"
+   },
+   {
+    "eq": "EQ06",
+    "doc": "02",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "5. 법 제11조제5항 단서(자발성·차별성 요건) 예외의 엄격한 심사기준 가. 법 제11조제5항 단서에 따라"
+   },
+   {
+    "eq": "EQ06",
+    "doc": "09",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제4조(납품업자 자발적·차별화 단독 행사 예외의 엄격한 요건) ① 대규모유통업법 제11조제5항 단서에 따라 "
+   },
+   {
+    "eq": "EQ07",
+    "doc": "06",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적 및 적용범위) ① 이 고시는 「관세법」 제254조의2에 따라 외국 전자상거래 쇼핑몰 또는 해외 "
+   },
+   {
+    "eq": "EQ07",
+    "doc": "06",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(해외직구 물품의 반송기한 및 반송수수료 특례) ① 해외직구 특송물품에 대하여 수하인이 반입 후 14일"
+   },
+   {
+    "eq": "EQ07",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(대금 환급 기한 및 지연배상금 산정) ① 전자상거래법 제18조제2항에 따라 반품 상품이 물류센터에 회"
+   },
+   {
+    "eq": "EQ08",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제4조(물류센터별 출고 SLA 기준 및 출고지연 자동 보상) ① 풀필먼트운영실은 물류 원장(`inventor"
+   },
+   {
+    "eq": "EQ09",
+    "doc": "01",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제6조(서면의 즉시 교부 및 계약사항 명시) ① 대규모유통업자는 납품업자등과 계약을 체결한 즉시 거래형태, "
+   },
+   {
+    "eq": "EQ09",
+    "doc": "01",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "제12조(배타적 거래 강요 금지) 대규모유통업자는 부당하게 납품업자등에게 경쟁 온라인쇼핑몰이나 타 유통채널과"
+   },
+   {
+    "eq": "EQ10",
+    "doc": "02",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "1. 목적 이 지침은 「대규모유통업에서의 거래공정화에 관한 법률」(이하 \"법\"이라 한다) 제11조(판매촉진비"
+   },
+   {
+    "eq": "EQ10",
+    "doc": "02",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "3. 사전 서면약정 체결 시점 및 방식 가. 사전 서면약정은 해당 프로모션이나 쿠폰 발급이 개시되기 이전에 "
+   },
+   {
+    "eq": "EQ11",
+    "doc": "03",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "제21조의2(온라인 인터페이스 운영에 있어서의 눈속임 상술 금지) 전자상거래를 하는 사업자 또는 통신판매업자"
+   },
+   {
+    "eq": "EQ11",
+    "doc": "04",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 가이드라인은 온라인 쇼핑몰 및 모바일 커머스 플랫폼이 소비자에게 제공하는 상품 추천, 할인"
+   },
+   {
+    "eq": "EQ12",
+    "doc": "05",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 가이드라인은 전자상거래 사업자가 이용자의 웹사이트 및 모바일 앱 방문이력, 상품 조회, 장"
+   },
+   {
+    "eq": "EQ12",
+    "doc": "05",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제4조(행태정보 보유기간 및 통제권 보장) ① 맞춤형 추천 및 타겟팅 광고 목적으로 수집된 상세 이벤트 로그"
+   },
+   {
+    "eq": "EQ13",
+    "doc": "03",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "제18조(청약철회등의 효과) ① 소비자는 제17조제1항 또는 제3항에 따라 청약철회등을 한 경우에는 이미 공"
+   },
+   {
+    "eq": "EQ13",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(대금 환급 기한 및 지연배상금 산정) ① 전자상거래법 제18조제2항에 따라 반품 상품이 물류센터에 회"
+   },
+   {
+    "eq": "EQ14",
+    "doc": "01",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제10조(상품의 반품 금지) ① 대규모유통업자는 정당한 사유 없이 납품받은 상품의 전부 또는 일부를 반품하여"
+   },
+   {
+    "eq": "EQ15",
+    "doc": "08",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠"
+   },
+   {
+    "eq": "EQ16",
+    "doc": "05",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(식별 결합 행태정보 기반 타겟팅 마케팅의 동의 요건) ① 전자상거래 사업자가 특정 회원(`user_i"
+   },
+   {
+    "eq": "EQ16",
+    "doc": "07",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 주식회사 K마켙(이하 \"당사\"라 한다)이 운영하는 온라인 패션·라이프스타일 플랫폼에"
+   },
+   {
+    "eq": "EQ17",
+    "doc": "03",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "② 소비자는 다음 각 호의 어느 하나에 해당하는 경우에는 통신판매업자의 의사에 반하여 제1항에 따른 청약철회"
+   },
+   {
+    "eq": "EQ17",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청"
+   },
+   {
+    "eq": "EQ18",
+    "doc": "03",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제17조(청약철회등) ① 통신판매업자와 재화등의 구매에 관한 계약을 체결한 소비자는 다음 각 호의 기간(거래"
+   },
+   {
+    "eq": "EQ18",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청"
+   },
+   {
+    "eq": "EQ19",
+    "doc": "07",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조"
+   },
+   {
+    "eq": "EQ20",
+    "doc": "07",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "제1조(목적) 이 내규는 주식회사 K마켙(이하 \"당사\"라 한다)이 운영하는 온라인 패션·라이프스타일 플랫폼에"
+   }
+  ],
+  "EQ-G2_queries": [
+   {
+    "eq": "EQ01#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ02#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ03#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ04#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ05#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ06#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ07#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ08#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ09#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ10#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ11#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ12#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ13#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ14#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2
+   },
+   {
+    "eq": "EQ15#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ16#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ17#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ18#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   },
+   {
+    "eq": "EQ19#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 4
+   },
+   {
+    "eq": "EQ20#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1
+   }
+  ],
+  "EQ-G3_allocation": [
+   {
+    "ok": true,
+    "errors": [],
+    "allocation": {
+     "graph_favored": 8,
+     "rag_favored": 6,
+     "parity": 6
+    }
+   }
+  ],
+  "EQ-G4_holdout": [
+   {
+    "eq": "EQ01",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.236,
+    "nearest_cq": "CQ01"
+   },
+   {
+    "eq": "EQ02",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.126,
+    "nearest_cq": "CQ01"
+   },
+   {
+    "eq": "EQ03",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.183,
+    "nearest_cq": "CQ03"
+   },
+   {
+    "eq": "EQ04",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.07,
+    "nearest_cq": "CQ05"
+   },
+   {
+    "eq": "EQ05",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.201,
+    "nearest_cq": "CQ08"
+   },
+   {
+    "eq": "EQ06",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.121,
+    "nearest_cq": "CQ10"
+   },
+   {
+    "eq": "EQ07",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.137,
+    "nearest_cq": "CQ14"
+   },
+   {
+    "eq": "EQ08",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.101,
+    "nearest_cq": "CQ15"
+   },
+   {
+    "eq": "EQ09",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.091,
+    "nearest_cq": "CQ11"
+   },
+   {
+    "eq": "EQ10",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.078,
+    "nearest_cq": "CQ19"
+   },
+   {
+    "eq": "EQ11",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.134,
+    "nearest_cq": "CQ20"
+   },
+   {
+    "eq": "EQ12",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.141,
+    "nearest_cq": "CQ16"
+   },
+   {
+    "eq": "EQ13",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.091,
+    "nearest_cq": "CQ11"
+   },
+   {
+    "eq": "EQ14",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.102,
+    "nearest_cq": "CQ11"
+   },
+   {
+    "eq": "EQ15",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.094,
+    "nearest_cq": "CQ09"
+   },
+   {
+    "eq": "EQ16",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.121,
+    "nearest_cq": "CQ16"
+   },
+   {
+    "eq": "EQ17",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.1,
+    "nearest_cq": "CQ12"
+   },
+   {
+    "eq": "EQ18",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.16,
+    "nearest_cq": "CQ13"
+   },
+   {
+    "eq": "EQ19",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.045,
+    "nearest_cq": "CQ01"
+   },
+   {
+    "eq": "EQ20",
+    "ok": true,
+    "errors": [],
+    "max_jaccard": 0.149,
+    "nearest_cq": "CQ04"
+   }
+  ],
+  "EQ-G5_grading": [
+   {
+    "eq": "EQ01",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ02",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ03",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ04",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ05",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ06",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ07",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ08",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ09",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ10",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ11",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ12",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ13",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ14",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ15",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ16",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ17",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ18",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ19",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "eq": "EQ20",
+    "ok": true,
+    "errors": []
+   }
+  ],
+  "EQ-G6_structure": [
+   {
+    "ok": true,
+    "errors": []
+   }
+  ]
+ },
+ "measured": {
+  "EQ01#1": {
+   "columns": [
+    "user_id",
+    "membership_tier",
+    "main_product_id",
+    "main_realized_margin_pct",
+    "coord_product_id",
+    "coord_realized_margin_pct",
+    "coord_age_days",
+    "allowed_coupon_discount_krw",
+    "final_bundle_price_krw"
+   ],
+   "rows": [
+    {
+     "user_id": "USR-1002",
+     "membership_tier": "VIP",
+     "main_product_id": "PRD-3003",
+     "main_realized_margin_pct": 29.4,
+     "coord_product_id": "PRD-3004",
+     "coord_realized_margin_pct": 23.5,
+     "coord_age_days": 25,
+     "allowed_coupon_discount_krw": 30000,
+     "final_bundle_price_krw": 270000
+    }
+   ]
+  },
+  "EQ02#1": {
+   "columns": [
+    "main_product_id",
+    "main_avail_qty",
+    "substitute_product_id",
+    "sub_age_days",
+    "sub_avail_qty",
+    "clearance_floor_margin_pct"
+   ],
+   "rows": [
+    {
+     "main_product_id": "PRD-3009",
+     "main_avail_qty": 0,
+     "substitute_product_id": "PRD-3002",
+     "sub_age_days": 125,
+     "sub_avail_qty": 50,
+     "clearance_floor_margin_pct": 10.0
+    }
+   ]
+  },
+  "EQ03#1": {
+   "columns": [
+    "product_id",
+    "age_days",
+    "base_margin_pct",
+    "approval_id",
+    "target_kind",
+    "approved_floor_margin_pct",
+    "status"
+   ],
+   "rows": [
+    {
+     "product_id": "PRD-3012",
+     "age_days": 35,
+     "base_margin_pct": 22.0,
+     "approval_id": "EXC-KM-2026-07",
+     "target_kind": "VIP_RETENTION",
+     "approved_floor_margin_pct": 12.0,
+     "status": "ACTIVE"
+    }
+   ]
+  },
+  "EQ04#1": {
+   "columns": [
+    "md_total_return_cnt",
+    "cs_seller_fault_cnt",
+    "diff_cnt"
+   ],
+   "rows": [
+    {
+     "md_total_return_cnt": 6,
+     "cs_seller_fault_cnt": 3,
+     "diff_cnt": 3
+    }
+   ]
+  },
+  "EQ05#1": {
+   "columns": [
+    "brand_id",
+    "promo_item_cnt",
+    "total_discount_krw",
+    "contract_60pct_krw",
+    "legal_50pct_krw",
+    "kmarket_excess_absorbed_krw"
+   ],
+   "rows": [
+    {
+     "brand_id": "BRD-01",
+     "promo_item_cnt": 4,
+     "total_discount_krw": 300000,
+     "contract_60pct_krw": 180000,
+     "legal_50pct_krw": 150000,
+     "kmarket_excess_absorbed_krw": 30000
+    }
+   ]
+  },
+  "EQ06#1": {
+   "columns": [
+    "item_id",
+    "brand_id",
+    "coupon_discount_krw",
+    "approval_id",
+    "status",
+    "vendor_share_krw",
+    "kmarket_share_krw"
+   ],
+   "rows": [
+    {
+     "item_id": "OIT-2026-0017",
+     "brand_id": "BRD-05",
+     "coupon_discount_krw": 60000,
+     "approval_id": "EXC-KM-2026-03",
+     "status": "ACTIVE",
+     "vendor_share_krw": 42000,
+     "kmarket_share_krw": 18000
+    }
+   ]
+  },
+  "EQ07#1": {
+   "columns": [
+    "item_id",
+    "order_id",
+    "distribution_center_id",
+    "return_reason_cd",
+    "sale_price_krw",
+    "customer_return_fee_krw",
+    "refund_amount_krw"
+   ],
+   "rows": [
+    {
+     "item_id": "OIT-2026-0018",
+     "order_id": "ORD-2026-0012",
+     "distribution_center_id": "DC-YIN",
+     "return_reason_cd": "SIZE_MISMATCH_SPEC_DIFF",
+     "sale_price_krw": 100000,
+     "customer_return_fee_krw": 0,
+     "refund_amount_krw": 100000
+    }
+   ]
+  },
+  "EQ08#1": {
+   "columns": [
+    "total_breach_orders",
+    "dc_yin_breach_cnt",
+    "dc_bus_breach_cnt",
+    "total_compensation_points"
+   ],
+   "rows": [
+    {
+     "total_breach_orders": 3,
+     "dc_yin_breach_cnt": 2,
+     "dc_bus_breach_cnt": 1,
+     "total_compensation_points": 9000
+    }
+   ]
+  },
+  "EQ09#1": {
+   "columns": [
+    "total_brands",
+    "signed_brands"
+   ],
+   "rows": [
+    {
+     "total_brands": 8,
+     "signed_brands": 7
+    }
+   ]
+  },
+  "EQ10#1": {
+   "columns": [
+    "brand_id",
+    "brand_name",
+    "agreed_promo_share_pct"
+   ],
+   "rows": [
+    {
+     "brand_id": "BRD-03",
+     "brand_name": "마린블루",
+     "agreed_promo_share_pct": 50.0
+    }
+   ]
+  },
+  "EQ11#1": {
+   "columns": [
+    "active_products"
+   ],
+   "rows": [
+    {
+     "active_products": 30
+    }
+   ]
+  },
+  "EQ12#1": {
+   "columns": [
+    "event_cnt",
+    "session_cnt"
+   ],
+   "rows": [
+    {
+     "event_cnt": 11,
+     "session_cnt": 6
+    }
+   ]
+  },
+  "EQ13#1": {
+   "columns": [
+    "returned_cnt",
+    "returned_amount_krw"
+   ],
+   "rows": [
+    {
+     "returned_cnt": 5,
+     "returned_amount_krw": 650000
+    }
+   ]
+  },
+  "EQ14#1": {
+   "columns": [
+    "brand_id",
+    "brand_name"
+   ],
+   "rows": [
+    {
+     "brand_id": "BRD-05",
+     "brand_name": "노르딕아웃도어"
+    },
+    {
+     "brand_id": "BRD-08",
+     "brand_name": "케이마켙PB"
+    }
+   ]
+  },
+  "EQ15#1": {
+   "columns": [
+    "item_id",
+    "sale_price_krw",
+    "cost_krw",
+    "realized_margin_pct"
+   ],
+   "rows": [
+    {
+     "item_id": "OIT-2026-0001",
+     "sale_price_krw": 340000,
+     "cost_krw": 240000,
+     "realized_margin_pct": 29.4
+    }
+   ]
+  },
+  "EQ16#1": {
+   "columns": [
+    "user_id",
+    "user_name",
+    "membership_tier",
+    "marketing_opt_in_yn"
+   ],
+   "rows": [
+    {
+     "user_id": "USR-1004",
+     "user_name": "최현우",
+     "membership_tier": "VIP",
+     "marketing_opt_in_yn": "N"
+    }
+   ]
+  },
+  "EQ17#1": {
+   "columns": [
+    "item_id",
+    "product_id",
+    "sale_price_krw",
+    "approval_id",
+    "hologram_tag_intact_yn"
+   ],
+   "rows": [
+    {
+     "item_id": "OIT-2026-0014",
+     "product_id": "PRD-3007",
+     "sale_price_krw": 90000,
+     "approval_id": "EXC-KM-2026-05",
+     "hologram_tag_intact_yn": "N"
+    }
+   ]
+  },
+  "EQ18#1": {
+   "columns": [
+    "item_id",
+    "sale_price_krw",
+    "return_ship_fee_krw",
+    "net_refund_krw"
+   ],
+   "rows": [
+    {
+     "item_id": "OIT-2026-0007",
+     "sale_price_krw": 200000,
+     "return_ship_fee_krw": 6000,
+     "net_refund_krw": 194000
+    }
+   ]
+  },
+  "EQ19#1": {
+   "columns": [
+    "stock_status",
+    "item_cnt",
+    "total_qty"
+   ],
+   "rows": [
+    {
+     "stock_status": "AVAILABLE",
+     "item_cnt": 28,
+     "total_qty": 715
+    },
+    {
+     "stock_status": "OUT_OF_STOCK",
+     "item_cnt": 2,
+     "total_qty": 0
+    },
+    {
+     "stock_status": "RESERVED",
+     "item_cnt": 1,
+     "total_qty": 10
+    },
+    {
+     "stock_status": "RETURN_INSPECTION",
+     "item_cnt": 1,
+     "total_qty": 15
+    }
+   ]
+  },
+  "EQ20#1": {
+   "columns": [
+    "session_id",
+    "user_id",
+    "product_id",
+    "membership_tier"
+   ],
+   "rows": [
+    {
+     "session_id": "SES-1008-A",
+     "user_id": "USR-1008",
+     "product_id": "PRD-3004",
+     "membership_tier": "VIP"
+    }
+   ]
+  }
+ },
+ "spec": {
+  "meta": {
+   "version": "1.1.0",
+   "created": "2026-10-06",
+   "updated": "2026-10-06",
+   "status": "approved",
+   "allocation": {
+    "graph_favored": 8,
+    "rag_favored": 6,
+    "parity": 6
+   },
+   "holdout_from": "ecommerce/ontology/cq/competency_questions.yaml"
+  },
+  "protocol": {
+   "arms": {
+    "rag": {
+     "retrieval": "GCP Vertex AI RAG Engine — ecommerce/data/un_data/*.pdf 10종 벡터 검색 + BigQuery 관계형 SQL",
+     "tools": [
+      "vertex_rag_search",
+      "bigquery_sql"
+     ]
+    },
+    "graphrag": {
+     "retrieval": "단일 통합 GraphRAG 파이프라인 — Alias(34행) & KC Aspect 고정 GQL 템플릿 바인딩 → GQL 플래너 + BQ Dry-Run 검증 → KC 유효성 검증(kc_lookup) → 단일 통합 GQL(graph_query) + ObjectRef 원문 조회(fetch_provision)",
+     "tools": [
+      "graph_query",
+      "kc_lookup",
+      "fetch_provision"
+     ]
+    }
+   },
+   "scoring": {
+    "per_question": "2 = must_include 전부 + must_not_include 0 + 필수 인용 충족 / 1 = must_include 절반 이상 & must_not_include 0 / 0 = 그 외",
+    "judge": "정규식 기반 결정론적 채점 (LLM-judge 미사용)"
+   }
+  },
+  "sources": {
+   "01": {
+    "file": "01_LAW_대규모유통업법_전문_2025.pdf",
+    "authority": "binding"
+   },
+   "02": {
+    "file": "02_FTC_대규모유통업법_판매촉진비용부담전가_심사지침_2025.pdf",
+    "authority": "advisory"
+   },
+   "03": {
+    "file": "03_LAW_전자상거래법_전문_2025.pdf",
+    "authority": "binding"
+   },
+   "04": {
+    "file": "04_FTC_전자상거래_다크패턴_및_맞춤형광고_가이드라인_2025.pdf",
+    "authority": "advisory"
+   },
+   "05": {
+    "file": "05_PIPC_온라인_맞춤형광고_행태정보_가이드라인_2025.pdf",
+    "authority": "advisory"
+   },
+   "06": {
+    "file": "06_DISTRACTOR_관세청_해외직구_목록통관_및_특송물품_고시_2025.pdf",
+    "authority": "distractor"
+   },
+   "07": {
+    "file": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+    "authority": "internal"
+   },
+   "08": {
+    "file": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+    "authority": "internal"
+   },
+   "09": {
+    "file": "09_INTERNAL_K마켙_입점브랜드_공동프로모션_정산내규_2025.pdf",
+    "authority": "internal"
+   },
+   "10": {
+    "file": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+    "authority": "internal"
+   }
+  },
+  "questions": [
+   {
+    "id": "EQ01",
+    "category": "graph_favored",
+    "sibling_cq": "CQ01",
+    "question": "박준혁 고객이 장바구니 세션 SES-1002-A에 담아둔 주상품 PRD-3003과 코디상품 PRD-3004를 묶어 15% 번들 쿠폰 할인을 적용하려고 할 때, 각 상품의 마진 가드레일 충족 여부를 반영한 합산 할인액과 최종 결제 제안 금액은 얼마인가?",
+    "expected_winner": "graphrag",
+    "rationale": "장바구니 세션(SES-1002-A) → 주상품(PRD-3003, 정상가 200,000원, 원가 120,000원)은 15% 할인 시 실결제가 170,000원으로 할인 후 실현마진율 29.4% ≥ 25% 가드레일을 통과(30,000원 할인)하나, 코디상품(PRD-3004, 정상가 100,000원, 원가 65,000원, 기본마진 35%)은 15% 할인 시 실결제가 85,000원으로 할인 후 실현마진율이 23.5% < 25.0%로 하락하며 비체화(입고 25일차)·예외승인 부재로 쿠폰 할인이 차단(0원 할인, 정가 100,000원 유지)되어 합산 할인액 30,000원·최종 제안가 270,000원을 도출해야 함.",
+    "evidence": [
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조회 고객에게 상품을 추천할 때에는 먼저 물류 원장(`inventory_items`)의 실시"
+     },
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 2,
+      "locator": "제4조~제5조",
+      "section": "제4조~제5조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제4조(회원 등급별 타겟팅 쿠폰 할인율 상한 및 마진 가드레일 연동) ① 마케팅 수신동의(`marketing_opt_in = True`)가 확인된 회원에 대하여 부여할 수 있는 CRM 타겟팅 쿠폰의"
+     },
+     {
+      "doc": "08",
+      "pdf": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠폰 남발로 인한 역마진을 방지하기 위하여, 상품 마진율 산정 산식과 상시 최저마진 가드레일"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  u.user_id,\n  u.membership_tier,\n  p1.product_id AS main_product_id,\n  ROUND((p1.retail_price_krw * 0.85 - p1.cost_krw) / (p1.retail_price_krw * 0.85) * 100, 1) AS main_realized_margin_pct,\n  p2.product_id AS coord_product_id,\n  ROUND((p2.retail_price_krw * 0.85 - p2.cost_krw) / (p2.retail_price_krw * 0.85) * 100, 1) AS coord_realized_margin_pct,\n  inv2.age_days AS coord_age_days,\n  CAST(p1.retail_price_krw * 0.15 AS INT64) AS allowed_coupon_discount_krw,\n  CAST(p1.retail_price_krw * 0.85 + p2.retail_price_krw AS INT64) AS final_bundle_price_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_events` e\nJOIN `finance-ontology-changseop.kmarket_ecommerce.users` u ON e.user_id = u.user_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p1 ON e.product_id = p1.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p2 ON p1.coord_product_id = p2.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv2 ON p2.product_id = inv2.product_id\nWHERE e.session_id = 'SES-1002-A' AND e.event_type = 'cart'",
+      "expect": {
+       "scalar": {
+        "user_id": "USR-1002",
+        "membership_tier": "VIP",
+        "main_product_id": "PRD-3003",
+        "main_realized_margin_pct": 29.4,
+        "coord_product_id": "PRD-3004",
+        "coord_realized_margin_pct": 23.5,
+        "coord_age_days": 25,
+        "allowed_coupon_discount_krw": 30000,
+        "final_bundle_price_krw": 270000
+       }
+      }
+     }
+    ],
+    "gold_answer": "합산 쿠폰 할인액은 30,000원이며 최종 번들 결제 제안 금액은 270,000원이다. 주상품 PRD-3003(정상가 200,000원, 매입원가 120,000원)은 15% 할인(30,000원) 시 실결제가 170,000원 기준 실현마진율이 29.4%로 상시 가드레일(25.0%)을 충족하지만, 코디상품 PRD-3004(정상가 100,000원, 매입원가 65,000원, 기본마진 35.0%)는 15% 할인(15,000원) 시 실결제가 85,000원 기준 실현마진율이 23.5%로 하락하여 상시 최저마진율(25.0%)에 미달하고, 입고 경과일수 25일차(비체화) 및 예외승인 부재로 쿠폰 할인이 차단(0원 할인, 정가 100,000원 유지)되기 때문이다.",
+    "grading": {
+     "must_include": [
+      "30,?000",
+      "270,?000",
+      "23\\.5%"
+     ],
+     "must_not_include": [
+      "255,?000"
+     ],
+     "cite": [
+      {
+       "doc": "07",
+       "locator": "제3조"
+      },
+      {
+       "doc": "08",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ02",
+    "category": "graph_favored",
+    "sibling_cq": "CQ02",
+    "question": "장바구니 세션 SES-1007-A에서 고객이 담은 상품 PRD-3009는 현재 출고 가능한 재고가 있는가? 만약 품절이라면 대체 추천해야 할 상품 코드와 해당 대체상품의 체화재고 기준에 따른 최저마진율 하한은 몇 %인가?",
+    "expected_winner": "graphrag",
+    "rationale": "행동로그(SES-1007-A) → 주상품(PRD-3009) 재고(avail_qty=0 품절) 확인 → 대체상품(PRD-3002) 전환 → 대체상품 입고 경과일수(125일, 50개) 및 MD 내규 제3조(체화재고 10% 마진 하한 완화)까지 다중 홉 그래프 순회가 필요함.",
+    "evidence": [
+     {
+      "doc": "04",
+      "pdf": "04_FTC_전자상거래_다크패턴_및_맞춤형광고_가이드라인_2025.pdf",
+      "page": 1,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "제3조(실시간 재고 및 품절 표시의 정확성) ① 사업자가 '품절 임박', '잔여 재고 N개' 등의 문구를 노출할 때에는 물류센터의 실시간 가용재고(`available_stock`) 원장 데이터와 일"
+     },
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조회 고객에게 상품을 추천할 때에는 먼저 물류 원장(`inventory_items`)의 실시"
+     },
+     {
+      "doc": "08",
+      "pdf": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(체화재고의 정의 및 클리어런스 마진 하한 완화 특례) ① 물류 원장(`inventory_items`)상 입고 후 경과일수(`stock_age_days`)가 90일 이상이고 가용재고(`avai"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  p.product_id AS main_product_id,\n  inv.avail_qty AS main_avail_qty,\n  p.substitute_product_id,\n  inv_sub.age_days AS sub_age_days,\n  inv_sub.avail_qty AS sub_avail_qty,\n  CASE WHEN inv_sub.age_days >= 90 AND inv_sub.avail_qty >= 30 THEN 10.0 ELSE 25.0 END AS clearance_floor_margin_pct\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_events` e\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p ON e.product_id = p.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv ON p.product_id = inv.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv_sub ON p.substitute_product_id = inv_sub.product_id\nWHERE e.session_id = 'SES-1007-A' AND e.event_type = 'cart'",
+      "expect": {
+       "scalar": {
+        "main_product_id": "PRD-3009",
+        "main_avail_qty": 0,
+        "substitute_product_id": "PRD-3002",
+        "sub_age_days": 125,
+        "sub_avail_qty": 50,
+        "clearance_floor_margin_pct": 10.0
+       }
+      }
+     }
+    ],
+    "gold_answer": "PRD-3009는 현재 가용재고가 0개인 일시품절(OUT_OF_STOCK) 상태이므로 추천이 차단되며, 대체 상품인 PRD-3002(아틀리에 메리노울 터틀넥 니트 아이보리, 입고 125일차·가용재고 50개)로 전환 추천해야 한다. PRD-3002는 입고 90일 이상 및 가용재고 30개 이상 체화재고 요건을 충족하여 MD 내규 제3조에 따라 최저마진율 하한이 10.0%(10%)로 완화된다.",
+    "grading": {
+     "must_include": [
+      "PRD-3002",
+      "125일",
+      "10(\\.0)?%"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "07",
+       "locator": "제3조"
+      },
+      {
+       "doc": "08",
+       "locator": "제3조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ03",
+    "category": "graph_favored",
+    "sibling_cq": "CQ03",
+    "question": "입고된 지 얼마 안 된 신상품 PRD-3012는 기본 마진율이 상시 가드레일인 25%에 미달하는데 이번 프로모션에서 차단되는가, 아니면 등록된 캠페인 예외승인 결재에 따라 완화된 마진 하한이 적용되는가?",
+    "expected_winner": "graphrag",
+    "rationale": "입고 35일차라 체화재고(90일+) 요건은 충족하지 못하지만, CampaignException 노드의 VIP_RETENTION 결재(EXC-KM-2026-07, 하한 12.0%, ACTIVE)를 통해 기본마진 22.0% 상품이 프로모션 적격임을 추론해야 함.",
+    "evidence": [
+     {
+      "doc": "08",
+      "pdf": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠폰 남발로 인한 역마진을 방지하기 위하여, 상품 마진율 산정 산식과 상시 최저마진 가드레일"
+     },
+     {
+      "doc": "08",
+      "pdf": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+      "page": 2,
+      "locator": "제4조",
+      "section": "제4조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제4조(캠페인 예외승인 원장 검증 및 우회 기준) ① 체화재고 완화 요건이나 상시 마진율 25% 기준에 대한 예외를 적용하여 CRM 번들 쿠폰이나 클리어런스 특가를 실행하려는 경우, 실시간 캠페인"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  p.product_id,\n  inv.age_days,\n  ROUND((p.retail_price_krw - p.cost_krw) / p.retail_price_krw * 100, 1) AS base_margin_pct,\n  ce.approval_id,\n  ce.target_kind,\n  ce.approved_floor_margin_pct,\n  ce.status\nFROM `finance-ontology-changseop.kmarket_ecommerce.products` p\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv ON p.product_id = inv.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_campaign_exceptions` ce ON p.product_id = ce.product_id\nWHERE p.product_id = 'PRD-3012'",
+      "expect": {
+       "scalar": {
+        "product_id": "PRD-3012",
+        "age_days": 35,
+        "base_margin_pct": 22.0,
+        "approval_id": "EXC-KM-2026-07",
+        "approved_floor_margin_pct": 12.0,
+        "status": "ACTIVE"
+       }
+      }
+     }
+    ],
+    "gold_answer": "완화된 마진 하한이 적용되어 프로모션이 허용된다. PRD-3012는 입고 35일차로 체화재고(90일 이상)에는 해당하지 않으나, 유효한 VIP_RETENTION 예외승인(EXC-KM-2026-07, 승인 하한 12.0%, ACTIVE)이 존재하므로 기본마진 22.0%에서 최저마진 하한 12.0%(12%)까지 할인 캠페인이 가능하다.",
+    "grading": {
+     "must_include": [
+      "EXC-KM-2026-07",
+      "22(\\.0)?%",
+      "12(\\.0)?%"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "08",
+       "locator": "제4조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ04",
+    "category": "graph_favored",
+    "sibling_cq": "CQ05",
+    "question": "전체 주문품목 중 반품 사유가 등록된 품목들에 대해, MD본부의 총반품 건수와 CS심사팀의 판매자 귀책 무상반품 건수는 각각 몇 건이며 두 본부 간 집계 차이는 몇 건인가?",
+    "expected_winner": "graphrag",
+    "rationale": "동일한 반품 데이터라도 BusinessContext(MD본부 vs CS심사팀)에 따라 호출하는 조문과 필터링 조건(전체 반품 6건 vs 판매자 귀책 3건)이 달라지는 맥락 분기 문제.",
+    "evidence": [
+     {
+      "doc": "03",
+      "pdf": "03_LAW_전자상거래법_전문_2025.pdf",
+      "page": 2,
+      "locator": "제17조제1항",
+      "section": "제17조제1항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제17조(청약철회등) ① 통신판매업자와 재화등의 구매에 관한 계약을 체결한 소비자는 다음 각 호의 기간(거래당사자가 다음 각 호의 기간보다 긴 기간으로 약정한 경우에는 그 기간을 말한다) 이내에 당"
+     },
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청약철회 심사와 환불 기한 관리, 그리고 국내 풀필먼트 물류센터의 출고 서비스수준협약(SLA"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  COUNTIF(return_reason_cd != 'NONE') AS md_total_return_cnt,\n  COUNTIF(return_reason_cd IN ('DEFECTIVE', 'SIZE_MISMATCH_SPEC_DIFF')) AS cs_seller_fault_cnt,\n  COUNTIF(return_reason_cd != 'NONE') - COUNTIF(return_reason_cd IN ('DEFECTIVE', 'SIZE_MISMATCH_SPEC_DIFF')) AS diff_cnt\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items`",
+      "expect": {
+       "scalar": {
+        "md_total_return_cnt": 6,
+        "cs_seller_fault_cnt": 3,
+        "diff_cnt": 3
+       }
+      }
+     }
+    ],
+    "gold_answer": "MD본부의 총반품 건수는 6건(단순변심 2건, 불량 2건, 실측사이즈 상이 1건, 착용·세탁 훼손 1건)이고, CS심사팀의 판매자 귀책 무상반품 건수는 3건(DEFECTIVE 2건, SIZE_MISMATCH_SPEC_DIFF 1건)으로 두 본부 간 집계 차이는 3건이다.",
+    "grading": {
+     "must_include": [
+      "6건",
+      "3건",
+      "DEFECTIVE"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "03",
+       "locator": "제17조제1항"
+      },
+      {
+       "doc": "10",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ05",
+    "category": "graph_favored",
+    "sibling_cq": "CQ08",
+    "question": "아틀리에누아르의 공동판촉 쿠폰 적용 주문품목들을 정산할 때, 계약서상 판촉비 분담률 대신 대규모유통업법 제11조제4항의 법정 상한을 적용하면 K마켙이 의무적으로 추가 흡수해야 하는 초과 분담액 합계는 얼마인가?",
+    "expected_winner": "graphrag",
+    "rationale": "계약서상 분담율(60%)을 그대로 곱하면 180,000원이지만, 법정 50% 상한(150,000원) 및 OIT-2026-0004의 자발적 특례 기각(EXC-KM-2026-06 REJECTED)을 결합해 K마켙 추가 흡수분 30,000원(총 부담 150,000원)을 도출해야 함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "pdf": "01_LAW_대규모유통업법_전문_2025.pdf",
+      "page": 3,
+      "locator": "제11조제3항~제5항",
+      "section": "제11조제3항~제5항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "③ 제1항 및 제2항에 따른 판매촉진비용의 분담비율은 대규모유통업자와 납품업자등이 해당 판매촉진행사를 통하여 직접적으로 얻을 것으로 예상되는 경제적 이익의 비율에 따라 정하되, 대규모유통업자와 납품"
+     },
+     {
+      "doc": "02",
+      "pdf": "02_FTC_대규모유통업법_판매촉진비용부담전가_심사지침_2025.pdf",
+      "page": 2,
+      "locator": "Ⅱ.4",
+      "section": "Ⅱ.4",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "4. 납품업자 분담비율 50% 상한선 준수 및 초과분 처리 가. 법 제11조제4항에 따라 납품업자의 판매촉진비용 분담비율은 어떠한 경우에도 총 판매촉진비용(쿠폰 할인금액 총액 등)의 100분의 50"
+     },
+     {
+      "doc": "09",
+      "pdf": "09_INTERNAL_K마켙_입점브랜드_공동프로모션_정산내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(납품업자 쿠폰 분담비율 50% 법정 상한 적용 및 초과분 K마켙 흡수 원칙) ① 사전 서면약정(`signed_promo_agreement = True`)이 체결된 입점브랜드라 하더라도, 대규"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  b.brand_id,\n  COUNT(*) AS promo_item_cnt,\n  SUM(oi.coupon_discount_krw) AS total_discount_krw,\n  CAST(SUM(oi.coupon_discount_krw * 0.60) AS INT64) AS contract_60pct_krw,\n  CAST(SUM(oi.coupon_discount_krw * 0.50) AS INT64) AS legal_50pct_krw,\n  CAST(SUM(oi.coupon_discount_krw * 0.10) AS INT64) AS kmarket_excess_absorbed_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p ON oi.product_id = p.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.brand_vendor_contracts` b ON p.brand_id = b.brand_id\nWHERE b.brand_id = 'BRD-01' AND oi.coupon_type = 'JOINT_PROMO'\nGROUP BY b.brand_id",
+      "expect": {
+       "scalar": {
+        "brand_id": "BRD-01",
+        "promo_item_cnt": 4,
+        "total_discount_krw": 300000,
+        "contract_60pct_krw": 180000,
+        "legal_50pct_krw": 150000,
+        "kmarket_excess_absorbed_krw": 30000
+       }
+      }
+     }
+    ],
+    "gold_answer": "총 쿠폰할인액 300,000원에 대해 계약서상 60% 분담액은 180,000원이나, 대규모유통업법 제11조제4항의 50% 상한이 적용되어 아틀리에누아르(BRD-01)의 적법 분담액은 150,000원으로 제한되고, 10%p 초과분인 30,000원(K마켙 총 부담액 150,000원 중 초과 흡수분)은 K마켙이 의무 흡수해야 한다.",
+    "grading": {
+     "must_include": [
+      "30,?000",
+      "150,?000",
+      "50%"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "01",
+       "locator": "제11조제3항~제5항"
+      },
+      {
+       "doc": "09",
+       "locator": "제3조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ06",
+    "category": "graph_favored",
+    "sibling_cq": "CQ10",
+    "question": "노르딕아웃도어의 다운 파카 주문품목 OIT-2026-0017에 대해 납품업자 판촉비 분담률 70%가 그대로 인정되어 브랜드에 청구할 수 있는지, 캠페인 예외승인 원장의 유효 결재 건과 기각 건을 대조하여 판정하라.",
+    "expected_winner": "graphrag",
+    "rationale": "대규모유통업법 제11조제5항 단서(자발적·차별화 행사 시 50% 상한 예외)와 CampaignException 원장의 ACTIVE(EXC-KM-2026-03) vs REJECTED(EXC-KM-2026-06) 상태를 결합 추론해야 함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "pdf": "01_LAW_대규모유통업법_전문_2025.pdf",
+      "page": 3,
+      "locator": "제11조제3항~제5항",
+      "section": "제11조제3항~제5항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "③ 제1항 및 제2항에 따른 판매촉진비용의 분담비율은 대규모유통업자와 납품업자등이 해당 판매촉진행사를 통하여 직접적으로 얻을 것으로 예상되는 경제적 이익의 비율에 따라 정하되, 대규모유통업자와 납품"
+     },
+     {
+      "doc": "02",
+      "pdf": "02_FTC_대규모유통업법_판매촉진비용부담전가_심사지침_2025.pdf",
+      "page": 2,
+      "locator": "Ⅱ.5",
+      "section": "Ⅱ.5",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "5. 법 제11조제5항 단서(자발성·차별성 요건) 예외의 엄격한 심사기준 가. 법 제11조제5항 단서에 따라 50% 분담비율 상한 규정의 적용을 배제받기 위해서는 해당 행사가 ① 납품업자의 자발적"
+     },
+     {
+      "doc": "09",
+      "pdf": "09_INTERNAL_K마켙_입점브랜드_공동프로모션_정산내규_2025.pdf",
+      "page": 2,
+      "locator": "제4조",
+      "section": "제4조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제4조(납품업자 자발적·차별화 단독 행사 예외의 엄격한 요건) ① 대규모유통업법 제11조제5항 단서에 따라 입점브랜드에 50%를 초과하는 판촉비 분담률을 예외적으로 적용하려면, 캠페인 예외승인 원장"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  oi.item_id,\n  b.brand_id,\n  oi.coupon_discount_krw,\n  ce.approval_id,\n  ce.status,\n  CAST(oi.coupon_discount_krw * (b.agreed_promo_share_pct / 100.0) AS INT64) AS vendor_share_krw,\n  CAST(oi.coupon_discount_krw * (1.0 - b.agreed_promo_share_pct / 100.0) AS INT64) AS kmarket_share_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p ON oi.product_id = p.product_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.brand_vendor_contracts` b ON p.brand_id = b.brand_id\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_campaign_exceptions` ce ON p.product_id = ce.product_id\nWHERE oi.item_id = 'OIT-2026-0017'",
+      "expect": {
+       "scalar": {
+        "item_id": "OIT-2026-0017",
+        "brand_id": "BRD-05",
+        "coupon_discount_krw": 60000,
+        "approval_id": "EXC-KM-2026-03",
+        "status": "ACTIVE",
+        "vendor_share_krw": 42000,
+        "kmarket_share_krw": 18000
+       }
+      }
+     }
+    ],
+    "gold_answer": "인정된다. OIT-2026-0017(BRD-05, PRD-3008)은 자발성·차별성 심사를 통과한 유효 결재(EXC-KM-2026-03, ACTIVE)가 존재하므로 대규모유통업법 제11조제5항 단서에 따라 70% 분담율이 적용되어 브랜드가 42,000원, K마켙이 18,000원을 분담한다(반면 기각된 EXC-KM-2026-06은 50% 상한 적용).",
+    "grading": {
+     "must_include": [
+      "42,?000",
+      "18,?000",
+      "EXC-KM-2026-03"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "01",
+       "locator": "제11조제3항~제5항"
+      },
+      {
+       "doc": "09",
+       "locator": "제4조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ07",
+    "category": "graph_favored",
+    "sibling_cq": "CQ14",
+    "question": "용인 물류센터에서 출고된 주문 ORD-2026-0012의 실측 사이즈 상이 반품 건(OIT-2026-0018)에 관세청 해외직구 특송고시상 국제반송수수료를 부과할 수 있는지 판정하고, 고객이 부담할 실제 반품배송비와 환급액을 산출하라.",
+    "expected_winner": "graphrag",
+    "rationale": "벡터 검색 시 '반품 수수료' 키워드로 관세청 해외직구 고시(35,000원)가 혼입되기 쉬우나, 그래프는 DC-YIN 국내 물류센터 출고 확인 및 CONFLICTS_BY_SECTOR 엣지로 타업권 고시를 차단하고 전자상거래법 제17조제3항(표시·광고 상이 무상반품)을 적용함.",
+    "evidence": [
+     {
+      "doc": "06",
+      "pdf": "06_DISTRACTOR_관세청_해외직구_목록통관_및_특송물품_고시_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "distractor",
+      "role": "rule",
+      "quote": "제1조(목적 및 적용범위) ① 이 고시는 「관세법」 제254조의2에 따라 외국 전자상거래 쇼핑몰 또는 해외 물류센터로부터 국제특송화물로 반입되는 해외직구 물품의 목록통관 및 수입신고 절차를 규정함을"
+     },
+     {
+      "doc": "06",
+      "pdf": "06_DISTRACTOR_관세청_해외직구_목록통관_및_특송물품_고시_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "distractor",
+      "role": "rule",
+      "quote": "제3조(해외직구 물품의 반송기한 및 반송수수료 특례) ① 해외직구 특송물품에 대하여 수하인이 반입 후 14일 이내에 국제반송을 요청하는 경우 국제항공 반송운임(건당 최소 35,000원) 및 보세창고"
+     },
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(대금 환급 기한 및 지연배상금 산정) ① 전자상거래법 제18조제2항에 따라 반품 상품이 물류센터에 회수되어 입고 확인된 날로부터 3영업일 이내에 고객의 실결제가격(`sale_price_krw"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  oi.item_id,\n  oi.order_id,\n  inv.distribution_center_id,\n  oi.return_reason_cd,\n  oi.sale_price_krw,\n  0 AS customer_return_fee_krw,\n  oi.sale_price_krw AS refund_amount_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv ON oi.inventory_item_id = inv.inventory_item_id\nWHERE oi.item_id = 'OIT-2026-0018'",
+      "expect": {
+       "scalar": {
+        "item_id": "OIT-2026-0018",
+        "order_id": "ORD-2026-0012",
+        "distribution_center_id": "DC-YIN",
+        "return_reason_cd": "SIZE_MISMATCH_SPEC_DIFF",
+        "customer_return_fee_krw": 0,
+        "refund_amount_krw": 100000
+       }
+      }
+     }
+    ],
+    "gold_answer": "부과할 수 없다. ORD-2026-0012(OIT-2026-0018)는 국내 용인 물류센터(DC-YIN)에서 출고된 국내 이커머스(DOMESTIC_ECOMMERCE) 거래이므로 관세청 해외직구 고시(OVERSEAS_DIRECT_CUSTOMS, 35,000원)는 적용이 차단된다. 또한 실측 사이즈 상이(SIZE_MISMATCH_SPEC_DIFF)는 판매자 귀책 사유이므로 고객 부담 반품배송비는 0원이며 결제금액 100,000원 전액을 환급해야 한다.",
+    "grading": {
+     "must_include": [
+      "0원",
+      "100,?000",
+      "DC-YIN"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "06",
+       "locator": "제3조"
+      },
+      {
+       "doc": "10",
+       "locator": "제3조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ08",
+    "category": "graph_favored",
+    "sibling_cq": "CQ15",
+    "question": "물류센터별 출고 목표 SLA를 위반한 지연 출고 주문들에 대해 K마켙이 지급해야 할 지연보상 적립금의 전사 합계 포인트와 물류센터별 지연 건수는 각각 얼마인가?",
+    "expected_winner": "graphrag",
+    "rationale": "Order(주문·출고 시각) → OrderItem → InventoryItem(물류센터 코드) → CS 내규 제4조(센터별 SLA 목표시간 및 건당 3,000P 보상)를 연결해 전사 지연 건수(3건)와 보상 합계(9,000P)를 집계해야 함.",
+    "evidence": [
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 2,
+      "locator": "제4조",
+      "section": "제4조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제4조(물류센터별 출고 SLA 기준 및 출고지연 자동 보상) ① 풀필먼트운영실은 물류 원장(`inventory_items`)에 지정된 물류센터(`distribution_center`)별 표준 출고"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "WITH sla_breach AS (\n  SELECT\n    o.order_id,\n    inv.distribution_center_id,\n    TIMESTAMP_DIFF(TIMESTAMP(o.shipped_at), TIMESTAMP(o.created_at), HOUR) AS elapsed_hours\n  FROM `finance-ontology-changseop.kmarket_ecommerce.ont_orders` o\n  JOIN `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi ON o.order_id = oi.order_id\n  JOIN `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items` inv ON oi.inventory_item_id = inv.inventory_item_id\n  WHERE TIMESTAMP_DIFF(TIMESTAMP(o.shipped_at), TIMESTAMP(o.created_at), HOUR) >\n    CASE inv.distribution_center_id WHEN 'DC-ICN' THEN 24 WHEN 'DC-YIN' THEN 36 WHEN 'DC-BUS' THEN 48 END\n)\nSELECT\n  COUNT(*) AS total_breach_orders,\n  COUNTIF(distribution_center_id = 'DC-YIN') AS dc_yin_breach_cnt,\n  COUNTIF(distribution_center_id = 'DC-BUS') AS dc_bus_breach_cnt,\n  COUNT(*) * 3000 AS total_compensation_points\nFROM sla_breach",
+      "expect": {
+       "scalar": {
+        "total_breach_orders": 3,
+        "dc_yin_breach_cnt": 2,
+        "dc_bus_breach_cnt": 1,
+        "total_compensation_points": 9000
+       }
+      }
+     }
+    ],
+    "gold_answer": "SLA 위반 지연 출고 주문은 총 3건(용인 DC-YIN 2건: ORD-2026-0009 60시간, ORD-2026-0014 42시간 / 양산 DC-BUS 1건: ORD-2026-0015 60시간)이며, 건당 3,000P씩 전사 합계 9,000P의 지연보상 적립금을 지급해야 한다.",
+    "grading": {
+     "must_include": [
+      "3건",
+      "9,?000P",
+      "3,?000P"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "10",
+       "locator": "제4조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ09",
+    "category": "rag_favored",
+    "sibling_cq": "CQ11",
+    "question": "대규모유통업법 제6조에서 계약 체결 즉시 서면을 교부할 때 요구하는 서명·기명날인 방식과 제18조에 명시된 계약 종료일로부터의 서류 보존 의무 기간은 몇 년인가?",
+    "expected_winner": "rag",
+    "rationale": "법 제6조의 서면 교부·전자서명 요건과 제18조의 5년 서류 보존 의무는 PDF 원문 조항의 서술형 사실 조회로 RAG 검색이 직접적임.",
+    "graph_risk": "온톨로지 그래프의 BrandVendorContract 노드는 서면약정 체결 여부(written_promo_agreement_yn)만 보유하며, 전자서명 정의나 5년 서류보존 세부 항목은 원문 텍스트에만 존재함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "pdf": "01_LAW_대규모유통업법_전문_2025.pdf",
+      "page": 1,
+      "locator": "제6조",
+      "section": "제6조",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제6조(서면의 즉시 교부 및 계약사항 명시) ① 대규모유통업자는 납품업자등과 계약을 체결한 즉시 거래형태, 거래품목, 납품대금 지급기일, 판매수수료율 또는 마진율, 반품 조건, 판매촉진비용 분담 기"
+     },
+     {
+      "doc": "01",
+      "pdf": "01_LAW_대규모유통업법_전문_2025.pdf",
+      "page": 4,
+      "locator": "제12조·제17조·제18조",
+      "section": "제12조·제17조·제18조",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제12조(배타적 거래 강요 금지) 대규모유통업자는 부당하게 납품업자등에게 경쟁 온라인쇼핑몰이나 타 유통채널과 거래하지 못하게 하거나 타 채널 판매가격을 인상하도록 강요하여서는 아니 된다. 제17조("
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  COUNT(*) AS total_brands,\n  COUNTIF(written_promo_agreement_yn = 'Y') AS signed_brands\nFROM `finance-ontology-changseop.kmarket_ecommerce.brand_vendor_contracts`",
+      "expect": {
+       "scalar": {
+        "total_brands": 8,
+        "signed_brands": 7
+       }
+      }
+     }
+    ],
+    "gold_answer": "대규모유통업법 제6조제2항에 따라 서면 계약서에는 대규모유통업자와 납품업자 쌍방이 서명(전자서명법 제2조제2호에 따른 전자서명 포함) 또는 기명날인하여야 하며, 제18조제1항·제2항에 따라 계약이 끝난 날부터 5년간 계약서 및 판매촉진비용 분담 약정서 등 대통령령으로 정하는 서류를 보존하여야 한다.",
+    "grading": {
+     "must_include": [
+      "전자서명",
+      "기명날인",
+      "5년"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "01",
+       "locator": "제6조"
+      },
+      {
+       "doc": "01",
+       "locator": "제12조·제17조·제18조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ10",
+    "category": "rag_favored",
+    "sibling_cq": "CQ09",
+    "question": "공정위 판매촉진비용 부담전가 심사지침에서 판촉행사 개시 이후 사후에 서면을 소급 보완하거나 분담비율을 공란으로 둔 약정의 효력과 법 위반 여부를 어떻게 규정하는가?",
+    "expected_winner": "rag",
+    "rationale": "심사지침 Ⅱ.3의 사후 소급 서면 교부 금지 및 공란 약정의 위법성 판단 기준은 비정형 지침 본문 서술에 상세히 기재되어 있어 RAG가 유리함.",
+    "graph_risk": "그래프는 written_promo_agreement_yn(Y/N) 이진 플래그로만 분담금을 계산하므로, '사후 소급 약정'이나 '공란 약정'의 법리적 무효 사유 서술은 텍스트 청크 검색이 필요함.",
+    "evidence": [
+     {
+      "doc": "02",
+      "pdf": "02_FTC_대규모유통업법_판매촉진비용부담전가_심사지침_2025.pdf",
+      "page": 1,
+      "locator": "Ⅰ.1~2",
+      "section": "Ⅰ.1~2",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "1. 목적 이 지침은 「대규모유통업에서의 거래공정화에 관한 법률」(이하 \"법\"이라 한다) 제11조(판매촉진비용의 부담전가 금지)의 요건을 구체화하여 온라인 플랫폼 및 대규모유통업자의 할인쿠폰 발행,"
+     },
+     {
+      "doc": "02",
+      "pdf": "02_FTC_대규모유통업법_판매촉진비용부담전가_심사지침_2025.pdf",
+      "page": 1,
+      "locator": "Ⅰ.3",
+      "section": "Ⅰ.3",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "3. 사전 서면약정 체결 시점 및 방식 가. 사전 서면약정은 해당 프로모션이나 쿠폰 발급이 개시되기 이전에 양 당사자의 서명 또는 전자서명이 완료되어야 한다. 나. 연간 기본계약서에 포괄적으로 '프"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT brand_id, brand_name, agreed_promo_share_pct\nFROM `finance-ontology-changseop.kmarket_ecommerce.brand_vendor_contracts`\nWHERE written_promo_agreement_yn = 'N'\nORDER BY brand_id",
+      "expect": {
+       "exact_rows": 1,
+       "must_contain": [
+        {
+         "brand_id": "BRD-03",
+         "brand_name": "마린블루",
+         "agreed_promo_share_pct": 50.0
+        }
+       ]
+      }
+     }
+    ],
+    "gold_answer": "공정위 판매촉진비용 심사지침 Ⅱ.3에 따르면 판매촉진행사가 시작된 이후에 사후적으로 서면을 교부하거나 소급하여 서명받은 경우, 또는 약정서에 예상 분담액이나 분담비율을 공란('추후 정산 시 합의' 등)으로 둔 경우에는 적법한 사전 서면약정으로 인정되지 아니하며 납품업자에게 판매촉진비용을 부담시키는 행위는 위법하다.",
+    "grading": {
+     "must_include": [
+      "사후",
+      "소급",
+      "공란"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "02",
+       "locator": "Ⅰ.3~Ⅱ.2"
+      },
+      {
+       "doc": "02",
+       "locator": "Ⅱ.3"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ11",
+    "category": "rag_favored",
+    "sibling_cq": "CQ20",
+    "question": "전자상거래법 제21조의2제1항에서 금지하는 온라인 다크패턴 4가지 행위 유형의 명칭과 공정위 다크패턴 가이드라인 제2조에서 허위할인 방지를 위해 요구하는 종전거래가격의 산정 기준은 무엇인가?",
+    "expected_winner": "rag",
+    "rationale": "전자상거래법 제21조의2제1항 각호의 4대 다크패턴 명칭과 가이드라인 제2조의 '직전 20일 최저 판매가격' 정의는 전형적인 법령·가이드라인 텍스트 질의임.",
+    "graph_risk": "Provision 노드는 missing_schema_columns(min_sale_price_20d_krw)만 구조화하고 있어 제21조의2제1항 1~4호의 세부 행위 유형 열거는 원문 조회가 필수적임.",
+    "evidence": [
+     {
+      "doc": "03",
+      "pdf": "03_LAW_전자상거래법_전문_2025.pdf",
+      "page": 3,
+      "locator": "제21조의2",
+      "section": "제21조의2",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제21조의2(온라인 인터페이스 운영에 있어서의 눈속임 상술 금지) 전자상거래를 하는 사업자 또는 통신판매업자는 재화등의 거래와 관련하여 소비자의 착오나 부주의를 유발하여 비합리적인 지출이나 의사결정"
+     },
+     {
+      "doc": "04",
+      "pdf": "04_FTC_전자상거래_다크패턴_및_맞춤형광고_가이드라인_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "제1조(목적) 이 가이드라인은 온라인 쇼핑몰 및 모바일 커머스 플랫폼이 소비자에게 제공하는 상품 추천, 할인쿠폰, 재고 알림 인터페이스에서 소비자의 합리적 선택을 왜곡하는 눈속임 상술(다크패턴)을"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT COUNT(*) AS active_products\nFROM `finance-ontology-changseop.kmarket_ecommerce.products`",
+      "expect": {
+       "scalar": {
+        "active_products": 30
+       }
+      }
+     }
+    ],
+    "gold_answer": "전자상거래법 제21조의2제1항이 금지하는 4대 다크패턴 유형은 ① 숨은 갱신, ② 순차공개 가격책정, ③ 특정옵션의 사전선택, ④ 잘못된 계층구조이며, 공정위 다크패턴 가이드라인 제2조에 따른 종전거래가격은 할인 표시 시점 직전 20일 동안 실제 판매된 최저 판매가격을 기준으로 표시하여야 한다.",
+    "grading": {
+     "must_include": [
+      "숨은 갱신",
+      "순차공개 가격책정",
+      "20일"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "03",
+       "locator": "제21조의2"
+      },
+      {
+       "doc": "04",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ12",
+    "category": "rag_favored",
+    "sibling_cq": "CQ18",
+    "question": "개인정보보호위원회 맞춤형 광고 행태정보 가이드라인 제4조·제5조에서 규정하는 비식별 행태정보의 최대 보유·이용 기간과 심야 시간대 광고성 푸시 제한 원칙은 무엇인가?",
+    "expected_winner": "rag",
+    "rationale": "가이드라인 제4조의 비식별 행태정보 최대 90일 보유 후 지체 없이 파기 원칙은 문서 내 서술형 조항으로 RAG 검색에 적합함.",
+    "graph_risk": "온톨로지 그래프는 실시간 장바구니 이벤트만 노드로 보유하며 비식별 행태정보의 90일 보유기간 상한은 그래프 필터 속성에 모델링되어 있지 않음.",
+    "evidence": [
+     {
+      "doc": "05",
+      "pdf": "05_PIPC_온라인_맞춤형광고_행태정보_가이드라인_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "제1조(목적) 이 가이드라인은 전자상거래 사업자가 이용자의 웹사이트 및 모바일 앱 방문이력, 상품 조회, 장바구니 담기, 구매이력 등 온라인상의 행태정보(Behavioral Information)를"
+     },
+     {
+      "doc": "05",
+      "pdf": "05_PIPC_온라인_맞춤형광고_행태정보_가이드라인_2025.pdf",
+      "page": 2,
+      "locator": "제4조~제5조",
+      "section": "제4조~제5조",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "제4조(행태정보 보유기간 및 통제권 보장) ① 맞춤형 추천 및 타겟팅 광고 목적으로 수집된 상세 이벤트 로그는 수집일로부터 최대 90일 이내에 파기하거나 비식별 통계로 전환하는 것을 원칙으로 한다."
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT COUNT(*) AS event_cnt, COUNT(DISTINCT session_id) AS session_cnt\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_events`",
+      "expect": {
+       "scalar": {
+        "event_cnt": 11,
+        "session_cnt": 6
+       }
+      }
+     }
+    ],
+    "gold_answer": "개보위 맞춤형 광고 행태정보 가이드라인 제4조에 따라 비식별 행태정보의 보유 및 이용 기간은 수집일로부터 최대 90일을 초과할 수 없으며 목적 달성 시 지체 없이 파기해야 한다. 또한 제5조에 따라 야간 시간대(21:00부터 익일 08:00까지)에는 별도의 야간 광고성 정보 수신동의가 없는 한 행태정보 기반 실시간 타겟팅 푸시 알림 전송이 금지된다.",
+    "grading": {
+     "must_include": [
+      "90일",
+      "21:00",
+      "08:00"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "05",
+       "locator": "제4조~제5조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ13",
+    "category": "rag_favored",
+    "sibling_cq": "CQ13",
+    "question": "전자상거래법 제18조 및 K마켙 CS 내규 제3조에 따라 통신판매업자가 소비자로부터 재화등을 반환받은 날부터 대금을 환급해야 하는 법정 기한과 환급 지연 시 지급해야 하는 지연배상금 연 이율은 얼마인가?",
+    "expected_winner": "rag",
+    "rationale": "환급 법정 기한(3영업일 이내)과 지연배상금 산정 이율(연 15%)은 법 제18조 및 내규 제3조 본문에 직접 명시된 서술형 규정 수치임.",
+    "graph_risk": "그래프는 반품 적격성과 반품배송비(6,000원)를 계산하지만 3영업일 환급 기한 도과 시 연 15% 지연배상금 이율은 그래프 엣지 속성에 포함되어 있지 않음.",
+    "evidence": [
+     {
+      "doc": "03",
+      "pdf": "03_LAW_전자상거래법_전문_2025.pdf",
+      "page": 3,
+      "locator": "제18조",
+      "section": "제18조",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제18조(청약철회등의 효과) ① 소비자는 제17조제1항 또는 제3항에 따라 청약철회등을 한 경우에는 이미 공급받은 재화등을 반환하여야 한다. ② 통신판매업자는 재화등을 반환받은 날부터 3영업일 이내"
+     },
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(대금 환급 기한 및 지연배상금 산정) ① 전자상거래법 제18조제2항에 따라 반품 상품이 물류센터에 회수되어 입고 확인된 날로부터 3영업일 이내에 고객의 실결제가격(`sale_price_krw"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT COUNT(*) AS returned_cnt, SUM(sale_price_krw) AS returned_amount_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items`\nWHERE status = 'Returned'",
+      "expect": {
+       "scalar": {
+        "returned_cnt": 5,
+        "returned_amount_krw": 650000
+       }
+      }
+     }
+    ],
+    "gold_answer": "전자상거래법 제18조제2항 및 K마켙 CS 내규 제3조제1항에 따라 재화등을 반환받은 날부터 3영업일 이내에 대금을 환급하여야 하며, 대금 환급을 지연한 때에는 그 지연기간에 대하여 연 100분의 15(연 15%)의 지연배상금을 함께 지급하여야 한다.",
+    "grading": {
+     "must_include": [
+      "3영업일",
+      "15%"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "03",
+       "locator": "제18조"
+      },
+      {
+       "doc": "10",
+       "locator": "제3조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ14",
+    "category": "rag_favored",
+    "sibling_cq": "CQ11",
+    "question": "대규모유통업법 제10조제1항에서 금지하는 부당 반품의 원칙과, 직매입 거래에서 예외적으로 납품업자에게 반품이 허용되는 정당한 사유는 무엇인가?",
+    "expected_winner": "rag",
+    "rationale": "대규모유통업법 제10조제1항 각호의 납품업자 대상 B2B 반품 예외 사유 열거는 법령 본문 독해 문제로 RAG에 유리함.",
+    "graph_risk": "온톨로지 그래프는 B2C 소비자 청약철회(OrderItem)만 모델링하고 대규모유통업자와 직매입 납품업자 간 B2B 반품 예외 요건은 원문 서술에만 존재함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "pdf": "01_LAW_대규모유통업법_전문_2025.pdf",
+      "page": 2,
+      "locator": "제10조",
+      "section": "제10조",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제10조(상품의 반품 금지) ① 대규모유통업자는 정당한 사유 없이 납품받은 상품의 전부 또는 일부를 반품하여서는 아니 된다. 다만, 다음 각 호의 어느 하나에 해당하는 경우로서 거래관행상 정당하다고"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT brand_id, brand_name\nFROM `finance-ontology-changseop.kmarket_ecommerce.brand_vendor_contracts`\nWHERE trade_type = '직매입'\nORDER BY brand_id",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "brand_id": "BRD-05"
+        },
+        {
+         "brand_id": "BRD-08"
+        }
+       ]
+      }
+     }
+    ],
+    "gold_answer": "대규모유통업법 제10조제1항은 정당한 사유 없이 납품받은 상품의 전부 또는 일부를 반품하는 행위를 금지하며, 직매입 거래에서는 ① 납품업자의 책임 있는 사유로 상품이 오손·훼손된 경우, ② 납품받은 상품이 계약한 상품과 다른 경우, ③ 시즌상품 등 일정 기간 동안만 판매되는 상품에 대해 사전에 반품조건을 구체적으로 약정한 경우 등에 한하여 예외적으로 반품이 허용된다.",
+    "grading": {
+     "must_include": [
+      "오손",
+      "훼손",
+      "직매입"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "01",
+       "locator": "제10조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ15",
+    "category": "parity",
+    "sibling_cq": "CQ06",
+    "question": "주문품목 OIT-2026-0001에 쿠폰 할인이 적용된 후의 단건 실현마진율은 소수 첫째 자리 기준 몇 %이며, MD본부 상시 마진 가드레일을 충족하는가?",
+    "expected_winner": "tie",
+    "rationale": "단일 주문품목(OIT-2026-0001)과 상품 원가(PRD-3001)를 조인해 실현마진율 산식((340,000-240,000)/340,000 = 29.4%)을 계산하는 기본 문항으로 두 암 모두 정확히 수행 가능함.",
+    "evidence": [
+     {
+      "doc": "08",
+      "pdf": "08_INTERNAL_K마켙_MD상품마진_및_체화재고_가격결정_내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 판매되는 직매입·특약매입·위수탁 상품의 수익성을 방어하고 무분별한 할인쿠폰 남발로 인한 역마진을 방지하기 위하여, 상품 마진율 산정 산식과 상시 최저마진 가드레일"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  oi.item_id,\n  oi.sale_price_krw,\n  p.cost_krw,\n  ROUND((oi.sale_price_krw - p.cost_krw) / oi.sale_price_krw * 100, 1) AS realized_margin_pct\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nJOIN `finance-ontology-changseop.kmarket_ecommerce.products` p ON oi.product_id = p.product_id\nWHERE oi.item_id = 'OIT-2026-0001'",
+      "expect": {
+       "scalar": {
+        "item_id": "OIT-2026-0001",
+        "sale_price_krw": 340000,
+        "cost_krw": 240000,
+        "realized_margin_pct": 29.4
+       }
+      }
+     }
+    ],
+    "gold_answer": "OIT-2026-0001의 실현마진율은 (실결제가 340,000원 - 매입원가 240,000원) / 340,000원 = 29.4%이며, MD본부 상시 최저마진 가드레일(25.0%)을 충족한다.",
+    "grading": {
+     "must_include": [
+      "29\\.4%",
+      "25(\\.0)?%"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "08",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ16",
+    "category": "parity",
+    "sibling_cq": "CQ16",
+    "question": "장바구니 이탈 세션 SES-1004-A를 발생시킨 VIP 등급 최현우 고객에게 맞춤형 리마인드 푸시나 타겟팅 쿠폰을 발송할 수 없는 이유를 회원 마스터의 동의 컬럼 값과 개보위 가이드라인 제3조를 근거로 답하라.",
+    "expected_winner": "tie",
+    "rationale": "USR-1004의 marketing_opt_in_yn = 'N' 단일 필터 확인과 개보위 가이드라인 제3조 매칭으로 두 암 모두 쉽게 해결 가능함.",
+    "evidence": [
+     {
+      "doc": "05",
+      "pdf": "05_PIPC_온라인_맞춤형광고_행태정보_가이드라인_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "제3조(식별 결합 행태정보 기반 타겟팅 마케팅의 동의 요건) ① 전자상거래 사업자가 특정 회원(`user_id`)의 실시간 이벤트 로그(`events` 테이블의 `view`, `cart`, `pur"
+     },
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 주식회사 K마켙(이하 \"당사\"라 한다)이 운영하는 온라인 패션·라이프스타일 플랫폼에서 고객 행동로그와 상품·재고 원장을 결합하여 초개인화 상품 추천 및 타겟팅 할인쿠폰을 발"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT u.user_id, u.user_name, u.membership_tier, u.marketing_opt_in_yn\nFROM `finance-ontology-changseop.kmarket_ecommerce.users` u\nWHERE u.user_id = 'USR-1004'",
+      "expect": {
+       "scalar": {
+        "user_id": "USR-1004",
+        "user_name": "최현우",
+        "membership_tier": "VIP",
+        "marketing_opt_in_yn": "N"
+       }
+      }
+     }
+    ],
+    "gold_answer": "최현우(USR-1004, VIP)는 회원 마스터상 마케팅 및 맞춤형 추천 수신동의가 거부(marketing_opt_in_yn = 'N') 상태이므로, 개인정보보호위원회 맞춤형 광고 행태정보 가이드라인 제3조 및 K마켙 CRM 내규 제2조에 따라 회원 식별 기반 장바구니 리마인드 푸시 및 타겟팅 쿠폰 발송이 즉시 차단된다.",
+    "grading": {
+     "must_include": [
+      "USR-1004",
+      "marketing_opt_in_yn",
+      "제3조"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "05",
+       "locator": "제3조"
+      },
+      {
+       "doc": "07",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ17",
+    "category": "parity",
+    "sibling_cq": "CQ12",
+    "question": "위생제한 상품인 실크 레이스 브라렛에 대한 반품 신청 건 OIT-2026-0014의 청약철회 승인 여부와 그 물리적 검수 근거는 무엇인가?",
+    "expected_winner": "tie",
+    "rationale": "OIT-2026-0014와 EXC-KM-2026-05(hologram_tag_intact_yn='N')이 직접 연결되어 있어 SQL 조인이나 그래프 탐색 모두 동일한 결론에 도달함.",
+    "evidence": [
+     {
+      "doc": "03",
+      "pdf": "03_LAW_전자상거래법_전문_2025.pdf",
+      "page": 2,
+      "locator": "제17조제2항",
+      "section": "제17조제2항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "② 소비자는 다음 각 호의 어느 하나에 해당하는 경우에는 통신판매업자의 의사에 반하여 제1항에 따른 청약철회등을 할 수 없다. 다만, 통신판매업자가 제6항에 따라 청약철회등이 불가능한 재화등에 그"
+     },
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청약철회 심사와 환불 기한 관리, 그리고 국내 풀필먼트 물류센터의 출고 서비스수준협약(SLA"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  oi.item_id,\n  oi.product_id,\n  oi.sale_price_krw,\n  ce.approval_id,\n  ce.hologram_tag_intact_yn\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nJOIN `finance-ontology-changseop.kmarket_ecommerce.ont_campaign_exceptions` ce ON oi.item_id = ce.item_id\nWHERE oi.item_id = 'OIT-2026-0014'",
+      "expect": {
+       "scalar": {
+        "item_id": "OIT-2026-0014",
+        "product_id": "PRD-3007",
+        "sale_price_krw": 90000,
+        "approval_id": "EXC-KM-2026-05",
+        "hologram_tag_intact_yn": "N"
+       }
+      }
+     }
+    ],
+    "gold_answer": "청약철회(반품)가 거절(REJECT_WITHDRAWAL)되어 결제가 90,000원은 환불되지 않는다. PRD-3007은 위생제한(HYGIENE_RESTRICTED) 상품인데 반품 검수 원장 EXC-KM-2026-05에서 홀로그램 실링 택이 훼손(hologram_tag_intact_yn = 'N')된 것으로 확인되었으므로 전자상거래법 제17조제2항에 따라 반품이 불가하다.",
+    "grading": {
+     "must_include": [
+      "EXC-KM-2026-05",
+      "90,?000",
+      "제17조제2항"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "03",
+       "locator": "제17조제2항"
+      },
+      {
+       "doc": "10",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ18",
+    "category": "parity",
+    "sibling_cq": "CQ13",
+    "question": "배송완료 후 3일 만에 단순변심으로 반품 접수된 주문품목 OIT-2026-0007의 청약철회 적격 여부, 차감할 왕복 반품배송비, 그리고 고객에게 최종 환급할 금액은 얼마인가?",
+    "expected_winner": "tie",
+    "rationale": "단순변심 7일 이내 반품 적격 판정 및 표준 왕복 반품배송비 6,000원 차감(200,000 - 6,000 = 194,000원)은 두 암 모두 명확히 계산 가능함.",
+    "evidence": [
+     {
+      "doc": "03",
+      "pdf": "03_LAW_전자상거래법_전문_2025.pdf",
+      "page": 2,
+      "locator": "제17조제1항",
+      "section": "제17조제1항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "제17조(청약철회등) ① 통신판매업자와 재화등의 구매에 관한 계약을 체결한 소비자는 다음 각 호의 기간(거래당사자가 다음 각 호의 기간보다 긴 기간으로 약정한 경우에는 그 기간을 말한다) 이내에 당"
+     },
+     {
+      "doc": "10",
+      "pdf": "10_INTERNAL_K마켙_CS반품환불_및_물류SLA_보상내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 K마켙에서 발생한 고객 주문(`orders`, `order_items`)의 반품·청약철회 심사와 환불 기한 관리, 그리고 국내 풀필먼트 물류센터의 출고 서비스수준협약(SLA"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  oi.item_id,\n  oi.sale_price_krw,\n  6000 AS return_ship_fee_krw,\n  oi.sale_price_krw - 6000 AS net_refund_krw\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_order_items` oi\nWHERE oi.item_id = 'OIT-2026-0007'",
+      "expect": {
+       "scalar": {
+        "item_id": "OIT-2026-0007",
+        "sale_price_krw": 200000,
+        "return_ship_fee_krw": 6000,
+        "net_refund_krw": 194000
+       }
+      }
+     }
+    ],
+    "gold_answer": "배송완료 후 7일 이내(3일 경과)에 신청되었으므로 전자상거래법 제17조제1항에 따라 청약철회가 승인되며, 단순변심 사유이므로 고객 부담 왕복 반품배송비 6,000원을 차감한 194,000원을 최종 환급한다.",
+    "grading": {
+     "must_include": [
+      "6,?000",
+      "194,?000",
+      "7일"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "03",
+       "locator": "제17조제1항"
+      },
+      {
+       "doc": "10",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ19",
+    "category": "parity",
+    "sibling_cq": "CQ07",
+    "question": "물류센터 재고 원장 전체 32개 항목을 재고상태별로 집계할 때 각 상태의 항목 수와 수량 합계는 얼마인가?",
+    "expected_winner": "tie",
+    "rationale": "단일 재고 원장 테이블의 상태별 집계 쿼리로 두 암 모두 동일하게 조회 가능함.",
+    "evidence": [
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 2,
+      "locator": "제3조",
+      "section": "제3조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제3조(가용재고 연동 대체상품 및 크로스셀 코디 번들 추천 규칙) ① 장바구니 이탈 고객 또는 상품 상세 조회 고객에게 상품을 추천할 때에는 먼저 물류 원장(`inventory_items`)의 실시"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  stock_status,\n  COUNT(*) AS item_cnt,\n  SUM(avail_qty) AS total_qty\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_inventory_items`\nGROUP BY stock_status\nORDER BY stock_status",
+      "expect": {
+       "exact_rows": 4,
+       "must_contain": [
+        {
+         "stock_status": "AVAILABLE",
+         "item_cnt": 28,
+         "total_qty": 715
+        },
+        {
+         "stock_status": "OUT_OF_STOCK",
+         "item_cnt": 2,
+         "total_qty": 0
+        },
+        {
+         "stock_status": "RESERVED",
+         "item_cnt": 1,
+         "total_qty": 10
+        },
+        {
+         "stock_status": "RETURN_INSPECTION",
+         "item_cnt": 1,
+         "total_qty": 15
+        }
+       ]
+      }
+     }
+    ],
+    "gold_answer": "재고상태별 집계 결과 AVAILABLE(즉시 출고 가용) 28건·715개, RESERVED(결제 진행 예약) 1건·10개, RETURN_INSPECTION(반품 검수 대기) 1건·15개, OUT_OF_STOCK(일시품절) 2건·0개이다.",
+    "grading": {
+     "must_include": [
+      "715",
+      "28",
+      "OUT_OF_STOCK"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "07",
+       "locator": "제3조"
+      }
+     ]
+    }
+   },
+   {
+    "id": "EQ20",
+    "category": "parity",
+    "sibling_cq": "CQ16",
+    "question": "실시간 행동로그에서 장바구니 담기 이후 이탈하지 않고 동일 세션 내에 결제완료까지 정상 전환된 세션 ID와 회원 ID, 구매 상품 ID 및 해당 회원의 멤버십 등급은 무엇인가?",
+    "expected_winner": "tie",
+    "rationale": "ont_events에서 event_type='purchase'가 존재하는 세션을 찾고 users와 조인하는 기본 조회로 두 암 모두 동등하게 수행함.",
+    "evidence": [
+     {
+      "doc": "07",
+      "pdf": "07_INTERNAL_K마켙_초개인화추천_및_CRM타겟팅_운영내규_2025.pdf",
+      "page": 1,
+      "locator": "제1조~제2조",
+      "section": "제1조~제2조",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "제1조(목적) 이 내규는 주식회사 K마켙(이하 \"당사\"라 한다)이 운영하는 온라인 패션·라이프스타일 플랫폼에서 고객 행동로그와 상품·재고 원장을 결합하여 초개인화 상품 추천 및 타겟팅 할인쿠폰을 발"
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT\n  e.session_id,\n  e.user_id,\n  e.product_id,\n  u.membership_tier\nFROM `finance-ontology-changseop.kmarket_ecommerce.ont_events` e\nJOIN `finance-ontology-changseop.kmarket_ecommerce.users` u ON e.user_id = u.user_id\nWHERE e.event_type = 'purchase'",
+      "expect": {
+       "scalar": {
+        "session_id": "SES-1008-A",
+        "user_id": "USR-1008",
+        "product_id": "PRD-3004",
+        "membership_tier": "VIP"
+       }
+      }
+     }
+    ],
+    "gold_answer": "장바구니 담기 후 동일 세션 내 결제완료(purchase)까지 전환된 세션은 SES-1008-A이며, 회원 ID는 USR-1008(VIP 등급), 구매 상품 ID는 PRD-3004이다.",
+    "grading": {
+     "must_include": [
+      "SES-1008-A",
+      "USR-1008",
+      "PRD-3004",
+      "VIP"
+     ],
+     "must_not_include": [],
+     "cite": [
+      {
+       "doc": "07",
+       "locator": "제1조~제2조"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

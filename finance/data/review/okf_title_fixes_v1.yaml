@@ -1,0 +1,166 @@
+# OKF 조문 제목·설명 수정안 — 사용자 검토용 (적용 전)
+#
+# 배경 (2026-09-28, log 참조): GraphRAG 플래너는 `kc_entry_id | title` 목록을 보고 조문을 고른다.
+# 아래 조문들은 본문(원문 발췌, P1–P4 검증 완료)은 맞지만 제목·설명이 다른 내용을 가리킨다.
+# 예: EQ16 정답("① 가①의 경우 : 기한이익 상실일")이 있는 조문의 제목이 "기업구조조정 … 특례"라서
+# 플래너가 한 번도 고르지 않았다 (0/2). RAG 는 본문 임베딩으로 찾는다.
+#
+# 원칙
+#   - 본문(verbatim)은 건드리지 않는다. 바꾸는 것은 제목·설명이다 (본문과 어긋난 경우에만 section_number 도).
+#   - ID 는 바꾸지 않는다: prov_id = kc_entry_id = 파일 경로 = 그래프 provision_slot_id 는 불변 위상 키 (AGENTS.md 불변식).
+#     slug(예: workout_special_rules)가 내용과 어긋나는 것은 남는다 → residuals 참조.
+#   - 원문에 제목이 있으면 그 제목을 그대로 쓴다. 없으면 본문에 있는 주제를 중립적으로 요약한다.
+#     EQ 정답 문구를 제목·설명에 넣지 않는다 (예: "기한이익 상실일"은 설명에 넣지 않음).
+#   - SSOT 는 data/build_okf_bundle.py 의 DOC_SPECS 이다. 이 YAML 은 검토·변경 기록용이며 빌더가 읽지 않는다.
+#
+# 발견 방법: 제목 단어가 본문에 나오는 비율(편집 제목 85개 대상). 1/3 미만 9개를 원문 PDF 와 대조해 읽었다.
+#   → 불일치 6건(change), 불일치 아님 2건(keep), 선택 1건(optional).
+
+version: 1
+status: applied             # proposed → approved → applied
+created: "2026-09-28T01:30Z"
+approval:
+  at: "2026-09-28T01:30Z"
+  by: user
+  scope:
+    - "changes 6건 전부 (impact_05 · impact_06 의 section_number 포함 — 01:30Z 확인: 'EQ 번호'가 아니라 조문 항목 번호임을 확인 후 승인)"
+    - "optional 중 part_titles 3개만 포함"
+    - "optional impact_02 는 제외 (수정 안 함)"
+applied:     # 01:32Z–01:51Z. 각 줄은 실행 결과 (주장 아님)
+  builder_edit: "scratch/apply_okf_title_fixes.py → DOC_SPECS 17곳 정확 치환 (조문 6건 제목·설명 + impact_05/06 section_number + part 제목 3개)"
+  S03: "build_okf_bundle.py 재빌드 → 변경 파일 정확히 20개 (조문 md 6 · doc.md 5 · index.md 8 · verification.json). 조문 본문 174/174 불변 · S03-G1 재생성 0 diff · okf_lint PASS (errors 0 · warnings 0). 주의: 빌더는 P1–P4 를 frontmatter 에 기록만 하고 assert 하지 않는다"
+  S04: "sync_gcs.py 버그 발견·수정 (exclude 정규식이 로컬 쪽에서 마지막 패턴만 적용 → verification.json 이 업로드됨 → 원격 객체 삭제 후 정규식을 하나의 앵커 그룹으로 수정). S04-G1 --verify-only exit 0 (로컬 226 · 원격 229 = 226 + 픽스처 3/3). push_catalog.py --only 19/19. S04-G2 verify_catalog.py PASS (225/225). KC REST 제목 = after, status stable"
+  S07: "build_ontology_graph.py 완료 (lex_provisions 174). S07-G1 kc_aspect_loader PASS (11 anchors · v1.2.0 · art_029 ALLOW). S07-G2 412 nodes / 1,442 edges 불변. v_node_provision 제목 6/6 = after, impact_05/06 article_no 2/2 = after (scratch/check_title_fix_bq.py)"
+  S08: "verify_cq --negative-control PASS 8/8 · NC 4/4 · verify_eval --negative-control PASS 6/6 (G2 10/10) · NC 4/4"
+  local_eq16: "로컬 GraphRAG (미배포 코드) EQ16 → '기한이익 상실일로부터 기산' (정답), FULL_GRAPHRAG · 도구 5회 · 버린 슬롯 0"
+source_of_truth: data/build_okf_bundle.py   # DOC_SPECS (줄 번호는 2026-09-28 기준)
+
+changes:
+  - prov_id: annex3_item_06_07_workout_special_rules
+    builder_line: 178
+    doc: "02 은행업감독규정 [별표 3] (7–8쪽)"
+    evidence: "본문 제목줄 '6. 회수예상가액 산정' · '7. 연체대출채권 및 연체기간' (원문 PDF 동일)"
+    title:
+      before: "[별표 3] 6.~7. 기업구조조정 촉진법 및 채무자회생법 관련 여신 건전성분류 특례"
+      after:  "[별표 3] 6.~7. 회수예상가액 산정 및 연체대출채권·연체기간"
+    description:
+      before: "부실징후기업·회생절차 개시 기업 등에 대한 신규지원자금(우선변제권) 건전성 분류 특례."
+      after:  "고정이하 분류여신 담보물의 회수예상가액 산정 기준과, 연체대출채권의 범위 및 유형별 연체기간 기산일."
+    affects_eq: [EQ16]
+
+  - prov_id: kif_03_regulatory_reserve_implications
+    builder_line: 361
+    doc: "08 KIF 브리프 (3쪽)"
+    evidence: "본문 3개 문단(■): 글로벌 CR 이 낮은 요인 · 과다 적립의 부작용 · RoRWA 관리. '대손준비금'·'손실흡수능력'은 본문에 없음"
+    title:
+      before: "3. 감독규정 대손준비금(Regulatory Loan Loss Reserve) 제도와 손실흡수능력 시사점"
+      after:  "3. 국내외 은행그룹 CR 격차 요인과 시사점 — 충당금 적립 관행 차이 및 위험조정수익률(RoRWA) 관리"
+    description:
+      before: "회계상 대손충당금 부족 시 감독규정(제29조) 최소적립률과의 차액을 대손준비금으로 적립하는 구조."
+      after:  "글로벌 은행그룹 CR 이 국내보다 낮은 요인(충당금 적립 기준과 담보·부실채권 관리 관행의 차이), 과다 적립이 가용자본·배당여력에 미치는 영향, RoRWA 등 위험조정수익률 관리와 비즈니스 모델 전환 필요성."
+    affects_eq: [EQ09]
+
+  - prov_id: rate_reform_ch03_internal_control
+    builder_line: 278
+    doc: "05 대출금리 산정체계 개선방안 (PDF 6–7쪽, 인쇄 11–12쪽)"
+    evidence: "원문 PDF 7쪽 장 제목 'Ⅲ. 새로운 잔액기준 COFIX 도입'. '내부통제 강화'는 Ⅱ-2 (PDF 5쪽)이며 이 조문 본문에 없음"
+    title:
+      before: "Ⅲ. 대출금리 산정 내부통제 강화 및 임의 가산금리 부과 금지"
+      after:  "Ⅲ. 새로운 잔액기준 COFIX 도입 — 결제성자금 포함 산정 및 기존 대출자 전환"
+    description:
+      before: "목표이익률·가산금리 재산정 주기 체계화 및 최고금리 부과 관행 폐지."
+      after:  "결제성자금·기타 예수/차입부채를 포함한 새로운 잔액기준 COFIX 산정(변동폭 비교), 시행 일정과 신규 대출자 적용, 기존 대출자 전환과 변동금리 중도상환수수료 인하, 신규취급액 기준 COFIX 현행 유지."
+    affects_eq: []
+
+  - prov_id: impact_05_annex3_4_counterparty_group
+    builder_line: 211
+    doc: "03 규제영향분석서 — [별표 3의4] 신·구조문대비표 (16–17쪽)"
+    evidence: "본문 항목 29(나~다)~37: 옵션 · 30 은행계정 동일 규칙 · 31 매수/매도포지션 상계 · 32 채무상환 우선순위 · 33 신용파생상품 보장매입 · 34 신용부도스왑 · 35 계정간 상계 · 36 순매도포지션 · 제6절 제1목 37 면제대상. '거래상대방 그룹'은 제2절(원문 10–12쪽)이며 이 본문에 없음"
+    title:
+      before: "[별표 3의4] 연계된 거래상대방 그룹 식별(지배관계·경제적 상호의존성)"
+      after:  "[별표 3의4] 트레이딩계정 포지션 익스포져 — 옵션·매수/매도포지션 상계·신용파생상품 처리 및 면제대상 익스포져"
+    description:
+      before: "단일 위험으로 간주되는 연결 거래상대방 그룹 합산 기준."
+      after:  "옵션 익스포져 산정, 동일 거래상대방 증권의 매수·매도포지션 상계 요건과 채무상환 우선순위, 신용파생상품 보장매입·신용부도스왑 처리, 계정간 상계 금지, 면제대상 익스포져(제6절 제1목) 도입부."
+    section_number:          # 본문과 어긋나서 함께 수정 제안 (그래프 article_no 로도 쓰임)
+      before: "별표3의4 제16호~제30호"
+      after:  "별표3의4 제29호~제37호"
+    affects_eq: []
+
+  - prov_id: impact_06_annex3_4_crm
+    builder_line: 212
+    doc: "03 규제영향분석서 — [별표 3의4] 신·구조문대비표 (19–20쪽)"
+    evidence: "본문: 제2목 이중상환청구권부 채권(41–42) · 제3목 집합투자, 유동화증권 및 기타 구조화상품(43–46). '신용위험경감기법'은 제4절(원문 13–14쪽, 18–23)이며 이 본문에 없음"
+    title:
+      before: "[별표 3의4] 신용위험경감(CRM) 기법 인정 및 보증·담보 대체 효과"
+      after:  "[별표 3의4] 이중상환청구권부 채권 및 집합투자·유동화증권 등 구조화상품 익스포져"
+    description:
+      before: "적격 담보 및 보증 제공 시 익스포져 감경 및 보증인 익스포져 전이 기준."
+      after:  "이중상환청구권부 채권의 익스포져 인식과 완화 조건, 구조화상품의 거래상대방 인식(기본자본 0.25% 기준·기초자산접근법·무명 고객), 규제회피 목적 분산투자 금지, 기초자산 익스포져 계산."
+    section_number:
+      before: "별표3의4 제31호~제45호"
+      after:  "별표3의4 제41호~제46호"
+    affects_eq: []
+
+  - prov_id: tf7_03_inclusive_finance
+    builder_line: 304
+    doc: "06 제7차 은행권 TF (5–6쪽)"
+    evidence: "본문: 상생금융 관련 참석자 의견(전담기구·창업벤처 투자·만기연장 차주 지원·KPI 신중론), 부위원장 평가(지속 가능한 상생금융·인센티브체계), '[ 3. 향후 계획 ]' 제8차 실무작업반. '금리감면 우수사례'·'금리인하요구권'은 본문에 없음"
+    title:
+      before: "[2. 은행권 상생금융 활성화 방안] 중소기업·소상공인 금리감면 우수사례"
+      after:  "[2. 은행권 상생금융 활성화 방안] 참석자 의견·당국 평가 및 [3. 향후 계획]"
+    description:
+      before: "중소기업·취약차주 이자부담 경감 및 금리인하요구권 운영 내실화."
+      after:  "상생금융 전담기구·창업벤처 투자·만기연장 차주 지원·KPI 반영 신중론 등 참석자 의견, 지속 가능한 상생금융 문화와 인센티브체계 개편 강조, 제8차 실무작업반(비이자수익 비중 확대) 예고."
+    affects_eq: []
+
+optional:   # 같은 종류의 문제. 승인 시 같은 재빌드에 포함 (추가 비용 없음)
+  - prov_id: impact_02_cost_benefit
+    builder_line: 202
+    reason: "제목은 포괄적이라 틀리진 않으나 설명이 본문(영향평가·규제일몰·비용감축제 체크리스트, 항목 11–15)과 다름"
+    title:
+      before: "규제영향분석서 — 규제의 적정성·실효성 및 경쟁영향평가"
+      after:  "규제영향분석서 — 영향평가·규제일몰·비용감축제 적용 여부 (항목 11~15)"
+    description:
+      before: "국내 은행권 거액 편중리스크 관리 효과 및 규제 준수 부담 분석."
+      after:  "기술·경쟁·중기 영향평가 해당 여부, 규제일몰 설정 여부, 우선허용·사후규제 및 비용감축제 적용 여부, 규제정비계획."
+  - part_titles:   # 디렉터리 index.md·KC 엔트리 제목. 플래너는 쓰지 않음. part_dir(경로)는 유지
+      - builder_line: 173
+        part_dir: 02_law_annex3_criteria/sec03_restructured_loan_exceptions
+        before: "제3호~제7호 채권재조정여신 건전성 조정 및 고정이하 분류 제외 특례"
+        after:  "제3호~제7호 채권재조정여신 건전성 분류 특례 · 회수예상가액 · 연체대출채권"
+      - builder_line: 276
+        part_dir: 05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix
+        before: "제Ⅲ장~참고3 내부통제 강화 및 금감원 검사 지적사항 개선방안"
+        after:  "제Ⅲ장~참고3 새로운 잔액기준 COFIX 도입 · 기대효과 · 금감원 검사 지적사항 개선방안"
+      - builder_line: 357
+        part_dir: 08_kif_loan_loss_provision/sec01_coverage_ratio_and_implications
+        before: "제1절~제3절 고정이하여신 대비 대손충당금 적립률(CR) 국제비교 및 대손준비금 시사점"
+        after:  "제1절~제3절 고정이하여신 대비 대손충당금 적립률(CR) 국제비교 및 시사점"
+
+keep:   # 검사에 걸렸지만 원문과 대조한 결과 불일치 아님 → 수정 안 함
+  - prov_id: impact_08_enforcement_bylaws
+    reason: "01:10Z 보고에서 불일치 후보로 적었으나 정정. 본문은 시행세칙·금융지주회사감독규정 신·구조문(면제 익스포져 신설, 제25조의2, 별지 제18호 업무보고서)으로 제목·설명과 맞음. 제목이 포괄적이라 단어 겹침만 낮았다"
+  - prov_id: distractor_04_art38_provision_surcharge
+    reason: "본문 '20% 가중하여 적립'이 제목의 핵심과 일치"
+
+apply_plan:   # 승인 후 실행. 각 단계는 실패할 수 있는 게이트로 확인 (runbook S03 · S04 · S07 · S08)
+  - step: "DOC_SPECS 수정 (위 changes, 승인된 optional)"
+  - step: "S03 python3 data/build_okf_bundle.py"
+    gates:
+      - "변경 파일 = 수정한 조문 md + 해당 doc.md · index.md + verification.json 뿐 (diff 로 확인)"
+      - "S03-G1 재생성 결정성 0 diff · S03-G2 okf_lint PASS (184 concepts · errors 0) · verification 174/174 P1–P4"
+  - step: "S04 python3 tools/sync_gcs.py → python3 tools/push_catalog.py --only <변경 파일> (전체 재푸시 안 함)"
+    gates:
+      - "S04-G1 sync_gcs.py --verify-only PASS (Q21 픽스처 3/3 유지 — tools/okf_fixtures.yaml)"
+      - "S04-G2 verify_catalog.py PASS · KC REST 로 변경 엔트리 제목 = after"
+  - step: "S07 build_ontology_graph.py (lex_provisions 는 verification.json 에서 제목을 읽음)"
+    gates:
+      - "S07-G1 kc_aspect_loader PASS · S07-G2 412 nodes / 1,442 edges 불변"
+      - "v_node_provision 의 해당 제목 = after"
+  - step: "S08 verify_cq.py · verify_eval.py --negative-control 재실행 (제목 변경 영향 없음을 확인)"
+  - step: "로컬 GraphRAG 로 EQ 20 재실행 → EQ16 확인 → 배포 → 재수집·판정"
+
+residuals:   # 이번에 고치지 않는 것
+  - "ID slug 가 내용과 어긋남 (annex3_item_06_07_workout_special_rules, rate_reform_ch03_internal_control, impact_05_…counterparty_group, impact_06_…crm, kif_03_regulatory_reserve_implications). 플래너는 ID 도 보므로 일부 오도 가능. ID 변경은 엣지·CQ·KC 전체를 건드려 이번 범위 밖"
+  - "P1–P4 는 제목–본문 일치를 검사하지 않음. 재발 방지용 검사(제목 단어 겹침 경고)는 별도 제안 예정"

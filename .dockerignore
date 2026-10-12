@@ -1,0 +1,14 @@
+.git
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.pyc
+**/agents/*/.env
+**/agents/*/uv.lock
+**/agents/*/tests/
+docs/
+ontology_arch.html
+second_brain/
+design_reference/
+sql/

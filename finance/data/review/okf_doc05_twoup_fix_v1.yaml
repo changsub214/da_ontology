@@ -1,0 +1,183 @@
+# OKF doc 05 re-segmentation — two-up (2 pages per sheet) column split
+#
+# Review file (AGENTS.md rule 1): nothing under okf/ changes until the user approves this file.
+# The numbers below come from a scratch prototype that built the whole bundle into scratch only:
+#   ~/.gemini/jetski/brain/2fd1112f-9d97-459a-9221-991228aa9e9c/scratch/doc05/proto_twoup.py
+#   → scratch/doc05/okf_new/ · scratch/doc05/proto_report.json
+
+meta:
+  id: okf_doc05_twoup_fix_v1
+  version: 1.0.0
+  status: applied             # proposed → approved → applied
+  created_at: "2026-09-28T03:24Z"
+  approved_at: "2026-09-28T03:32Z"
+  approved_by: "user — D1 approve (4 new IDs), D2 ch03 (before Ⅲ)"
+  applied_at: "2026-09-28T03:36–03:48Z"
+  applied_measured:
+    S03: "build_okf_bundle.py v3.1 → 10 docs + 178 provisions = 188 concepts; okf/ byte-identical to the prototype (diff -rq 0); vs before: changed 12 · added 4 · removed 0 (227 → 231 files); okf_lint errors 0 · warnings 0 PASS"
+    S04: "sync_gcs PASS local 230 · remote 233 (230 + fixtures 3/3), --verify-only PASS; push_catalog --prefix regulations/05_fsc_kfb_loan_rate_reform/ 15/15 + --only index.md 1/1 + --only log.md 1/1; verify_catalog PASS bundle 229/229 · missing 0 · stale 0 · bad resource 0 · fixtures 4/4 (gate now reads the expected set from okf/, no hard-coded 225)"
+    S07: "build_ontology_graph → lex_provisions 178; graph 11 node / 15 edge labels · 416 nodes / 1,446 edges (Provision 178 · PART_OF_DOCUMENT 178); v_node_provision 178 rows, doc 05 10 rows with the new titles, ObjectRef GET 200 ×10 and each body starts at its own heading; kc_aspect_loader 11 classes · v1.2.0 · art_029 ALLOW"
+    S08: "verify_cq 8/8 PASS · NC 4/4 FAILED as required; verify_eval 6/6 PASS · NC 4/4 FAILED as required (values unchanged)"
+  adr: "0014"
+  trigger: >-
+    EQ14 root-cause measurement (2026-09-28 02:23–02:26Z). EQ14 was GraphRAG's only miss (19/20).
+    The gold passage is in OKF, but in the wrong provision. The doc 05 PDF prints two pages side by
+    side on each landscape sheet. pdftotext's default mode reads the two columns line by line, so the
+    heading "다." at the top right comes before the left column's body. Anchor slicing then puts section
+    나's body into provision 다.
+  decider: "User, 2026-09-28 03:10Z — option C: split doc 05 into left/right columns and re-set provision boundaries."
+  scope: "data/un_data/05_FSC_KFB_은행권_대출금리_산정체계_개선방안.pdf only. The other 9 PDFs are unchanged."
+  principles:
+    - "Bodies stay verbatim source text. Only the reading order of doc 05 changes (left column, then right)."
+    - "The 6 existing provision IDs are kept. Their titles and descriptions are kept too."
+    - "Titles follow the source headings. EQ gold wording is never put into a title or description."
+    - "Page numbers stay sheet numbers (source_page 4 = PDF sheet 4), as today and as in the EQ/CQ evidence."
+
+evidence:
+  two_up_survey:
+    method: "pymupdf: a sheet counts as two-up when it carries a page footer '- n -' on both the left and the right half."
+    result:
+      "05": "sheets 2–8 of 9 (sheet 1 = cover | table of contents, sheet 9 = single page)"
+      others: "0 sheets in 01, 02, 03, 04, 06, 07, 08, 09, 10"
+  sheet_map:        # sheet → left page | right page (logical page numbers printed on the sheet)
+    1: "cover | table of contents"
+    2: "p.1 Ⅰ 추진 배경 | p.2 참고1"
+    3: "p.3 Ⅱ-1-가 대출금리 산정내역서 | p.4 참고2"
+    4: "p.5 Ⅱ-1-나 금리인하요구권 운영 개선 | p.6 Ⅱ-1-다 대출금리 비교공시제도 개선"
+    5: "p.7 Ⅱ-2 대출금리 산정체계 내부통제 강화 | p.8 Ⅱ-3 가산금리 항목 조정"
+    6: "p.9 Ⅱ-4 부당한 금리산정 관련 행정제재 근거 | p.10 별첨 중도상환수수료 개선방안"
+    7: "p.11 Ⅲ 새로운 잔액기준 COFIX 도입 | p.12 COFIX 자금 구성"
+    8: "p.13 Ⅳ 기대 효과 | p.14 Ⅴ 향후 추진계획"
+    9: "p.15 참고3 금감원 검사결과 문제점 개선방안"
+  defects_today:
+    - id: D-1
+      what: "rate_reform_sec_2_1_b_patent_discretion (title: Ⅱ-1-나 … ④항 특허 재량) holds only the 나 heading and (현황), 193 chars. The ④ sentence in its title is not in its body."
+    - id: D-2
+      what: "rate_reform_sec_2_1_c_abc_separation (title: Ⅱ-1-다 비교공시) holds 3,071 chars: section 나's 요건 table, (문제점), (개선) ①–④, then 다, then p.7 Ⅱ-2 and p.8 Ⅱ-3."
+    - id: D-3
+      what: "rate_reform_ch03_internal_control starts at the first '3.' on sheets 6–7, which is '3. 결제성자금' on p.12. p.9 Ⅱ-4 and p.10 별첨 are in no provision at all, and the Ⅲ opening on p.11 is missing."
+      measured: "lines missing from every doc 05 provision: p.9 22/22 · p.10 21/21 · p.11 14/22 · p.12 9/31"
+    - id: D-4
+      what: "ch01_background, sec_2_1_a_statement and ch04_appendix_fss_audit have all their characters but in mixed column order."
+  evidence_quotes_today:   # CQ/EQ quotes from doc 05 → provision that holds them now
+    CQ12: "3/3 in sec_2_1_c, but the CQ12 graph path points to sec_2_1_b"
+    EQ05: "1/1 in sec_2_1_c"
+    EQ14: "2/2 in sec_2_1_c — the planner picked sec_2_1_b (title '금리인하요구권'), which lacks them"
+    CQ15_EQ19: "sec_2_1_a (correct)"
+
+method:
+  extraction: >-
+    For doc 05 only, cut every sheet at x = 420 pt (page width 841 pt; the left column ends at x ≤ 392 and the right
+    column starts at x ≥ 471) and run pdftotext -x/-y/-W/-H on the left half, then the right half. The two texts
+    are joined with a blank line. Sheet numbering, and therefore source_page, is unchanged.
+  builder_change: >-
+    data/build_okf_bundle.py: extract_pdf_pages(pdf, two_up_split_x=None). build_bundle() passes
+    doc_spec.get("two_up_split_x"), and only the doc 05 spec sets it (420). Other documents use the same code path as today.
+
+provisions:
+  existing_kept_ids:
+    - id: rate_reform_ch01_background
+      change: "none in spec; reading order only"
+      chars: {before: 2031, after: 2026}
+      content_check: "characters lost 0 · added 0 (same text, left-then-right order)"
+    - id: rate_reform_sec_2_1_a_statement
+      change: "none in spec; reading order only"
+      chars: {before: 1556, after: 1550}
+      content_check: "characters lost 0 · added 0"
+    - id: rate_reform_sec_2_1_b_patent_discretion
+      change: "none in spec (start '나. 금리인하요구권 운영 개선', end '다. 대출금리 비교공시제도 개선')"
+      chars: {before: 193, after: 998}
+      body_after: "all of p.5: (현황), 요건 table, (문제점), (개선) ① ② ③ ④ and the ④ footnote"
+      title: "kept — the ④ sentence in the title is now in the body"
+    - id: rate_reform_sec_2_1_c_abc_separation
+      change: "pages [4, 5] → [4]"
+      chars: {before: 3071, after: 714}
+      body_after: "p.6 only: (현황), 비교공시 example table, (문제점), (개선), 현행/개선 table"
+    - id: rate_reform_ch03_internal_control
+      change: "pages [6, 7] → [7]; start '3.' → 'Ⅲ 새로운 잔액기준 COFIX 도입'"
+      chars: {before: 1461, after: 2161}
+      body_after: "p.11–12: Ⅲ from its heading, 현황 and the COFIX fund table"
+      note: "The ID says internal_control but the body is Ⅲ COFIX. Kept for ID stability (v1 already retitled it to COFIX). The real internal-control section becomes rate_reform_sec_2_2_internal_control."
+    - id: rate_reform_ch04_appendix_fss_audit
+      change: "none in spec; reading order only (p.13 Ⅳ, p.14 Ⅴ, p.15 참고3)"
+      chars: {before: 2151, after: 2144}
+      content_check: "characters lost 0 · added 0"
+
+  new:   # D1 — the user must approve these IDs (each becomes a KC entry in finance-okf and a GCS object)
+    part_dir: ch03_internal_control_and_appendix     # D2 — placed before Ⅲ, in document order
+    items:
+      - id: rate_reform_sec_2_2_internal_control
+        kc_entry_id: regulations/05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix/rate_reform_sec_2_2_internal_control
+        section_number: "제Ⅱ장 2"
+        title: "Ⅱ-2. 대출금리 산정체계 내부통제 강화 — 기초정보 근거 산정 · 임의변경 내부승인 · 운영실태 주기 점검"
+        description: "차주 제공·조회 기초정보에 근거한 금리 산출, 여신심사시스템 산출 금리 변경 시 합리적 근거와 내부승인 의무화, 일선 점포 금리산정 운영실태 주기적 점검·기록."
+        pages: [5]
+        anchors: {start: "2.\n\n대출금리 산정체계 내부통제 강화", end: "3.\n\n합리적 대출금리"}
+        chars: 827
+      - id: rate_reform_sec_2_3_spread_items
+        kc_entry_id: regulations/05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix/rate_reform_sec_2_3_spread_items
+        section_number: "제Ⅱ장 3"
+        title: "Ⅱ-3. 합리적 대출금리 산정을 위한 가산금리 항목 조정 — 구성항목 주기적 재산정 · 유동성 프리미엄 정의 개선"
+        description: "유동성·리스크프리미엄 월 1회 이상·간접비 1년 단위 재산정 원칙, 고정금리 대출에도 유동성프리미엄 가산 허용."
+        pages: [5]
+        anchors: {start: "3.\n\n합리적 대출금리", end: null}
+        chars: 717
+      - id: rate_reform_sec_2_4_unfair_rate_sanction
+        kc_entry_id: regulations/05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix/rate_reform_sec_2_4_unfair_rate_sanction
+        section_number: "제Ⅱ장 4"
+        title: "Ⅱ-4. 부당한 금리산정 관련 행정제재 근거 마련 — 은행법 시행령 개정 우선 추진 · 의원입법안 현황"
+        description: "현행 은행법령상 대출금리 부당산정 행위에 행정제재가 곤란한 문제와, 불공정 영업행위 유형 추가를 위한 시행령 개정·의원입법안 3건."
+        pages: [6]
+        anchors: {start: "4.\n\n부당한 금리산정 관련 행정제재 근거 마련", end: "중도상환수수료 개선방안"}
+        chars: 871
+      - id: rate_reform_annex_prepayment_fee
+        kc_entry_id: regulations/05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix/rate_reform_annex_prepayment_fee
+        section_number: "별첨"
+        title: "별첨. 중도상환수수료 개선방안 — 변동금리대출 중도상환수수료 인하"
+        description: "잔여일수 체감방식 중도상환수수료의 부과 근거(대출비용·이자손실)와, 이자손실 위험이 작은 변동금리대출의 수수료 인하."
+        pages: [6]
+        anchors: {start: "중도상환수수료 개선방안", end: null}
+        chars: 740
+    part_title_change:
+      part: ch03_internal_control_and_appendix
+      before: "제Ⅲ장~참고3 새로운 잔액기준 COFIX 도입 · 기대효과 · 금감원 검사 지적사항 개선방안"
+      after: "제Ⅱ장 2~4 · 별첨 · 제Ⅲ장~참고3 내부통제 강화 · 가산금리 항목 조정 · 행정제재 근거 · 중도상환수수료 · 새로운 잔액기준 COFIX 도입 · 기대효과 · 금감원 검사 지적사항 개선방안"
+
+decisions_needed:
+  D1:
+    question: "Approve the 4 new provision IDs above (new KC entries and GCS objects)?"
+    recommended: approve
+    alternative: >-
+      No new IDs: widen sec_2_1_c to p.6–8 and ch03 to p.9–12 and give them catch-all titles.
+      Not recommended — the planner picks provisions by title, and a catch-all title is what hid EQ14.
+  D2:
+    question: "Put the new provisions in part ch03_internal_control_and_appendix (before Ⅲ), or in part ch02?"
+    recommended: "ch03 — document order is kept, the ch02 part title (1-나~1-다) stays accurate, and the dir name ch03_internal_control_and_appendix then really holds internal control and appendix"
+
+prototype_measured:        # 2026-09-28T03:20Z, scratch only
+  split_integrity: "characters lost 0 · extra 0 on all 9 sheets (split text vs default pdftotext, whitespace removed)"
+  anchors: "10/10 start anchors found exactly once; 3/3 end anchors found once after their start"
+  files: "okf 227 → 231: changed 12, added 4, removed 0. Non-doc-05 provisions byte-identical."
+  changed_files:
+    - index.md                       # count text 174 → 178 provisions, 184 → 188 concepts
+    - log.md                         # same counts
+    - verification.json
+    - regulations/05_fsc_kfb_loan_rate_reform/doc.md          # provision_count 6 → 10, list
+    - regulations/05_fsc_kfb_loan_rate_reform/index.md        # ch03 part title
+    - regulations/05_fsc_kfb_loan_rate_reform/ch03_internal_control_and_appendix/index.md
+    - "the 6 doc 05 provision md files"
+  coverage_by_logical_page: "p.1–p.15 all 100% after (before: p.9 0/22 · p.10 0/21 · p.11 8/22 · p.12 22/31). Cover and TOC are excluded, as before."
+  evidence_quotes_after:
+    CQ12: "3/3 in sec_2_1_b (= its graph path)"
+    EQ05: "1/1 in sec_2_1_b"
+    EQ14: "2/2 in sec_2_1_b"
+    CQ15_EQ19: "sec_2_1_a (unchanged)"
+
+apply_plan:                # after approval; every step is a runbook stage with its gate
+  - "S03: builder change + doc 05 spec → build → the same 12 changed + 4 added as the prototype; okf_lint 0/0"
+  - "S04: sync_gcs → --verify-only PASS; push_catalog --prefix regulations/05_fsc_kfb_loan_rate_reform/ plus --only for root index.md/log.md; verify_catalog PASS (bundle 225 → 229)"
+  - "S07: build_ontology_graph → +4 Provision nodes and their PART_OF_DOCUMENT edges (expected 416 / 1,446, measured at apply); v_node_provision shows the 4 new titles; kc_aspect_loader PASS"
+  - "S08: verify_cq / verify_eval PASS (their quotes are checked against the PDF, not the bundle)"
+  - "No code change and no redeploy: the engine reads provision bodies live from GCS through BigQuery ObjectRef, and the planner catalog is read live from v_node_provision (600 s cache)"
+  - "Module 05 sidebar 21 + S13-G1 parity (CQ12 uses sec_2_1_b)"
+  - "Re-collect GraphRAG 20/20 (the planner catalog changes for every question) → judge ×2. RAG unchanged (same PDFs). EQ14 is measured, not assumed."

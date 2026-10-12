@@ -1,0 +1,33 @@
+# Intended OKF governance fixtures that live OUTSIDE the builder bundle.
+#
+# One fact in one place: tools/sync_gcs.py and tools/verify_catalog.py read this file to
+#   - treat these remote objects / KC entries as EXPECTED (not orphans),
+#   - FAIL if any of them is missing (the demo below depends on them live),
+#   - exclude them from `rsync --delete-unmatched-destination-objects`.
+#
+# Origin: 2026-09-23 03:43Z–04:40Z, created by manual publishes from the Studio module
+# `03 · okf-management` (tools/studio_server.py POST /api/okf/publish) against the pre-v0.2
+# bundle layout (`supervisory_regs/…`). data/build_okf_bundle.py does NOT produce them and
+# no seed script exists yet — see runbook S04 and ADR 0009.
+#
+# Consumer: agent question 21 (Q21_D5, "과거 폐기된 구버전 감독규정 스냅샷 …") —
+#   agents/starlight-graphrag/app/orchestrator/engine.py resolves
+#   `versions/art_29_allowance_coverage_ratio_v0_2_0` (status=deprecated) through the KC
+#   `superseded_by` chain and governance_gate returns BLOCKED_DEPRECATED.
+
+purpose: "Q21_D5 BLOCKED_DEPRECATED governance demo (deprecated snapshot → superseded_by chain)"
+created_at: "2026-09-23T03:43Z..04:40Z"
+created_by: "tools/studio_server.py POST /api/okf/publish (manual, 03 · okf-management)"
+
+# Paths relative to gs://<GCS_BUCKET>/okf/
+gcs_objects:
+  - versions/art_29_allowance_coverage_ratio_v0.2.0.md
+  - versions/supervisory_regs-01_banking_supervisory_regulation-ch0-95bb8c93_v0.2.0.md
+  - supervisory_regs/01_banking_supervisory_regulation/ch02_soundness_and_provisioning/art_29_allowance_coverage_ratio.md
+
+# Dataplex entry ids in entry group finance-okf
+kc_entries:
+  - versions/art_29_allowance_coverage_ratio_v0_2_0
+  - versions/art_29_allowance_coverage_ratio_v0.2.0
+  - versions/supervisory_regs-01_banking_supervisory_regulation-ch0-95bb8c93_v0.2.0
+  - supervisory_regs/01_banking_supervisory_regulation/ch02_soundness_and_provisioning/art_29_allowance_coverage_ratio

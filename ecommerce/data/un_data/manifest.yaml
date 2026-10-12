@@ -1,0 +1,120 @@
+version: 1.0-pdf
+domain: ecommerce
+company: K마켙 (K-Market)
+directory: ecommerce/data/un_data
+total_pdfs: 10
+status: proposed
+documents:
+- doc_id: law_ecom_consumer_act
+  filename: 01_LAW_전자상거래_등에서의_소비자보호에_관한_법률_발췌.pdf
+  title: 전자상거래 등에서의 소비자보호에 관한 법률 (청약철회 및 위약금·손해배상 기준)
+  authority: 공정거래위원회 · 법제처 국가법령정보센터
+  content_class: authentic
+  license: 공공누리 제1유형 (법제처 국가법령정보센터)
+  key_provisions:
+  - '제17조제1항(청약철회등): 재화등을 공급받은 날(배송완료일 delivered_at)부터 7일 이내 단순변심 청약철회 가능 원칙'
+  - '제17조제2항(청약철회 제한 및 단서): 복제가능 재화·주문생산·포장 훼손 시 청약철회 제한, 단 내용 확인을 위한 단순 포장 개봉(시착·홀로그램
+    택 미제거)은 청약철회 제한 사유에서 제외'
+  - '제18조(청약철회등의 효과): 반품 입고완료일(returned_at)로부터 3영업일 이내 대금 환급 의무 및 지연 시 지연배상금(연 15%)
+    지급'
+- doc_id: law_large_retail_fair_act
+  filename: 02_LAW_대규모유통업에서의_거래_공정화에_관한_법률_발췌.pdf
+  title: 대규모유통업에서의 거래 공정화에 관한 법률 (판촉비용 부담전가 금지 및 특약매입 반품 제한)
+  authority: 공정거래위원회 · 법제처 국가법령정보센터
+  content_class: authentic
+  license: 공공누리 제1유형 (법제처 국가법령정보센터)
+  key_provisions:
+  - '제10조(상품의 반품 금지): 직매입 거래 시 정당한 사유 없는 반품 금지 원칙 vs 특약매입·시즌상품 사전 서면약정 단서'
+  - '제11조제1항~제4항(판촉비용의 부담전가 금지): 사전 서면약정 필수 및 납품업자(입점 브랜드)의 판촉비용 분담비율은 100분의 50(50%)을
+    초과할 수 없음'
+  - '제11조제5항(자발적 차별화 판촉행사 예외): 입점 브랜드가 자발적으로 단독 요청하여 기획한 차별화 프로모션의 경우 50% 분담 상한 적용
+    제외 특례'
+- doc_id: ftc_consumer_dispute_standards
+  filename: 03_FTC_소비자분쟁해결기준_의류_패션잡화_전자상거래.pdf
+  title: '[별표 II] 품목별 소비자분쟁해결기준 — 의류·패션잡화·사이버몰 (공정거래위원회 고시)'
+  authority: 공정거래위원회
+  content_class: authentic
+  license: 공공누리 제1유형 (공정거래위원회)
+  key_provisions:
+  - '의류·패션잡화 품질보증 및 반품기준: 세탁 후 변형·염색불량 무상교환/환급, 세트(코디 번들) 상품 일부 반품 시 단품 정가 재계산 기준'
+  - '인터넷쇼핑몰 배송지연 배상기준: 약정 출고 기한(SLA) 초과 시 대체상품 공급 또는 주문금액 대비 지연일수별 보상적립금 지급 기준'
+- doc_id: ftc_online_promo_guideline
+  filename: 04_FTC_온라인쇼핑몰_특가행사_할인율_표시광고_및_판촉지침.pdf
+  title: 온라인 쇼핑몰 특별할인행사(프로모션) 심사지침 및 기만적 표시·광고 방지 가이드라인
+  authority: 공정거래위원회 유통거래과
+  content_class: authentic
+  license: 공공누리 제1유형 (공정거래위원회)
+  key_provisions:
+  - '할인율 산정 기준가격(retail_price_krw): 최근 20일 이상 실제 판매된 기준 정가 대비 할인율만 표시 허용'
+  - '쿠폰 중복할인 시 정산 분담 기준: 플랫폼 단독 발행 등급쿠폰은 플랫폼 100% 부담, 브랜드 공동캠페인 쿠폰만 약정 분담률 적용'
+- doc_id: pipc_marketing_consent_guide
+  filename: 05_PIPC_개인정보보호법_맞춤형_추천_및_야간마케팅_동의지침.pdf
+  title: 온라인 맞춤형 광고·초개인화 추천 및 영리목적 광고성 정보 전송 가이드라인
+  authority: 개인정보보호위원회 · 한국인터넷진흥원(KISA)
+  content_class: authentic
+  license: 공공누리 제1유형 (개인정보보호위원회)
+  key_provisions:
+  - '행태정보(events: 장바구니·상품조회) 기반 인앱 추천 노출은 수신동의 무관 가능하나, 외부 푸시·알림톡 시크릿 쿠폰 발송은 마케팅 수신동의(marketing_opt_in_yn
+    = Y) 필수'
+- doc_id: distractor_overseas_dutyfree_reg
+  filename: 06_DISTRACTOR_해외직구_구매대행_및_보세면세점_특례고시.pdf
+  title: '[타업권/해외직구 함정(Distractor)] 해외직구 구매대행 및 보세판매장(면세점) 반품·할인 특례고시'
+  authority: 관세청 · 공정거래위원회
+  content_class: authentic
+  license: 공공누리 제1유형
+  key_provisions:
+  - '[RAG 혼동 유도 Distractor]: 국내 풀필먼트 직배송인 K마켙 일반 주문이 아닌 ''해외직구 구매대행(왕복 국제물류비 25,000원
+    정액 차감, 출고 후 취소 불가)'' 및 ''면세점 한도 규정''을 수록하여, 일반 Vector RAG가 반품·쿠폰 질문 시 해외직구 규정을
+    잘못 인용하는지 검증'
+- doc_id: synthetic_kmarket_crm_personalization
+  filename: 07_SYNTHETIC_K마켙_CRM_초개인화추천_및_타겟쿠폰_운영지침.pdf
+  title: '[당사 내규 PDF] K마켙 CRM 초개인화 코디추천 및 타겟 오퍼 운영지침 (제2026-CRM-01호)'
+  authority: K마켙 CRM초개인화팀 · 그로스마케팅실 (PyMuPDF 렌더링)
+  content_class: synthetic
+  license: Clean-room Demonstration PDF (8-gram overlap = 0)
+  key_provisions:
+  - '제5조(부서별 유효구매액 및 반품률 산출 정의): CRM팀 등급산정 구매액(최근 90일 Complete+Shipped 합산) vs 재무정산팀
+    확정매출(Complete 중 배송완료 7일 경과분) 정의 분리'
+  - '제8조(장바구니 미결제 코디 번들 초개인화 추천): 장바구니(cart) 후 미구매 상품과 코디 호환(coord_product_id) 또는
+    품절 시 대체 상품(substitute_product_id)을 결합 추천할 때 등급별 기본 할인율(VIP 20%, GOLD 15%, SILVER
+    10%, WELCOME 5%)'
+  - '제9조(과다반품 주의고객 오퍼 제한 단서): 최근 90일 주문건 중 반품(Returned) 비율이 30% 이상인 고객은 등급 무관 초개인화
+    시크릿 쿠폰 한도를 최대 5%로 제한(단, 상품불량 귀책 반품은 모수 제외)'
+- doc_id: synthetic_kmarket_md_margin_clearance
+  filename: 08_SYNTHETIC_K마켙_MD_상품마진_가드레일_및_체화재고_클리어런스_내규.pdf
+  title: '[당사 내규 PDF] K마켙 MD 상품마진율 가드레일 및 체화재고 클리어런스 특례 내규 (제2026-MD-04호)'
+  authority: K마켙 MD상품본부 · 재무기획실 (PyMuPDF 렌더링)
+  content_class: synthetic
+  license: Clean-room Demonstration PDF (8-gram overlap = 0)
+  key_provisions:
+  - '제11조(초개인화 쿠폰 최소 마진율 가드레일 원칙): 상품 기본 마진율((retail_price_krw - cost_krw) / retail_price_krw)이
+    25.0% 미만인 저마진 상품은 초개인화 쿠폰 할인율을 최대 5%까지만 허용(역마진 방지 원칙)'
+  - '제12조(체화재고 클리어런스 마진 하한 완화 특례): 단, 물류센터 입고 후 90일 초과 미판매 체화재고(age_days > 90)로서 MD본부장
+    캠페인 특례승인(campaign_exceptions)을 득한 상품은 순마진 하한(approved_floor_margin_pct, 예: 10.0%)까지
+    초개인화 할인을 확대 적용할 수 있음'
+- doc_id: synthetic_kmarket_vendor_settlement
+  filename: 09_SYNTHETIC_K마켙_입점브랜드_공동판촉_및_정산관리_세칙.pdf
+  title: '[당사 내규 PDF] K마켙 입점 파트너(브랜드) 공동판촉 비용분담 및 정산관리 세칙 (제2026-FIN-02호)'
+  authority: K마켙 파트너정산팀 · 준법감시팀 (PyMuPDF 렌더링)
+  content_class: synthetic
+  license: Clean-room Demonstration PDF (8-gram overlap = 0)
+  key_provisions:
+  - '제6조(공동판촉 쿠폰 분담률 산정 및 법정 상한 연동): 특약매입·위수탁 입점 브랜드 상품에 발행된 캠페인 쿠폰 할인액은 계약서상 약정 분담률(joint_promo_vendor_share_pct)을
+    적용하되, 대규모유통업법 제11조에 의거 사전 서면약정(written_promo_agreement_yn = Y)이 있는 경우에 한해 최대 50%까지만
+    브랜드 정산금에서 공제(서면약정 미비 시 K마켙 100% 부담)'
+  - '제14조(만료 구버전 프로모션 세칙 폐기 대상 — Q21 거버넌스 픽스처): 구버전(v0.2.0 DEPRECATED)의 ''VIP 쿠폰 일괄
+    60% 브랜드사 부담'' 조항 폐기 및 현행 v0.2.1(50% 상한 준수) 대체'
+- doc_id: synthetic_kmarket_cs_return_sla
+  filename: 10_SYNTHETIC_K마켙_CS_반품검수_및_풀필먼트_SLA보상_매뉴얼.pdf
+  title: '[당사 내규 PDF] K마켙 카테고리별 반품검수 · 청약철회 예외 및 풀필먼트 SLA 보상 매뉴얼 (제2026-CS-07호)'
+  authority: K마켙 CS운영실 · 풀필먼트센터 (PyMuPDF 렌더링)
+  content_class: synthetic
+  license: Clean-room Demonstration PDF (8-gram overlap = 0)
+  key_provisions:
+  - '제4조(부서별 가용재고 산출 정의): 물류팀 당일출고 가용재고(stock_status = AVAILABLE 이고 age_days <= 180)
+    vs 재무팀 재고자산(AVAILABLE + RESERVED + RETURN_INSPECTION 전체 원가 합산) 정의 분리'
+  - '제7조(이너웨어·수영복 반품 제한 원칙 및 상위법령 우선 특례): 당사 내규상 Intimates(이너웨어)·Swim(수영복) 카테고리는 위생상
+    단순변심 반품 제한 태그(HYGIENE_RESTRICTED)가 부여되나, 전자상거래법 제17조제2항 상위 규정에 따라 검수 결과 홀로그램 미개봉
+    택이 보존(hologram_tag_intact_yn = Y)되고 배송완료 후 7일 이내 접수된 건은 즉시 환불 승인'
+  - '제10조(출고지연 SLA 보상포인트 지급 기준): 브랜드 계약 출고 기한(sla_ship_hours)을 24시간 이상 초과하여 출고(shipped_at
+    - created_at)된 주문은 결제금액(sale_price_krw)의 5%(최대 10,000원)를 보상 적립금으로 지급'

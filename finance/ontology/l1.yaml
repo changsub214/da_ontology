@@ -1,0 +1,413 @@
+# ---------------------------------------------------------------------------
+# ontology/l1.yaml — 별빛은행 금융 온톨로지 L1 Knowledge Graph 선언적 매니페스트 (SSOT)
+#
+# 대상 데이터세트: starlight_bank_ontology
+# 대상 그래프명:   starlight_bank_ontology.finance_graph
+#
+# 핵심 아키텍처 불변식 (ADR 0005 반영):
+#   1. Node Classes (총 11종 = LDM 8 + CTX 1 + LEX 2)
+#      - LDM (8): Customer, FinancialProduct, WorkoutHistory (BQ Native 3종)
+#                 LoanContract(★단일 허브), Collateral, DelinquencyEvent,
+#                 RateCutRequest, ExceptionApproval (Spanner Federated ont_* 5종)
+#      - CTX (1): BusinessContext (6개 부서/업무목적 해석 분기 앵커)
+#      - LEX (2): SourceDocument (10건) + Provision (174건) = 총 184개 OKF & KC 1:1 매핑
+#   2. 한 사실은 한 곳에만 둔다 (Single Source of Governance):
+#      - 문서의 유효 상태(status: stable/verified vs deprecated)와 대체 문서 체인(superseded_by)은
+#        BigQuery에 중복 저장하지 않고 오직 Dataplex Knowledge Catalog의 okf Aspect에만 둔다.
+#      - BigQuery의 Provision 노드는 불변 슬롯 식별자(provision_slot_id)와 kc_entry_id만 보유한다.
+#   3. 정답 유출 금지 (G04_no_leakage) 및 실시간성 보장:
+#      - GOVERNED_BY_CRITERIA 및 EVALUATED_UNDER_PROVISION 엣지는 정적 테이블이 아니라
+#        실시간 SQL View로 정의하며, 단서 해당 여부(예: KSIC F·G·H·L 0.9%) 같은 정답을
+#        미리 계산해 넣지 않고 심사 관할 범위(Scope)만 연결한다.
+#   4. Dataplex Business Glossary (term_key) 연동:
+#      - INVOKES_PROVISION 엣지의 term_key는 Dataplex Glossary(`starlight-finance-glossary`)의
+#        Term ID와 1:1 매핑되어 동일 용어(연체율, 금리 등)를 부서별로 정확히 분기한다.
+#   5. 모든 Label(클래스/엣지)과 Property(컬럼)에 직관적인 한 줄 한글 설명(description)을 부여하며,
+#      KC의 ontology-class-anchors Custom Aspect는 본 l1.yaml에서 자동 생성된다.
+# ---------------------------------------------------------------------------
+
+meta:
+  name: starlight_bank_finance_ontology
+  version: 1.2.0
+  updated_at: "2026-09-27"
+  source_dataset: starlight_bank
+  ontology_dataset: starlight_bank_ontology
+  property_graph_name: starlight_bank_ontology.finance_graph
+  alias_table: starlight_bank_ontology.ont_entity_aliases
+  kc_entry_group: finance-okf
+  kc_glossary_id: starlight-finance-glossary
+  kc_anchor_aspect_type: ontology-class-anchors
+  bq_objectref_connection: us-central1.okf-gcs-conn
+  counts:
+    node_classes: 11
+    edge_types: 15
+    glossary_terms: 7
+    lex_total_entries: 184
+    lex_source_documents: 10
+    lex_provisions: 174
+    business_contexts: 6
+
+# ===========================================================================
+# 0. DATAPLEX BUSINESS GLOSSARY TERMS (7종 — INVOKES_PROVISION.term_key와 1:1 매핑)
+# ===========================================================================
+glossary_terms:
+  - term_key: delinquency-rate
+    display_name: "연체율 · 부실비율"
+    description: "여신 건전성 및 연체 수준을 나타내는 핵심 지표로, 호출 부서(리스크관리위원회 고정이하여신비율 1.51%, 금감원 대외공시 연체율 2.26%, 여신관리팀 조기경보 실질연체율 4.00%)에 따라 산식과 특수채권 포함 여부가 분기됨"
+    synonyms: ["연체율", "부실비율", "고정이하여신비율", "고정이하비율", "원화대출 연체율", "공시 연체율", "실질 연체율", "조기경보 연체율"]
+  - term_key: provision-criteria
+    display_name: "대손충당금 · 대손준비금 적립기준"
+    description: "자산건전성 5단계 분류별 법정 최소 대손충당금 적립비율(기업 정상 0.85%, 경기민감업종 F·G·H·L 0.90%, 요주의 7%, 고정 20%, 회수의문 50%, 추정손실 100%, 우선변제자산 감경) 및 대손충당금 적립률(Coverage Ratio)"
+    synonyms: ["대손충당금", "대손준비금", "충당금 적립률", "coverage ratio", "최소적립비율", "우선변제자산 감경"]
+  - term_key: restructured-exemption
+    display_name: "채권재조정 여신 건전성 분류 특례"
+    description: "워크아웃·회생절차 등 채권재조정 여신이 6개월 이상 연속 정상상환 또는 유상증자 등 상환능력 개선 사건을 충족하고 판단근거를 문서화한 경우 고정이하로 분류하지 아니할 수 있는 특례(감독규정 별표3 제3호 라목)"
+    synonyms: ["채권재조정", "별표3 라목", "라목 특례", "워크아웃 건전성 특례", "요주의 유지 근거"]
+  - term_key: eod-deferral
+    display_name: "기한이익상실(EOD) 통지 및 유예 특례"
+    description: "원리금 연체 30일(1월) 초과 시 기한이익상실 예정 통지 원칙(내규 제16조)과 채권재조정·신용보증기금(KODIT) 85% 이상 보증서 및 우선변제자산 요건 충족 시 본부심사역 승인하 유예 특례(내규 제18조)"
+    synonyms: ["기한이익상실", "EOD", "EOD 유예", "보증서 담보 유예", "신보 85% 보증서"]
+  - term_key: loan-rate
+    display_name: "대출금리 산정체계 및 금리인하요구권"
+    description: "최종 적용금리 산식(기준금리 A + 가산금리 B - 우대금리 C), 비교공시 분리 원칙, TCB 우대금리 전결 상한(1.20%p) 및 특허권 단독 취득 시 필수 금리인하 제외 재량 기준"
+    synonyms: ["대출금리", "적용금리", "가산금리", "우대금리", "금리인하요구권", "금리인하요구", "비교공시", "전결 한도"]
+  - term_key: base-date
+    display_name: "대출 3대 기준일자 및 신규 영업실적"
+    description: "전산 등록일(reg_dt), 약정 체결일(contract_dt), 자금 실행일(disburse_dt)의 구분 기준이며, 특정일자 대출 조회 및 영업점 신규 대출 실적은 반드시 체결일(contract_dt)을 기준으로 집계함(내규 제21조)"
+    synonyms: ["나간 대출", "신규 대출 실적", "체결일", "등록일", "실행일", "기준일자"]
+  - term_key: large-exposure
+    display_name: "거액익스포져 한도 규제"
+    description: "단일 거래상대방 또는 연계된 거래상대방 그룹에 대한 익스포져를 은행 BIS 기본자본(Tier 1 Capital)의 25%(D-SIB 20%) 이내로 제한하는 신설 경영지도비율 규제(감독규정 제26조제1항제6호)"
+    synonyms: ["거액익스포져", "거액익스포져 한도", "기본자본 25%", "동일차주 한도"]
+
+# ===========================================================================
+# 1. NODE CLASSES (11종: LDM 8 + CTX 1 + LEX 2)
+# ===========================================================================
+node_classes:
+  - class_label: BusinessContext
+    layer: CTX
+    korean_name: 부서·업무목적 맥락
+    description: "동일 금융 용어(연체율·금리·실적) 호출 시 부서와 업무목적에 따라 적용 조문과 물리 컬럼을 분기하는 맥락 노드"
+    source_plane: bigquery_native
+    physical_table: starlight_bank_ontology.ctx_business_contexts
+    graph_view: starlight_bank_ontology.v_node_business_context
+    primary_key: context_id
+    expected_rows: 6
+    kc_anchor_config:
+      anchor_type: ALIAS_INTENT_MAP
+      alias_group: BUSINESS_CONTEXT
+      match_bind_key: context_id
+      gql_match_template: "(ctx:BusinessContext {context_id: '$CANONICAL_ID'})"
+      planner_instruction: "질문의 발화 부서·목적(리스크관리위원회, 금감원 공시, 여신관리팀 조기경보/EWS, 기업여신심사부, 영업점, 준법감시부)을 ont_entity_aliases에서 정규화하여 시작 노드로 MATCH 하세요."
+      outgoing_edges: ["SCOPES_PORTFOLIO", "INVOKES_PROVISION"]
+    properties:
+      - {name: context_id, type: STRING, role: pk, description: "부서·업무목적 맥락 고유 식별자 (PK, 예: RISK_MGMT, DISCLOSURE, CREDIT_MGMT)"}
+      - {name: dept_name, type: STRING, role: label, description: "업무를 주관하는 은행 내 부서명 (예: 리스크관리부, 재무기획부, 여신관리팀)"}
+      - {name: purpose_summary, type: STRING, role: attribute, description: "해당 부서의 핵심 의사결정 및 보고 목적 한 줄 요약"}
+      - {name: primary_metric_scope, type: STRING, role: attribute, description: "해당 맥락에서 주로 산출·점검하는 핵심 지표 및 심사 범위"}
+
+  - class_label: SourceDocument
+    layer: LEX
+    korean_name: 법령·감독규정·내규 원본 문서 루트
+    description: "은행업감독규정·모범규준·당행내규·타업권 규정 등 10종 원본 문서의 법적 구속력과 적용 업권을 정의하는 루트 노드"
+    source_plane: bigquery_lex_plus_kc
+    physical_table: starlight_bank_ontology.lex_source_documents
+    graph_view: starlight_bank_ontology.v_node_source_document
+    primary_key: doc_id
+    expected_rows: 10
+    kc_anchor_config:
+      anchor_type: KC_GOVERNED_LEX_ROOT
+      alias_group: SOURCE_DOCUMENT
+      match_bind_key: doc_id
+      gql_match_template: "(doc:SourceDocument {doc_id: '$CANONICAL_ID'})"
+      planner_instruction: "10개 원본 문서 루트입니다. authority_level(binding/internal/advisory/distractor) 및 applicable_sector(COMMERCIAL_BANK vs SAVINGS_BANK)로 타업권 교란 규정을 필터링하세요."
+      outgoing_edges: ["PART_OF_DOCUMENT (incoming)"]
+    properties:
+      - {name: doc_id, type: STRING, role: pk, description: "원본 법령·내규 문서 고유 식별자 (PK, DOC_01 ~ DOC_10)"}
+      - {name: doc_code, type: STRING, role: attribute, description: "문서 번호 코드 (01 ~ 10)"}
+      - {name: title, type: STRING, role: label, description: "법령·감독규정·브리프·내규 문서의 공식 명칭"}
+      - {name: authority_level, type: STRING, role: filter, description: "법적 구속력 구분 (binding 법규 / internal 당행내규 / advisory 가이드·자문 / distractor 타업권교란)"}
+      - {name: applicable_sector, type: STRING, role: filter, description: "규정 적용 대상 금융업권 (COMMERCIAL_BANK 시중은행 vs SAVINGS_BANK 상호저축은행)"}
+      - {name: issuing_body, type: STRING, role: attribute, description: "문서 제정·발행 기관명 (금융위원회, 은행연합회, 별빛은행 등)"}
+      - {name: kc_entry_id, type: STRING, role: kc_ref, description: "Dataplex Knowledge Catalog에 등록된 문서 루트 Entry ID"}
+      - {name: gcs_uri, type: STRING, role: object_ref, description: "GCS에 저장된 OKF 문서 루트 마크다운 파일 경로"}
+      - {name: gcs_obj_ref, type: "STRUCT<uri STRING, version STRING, authorizer STRING, details JSON>", role: object_ref, description: "BigQuery Cloud Resource Connection(us-central1.okf-gcs-conn) 기반 네이티브 ObjectRef 구조체 (OBJ.FETCH_METADATA / OBJ.GET_ACCESS_URL 호출용)"}
+
+  - class_label: Provision
+    layer: LEX
+    korean_name: 조문·별표·단서·내규 조항
+    description: "174개 개별 조문·별표·단서 조항 노드로, 불변 슬롯 ID·KC Entry 참조·참조 물리 컬럼 속성을 보유하며 거버넌스 상태는 KC Aspect에서만 실시간 검증함"
+    source_plane: bigquery_lex_plus_kc
+    physical_table: starlight_bank_ontology.lex_provisions
+    graph_view: starlight_bank_ontology.v_node_provision
+    primary_key: provision_slot_id
+    expected_rows: 174
+    kc_anchor_config:
+      anchor_type: KC_GOVERNED_LEX_NODE
+      alias_group: PROVISION_SYNONYM
+      match_bind_key: provision_slot_id
+      gql_match_template: "(pr:Provision {provision_slot_id: '$CANONICAL_ID'})"
+      planner_instruction: "도달 시 반드시 kc_entry_id로 Dataplex Knowledge Catalog의 okf Aspect를 실시간 조회하세요. status∈{'stable','verified'}이면 유효(ALLOW)로 처리하고, status=='deprecated'이면 KC Aspect의 superseded_by 체인을 최대 3단계까지 추적하여 status∈{'stable','verified'}인 대체 문서를 찾으며, 유효한 대체 문서가 없으면 판정을 즉시 차단하세요."
+      outgoing_edges: ["PART_OF_DOCUMENT", "HAS_EXCEPTION_PROVISO", "DELEGATES_TO_INTERNAL", "CONFLICTS_BY_SECTOR"]
+    properties:
+      - {name: provision_slot_id, type: STRING, role: pk, description: "버전이 바뀌어도 유지되는 불변 조문 슬롯 식별자 (PK, canonical_id)"}
+      - {name: doc_id, type: STRING, role: fk, description: "소속 원본 문서 식별자 (FK -> SourceDocument.doc_id)"}
+      - {name: kc_entry_id, type: STRING, role: kc_ref, description: "Dataplex Knowledge Catalog에서 실시간 유효성(status) 및 대체문서(superseded_by)를 조회할 기준 Entry ID"}
+      - {name: article_no, type: STRING, role: label, description: "조문 번호 또는 별표 항목명 (예: 제29조, 별표3 제3호 라목, 내규 제25조)"}
+      - {name: title, type: STRING, role: label, description: "조문·별표 항목의 제목"}
+      - {name: provision_role, type: STRING, role: filter, description: "조문의 기능적 역할 (BASE_CRITERIA 본칙 / EXCEPTION_PROVISO 단서·특례 / INTERNAL_RULE 당행내규 / DISTRACTOR_RULE 교란조문)"}
+      - {name: target_columns, type: STRING, role: schema_binding, description: "조문 적용 시 조회해야 하는 정형 원장 테이블.컬럼 목록 (콤마 구분)"}
+      - {name: missing_schema_columns, type: STRING, role: schema_gap, description: "규정상 필요하나 현재 DW에 존재하지 않는 데이터 공백 컬럼 (예: tier1_capital)"}
+      - {name: gcs_uri, type: STRING, role: object_ref, description: "GCS에 저장된 조문 마크다운 원문 URI"}
+      - {name: gcs_obj_ref, type: "STRUCT<uri STRING, version STRING, authorizer STRING, details JSON>", role: object_ref, description: "BigQuery Cloud Resource Connection(us-central1.okf-gcs-conn) 기반 네이티브 ObjectRef 구조체 (OBJ.FETCH_METADATA / OBJ.GET_ACCESS_URL 호출용)"}
+
+  - class_label: LoanContract
+    layer: LDM
+    korean_name: 기업여신 계약 원장 (단일 중심 허브)
+    description: "Spanner에서 실시간 연합 조회되는 기업여신 계약 원장이자 7개 정형 엔티티와 규정이 만나는 단일 중심 허브 노드"
+    source_plane: spanner_federated
+    physical_table: starlight_bank.ont_loan_contracts
+    graph_view: starlight_bank_ontology.v_node_loan_contract
+    primary_key: contract_id
+    expected_rows: 100
+    kc_anchor_config:
+      anchor_type: CENTRAL_HUB_ANCHOR
+      alias_group: CONTRACT_ID
+      match_bind_key: contract_id
+      gql_match_template: "(l:LoanContract {contract_id: '$CANONICAL_ID'})"
+      planner_instruction: "Spanner 실시간 여신 원장이자 그래프의 단일 중심 허브입니다. 차주·상품·담보·연체·워크아웃·금리인하·예외승인 및 규정이 모두 1-hop으로 연결됩니다."
+      outgoing_edges: ["BORROWED_BY", "OF_PRODUCT", "HAS_COLLATERAL", "HAS_DELINQUENCY", "HAS_RATE_CUT_REQUEST", "HAS_EXCEPTION_APPROVAL", "HAS_WORKOUT_HISTORY", "GOVERNED_BY_CRITERIA"]
+    properties:
+      - {name: contract_id, type: STRING, role: pk, description: "여신계약 고유 번호 (PK, 예: LN_2026_0001)"}
+      - {name: customer_id, type: STRING, role: fk, description: "차주 고객 고유 번호 (FK -> Customer.customer_id)"}
+      - {name: product_code, type: STRING, role: fk, description: "가입 여신상품 코드 (FK -> FinancialProduct.product_code)"}
+      - {name: borrower_name, type: STRING, role: label, description: "차주 법인명"}
+      - {name: ksic_section_code, type: STRING, role: filter, description: "한국표준산업분류 대분류 코드 (F 건설, G 도소매, H 숙박음식, L 부동산업 등)"}
+      - {name: reg_dt, type: DATE, role: attribute, description: "여신 심사 전산 최초 등록일 (실적 기준일 아님)"}
+      - {name: contract_dt, type: DATE, role: filter, description: "여신거래약정 체결일 (내규 제21조상 신규 영업실적 및 특정일자 조회 필수 기준일)"}
+      - {name: disburse_dt, type: DATE, role: attribute, description: "실제 대출금 자금 실행일 (자금부 집행 기준일)"}
+      - {name: base_rate, type: FLOAT64, role: attribute, description: "기준금리 A (연 %, 코픽스·CD·금융채 연동)"}
+      - {name: spread_rate, type: FLOAT64, role: attribute, description: "가산금리 B (연 %, 신용·업무원가·목표이익률 합산)"}
+      - {name: pref_rate, type: FLOAT64, role: attribute, description: "가감조정 우대금리 C (연 %p, 차감 항목이며 TCB 전결 상한은 1.20%p)"}
+      - {name: applied_rate, type: FLOAT64, role: attribute, description: "최종 적용금리 (연 %, base_rate + spread_rate - pref_rate)"}
+      - {name: contract_amt, type: INT64, role: attribute, description: "최초 여신 약정 금액 (원)"}
+      - {name: outstanding_amt, type: INT64, role: attribute, description: "현재 여신 대출 잔액 (원)"}
+      - {name: overdue_days, type: INT64, role: filter, description: "현재 원리금 연체 일수 (일)"}
+      - {name: asset_classification, type: STRING, role: filter, description: "자산건전성 5단계 분류 (NORMAL, PRECAUTIONARY, SUBSTANDARD, DOUBTFUL, ESTIMATED_LOSS)"}
+      - {name: rehab_priority_claim_yn, type: STRING, role: filter, description: "회생법·기촉법상 은행 우선변제권 인정 자산 여부 (Y/N)"}
+      - {name: booked_provision_krw, type: INT64, role: attribute, description: "현재 장부에 적립된 대손충당금 금액 (원)"}
+      - {name: account_status, type: STRING, role: filter, description: "계좌 원장 상태 (ACTIVE 정상운용 vs WRITTEN_OFF_SPECIAL_CLAIM 대손상각 특수채권)"}
+
+  - class_label: Customer
+    layer: LDM
+    korean_name: 기업 차주 마스터
+    description: "기업 차주의 산업분류(KSIC)·신용등급·기술등급·부채비율을 관리하는 BigQuery 마스터 노드"
+    source_plane: bigquery_native
+    physical_table: starlight_bank.customers
+    graph_view: starlight_bank_ontology.v_node_customer
+    primary_key: customer_id
+    expected_rows: 100
+    kc_anchor_config:
+      anchor_type: ALIAS_TABLE_LOOKUP
+      alias_group: CUSTOMER_NAME
+      match_bind_key: customer_id
+      gql_match_template: "(c:Customer {customer_id: '$CANONICAL_ID'})"
+      planner_instruction: "질문 속 기업명 약칭('별빛정밀'->CUST_0001, '태성금속'->CUST_0002, '극동철강'->CUST_0003, '에이펙스세미콘'->CUST_0008 등)을 ont_entity_aliases에서 최장일치(Longest-Match-First)로 조회해 customer_id로 정규화한 뒤 MATCH 절에 직접 바인딩하세요."
+      outgoing_edges: ["BORROWED_BY (incoming)"]
+    properties:
+      - {name: customer_id, type: STRING, role: pk, description: "기업 차주 고유 식별자 (PK, CUST_0001 ~ CUST_0100)"}
+      - {name: borrower_name, type: STRING, role: label, description: "차주 공식 법인명 (예: 별빛정밀(주), 에이펙스세미콘(주))"}
+      - {name: corp_reg_no, type: STRING, role: attribute, description: "법인등록번호"}
+      - {name: ksic_section_code, type: STRING, role: filter, description: "한국표준산업분류 대분류 알파벳 코드 (감독규정 제29조 단서 F·G·H·L 판정 기준)"}
+      - {name: ksic_detail_code, type: STRING, role: attribute, description: "한국표준산업분류 세세분류 5자리 코드"}
+      - {name: industry_name, type: STRING, role: attribute, description: "영위 업종 한글 명칭"}
+      - {name: credit_rating, type: STRING, role: attribute, description: "당행 내부 기업신용등급 (예: AAA, A+, BBB+, BBB, BB-)"}
+      - {name: tcb_tech_grade, type: STRING, role: attribute, description: "기술신용평가기관(TCB) 기술등급 (예: T2, T3, T4, NONE)"}
+      - {name: debt_ratio_pct, type: FLOAT64, role: filter, description: "차주 최근 결산 부채비율 (%, 내규 제25조 신속심사 상한 250.0% 판정 기준)"}
+
+  - class_label: FinancialProduct
+    layer: LDM
+    korean_name: 여신 금융상품 마스터
+    description: "대출 상품의 여신유형(기업여신 여부)·타깃 세그먼트·기준금리 벤치마크를 정의하는 상품 마스터 노드"
+    source_plane: bigquery_native
+    physical_table: starlight_bank.financial_products
+    graph_view: starlight_bank_ontology.v_node_financial_product
+    primary_key: product_code
+    expected_rows: 4
+    kc_anchor_config:
+      anchor_type: ALIAS_TABLE_LOOKUP
+      alias_group: PRODUCT_NAME
+      match_bind_key: product_code
+      gql_match_template: "(p:FinancialProduct {product_code: '$CANONICAL_ID'})"
+      planner_instruction: "상품 약칭('TCB 기술혁신 운전자금'->PROD_TCB_WORKING, '프라임 중견기업 운전자금'->PROD_CORP_PRIME_WC 등)을 ont_entity_aliases에서 조회해 product_code로 변환 후 MATCH 절에 바인딩하세요."
+      outgoing_edges: ["OF_PRODUCT (incoming)"]
+    properties:
+      - {name: product_code, type: STRING, role: pk, description: "여신 금융상품 고유 코드 (PK, PROD_TCB_WORKING, PROD_CORP_PRIME_WC, PROD_CONST_REALESTATE, PROD_RESTRUCTURED_DIP)"}
+      - {name: product_name, type: STRING, role: label, description: "여신 금융상품 한글 명칭"}
+      - {name: loan_category, type: STRING, role: filter, description: "여신 대분류 코드 (CORPORATE_* 기업여신 여부 확인 및 가계여신 규정 배제 기준)"}
+      - {name: target_segment, type: STRING, role: attribute, description: "주요 가입 대상 기업 세그먼트"}
+      - {name: base_rate_benchmark, type: STRING, role: attribute, description: "연동 기준금리 지표 (KORIBOR_3M, BANK_DEBENTURE_1Y, COFIX_NEW)"}
+      - {name: repayment_method, type: STRING, role: attribute, description: "원리금 상환 방식"}
+      - {name: max_maturity_months, type: INT64, role: attribute, description: "최대 대출 만기 개월 수"}
+
+  - class_label: WorkoutHistory
+    layer: LDM
+    korean_name: 채권재조정·워크아웃·회생절차 이력
+    description: "채권재조정 여신의 연속 정상상환 개월 수·유상증자 금액·법적 구조조정 절차를 관리하는 이력 노드"
+    source_plane: bigquery_native
+    physical_table: starlight_bank.workout_histories
+    graph_view: starlight_bank_ontology.v_node_workout_history
+    primary_key: workout_id
+    expected_rows: 3
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: WORKOUT_ID_OR_PROCEEDING
+      match_bind_key: workout_id
+      gql_match_template: "(w:WorkoutHistory {workout_id: '$CANONICAL_ID'})"
+      planner_instruction: "workout_id 또는 법적 절차 코드(legal_proceeding_code)로 직접 MATCH 하거나, LoanContract에서 HAS_WORKOUT_HISTORY 엣지를 타고 탐색하여 6개월 연속 상환 및 유상증자 여부를 확인하세요."
+      outgoing_edges: ["HAS_WORKOUT_HISTORY (incoming)"]
+    properties:
+      - {name: workout_id, type: STRING, role: pk, description: "워크아웃·채권재조정 이력 고유 번호 (PK)"}
+      - {name: contract_id, type: STRING, role: fk, description: "대상 여신계약 번호 (FK -> LoanContract.contract_id)"}
+      - {name: customer_id, type: STRING, role: fk, description: "대상 차주 고객 번호 (FK -> Customer.customer_id)"}
+      - {name: workout_start_dt, type: DATE, role: attribute, description: "채권재조정·워크아웃 개시일자"}
+      - {name: consecutive_normal_repay_months, type: INT64, role: filter, description: "채권재조정 후 연속 정상 원리금 상환 개월 수 (별표3 라목 6개월 이상 요건 기준)"}
+      - {name: new_equity_paid_in_krw, type: INT64, role: filter, description: "유상증자·출자전환 등 신규 자본 확충 납입 금액 (원, 별표3 라목 상환능력 개선 기준)"}
+      - {name: legal_proceeding_code, type: STRING, role: filter, description: "근거 법적 절차 코드 (CORP_RESTRUCT_ACT_WORKOUT 기촉법 워크아웃, REHAB_ACT_ART180_2_DIP 회생법 등)"}
+
+  - class_label: Collateral
+    layer: LDM
+    korean_name: 담보 및 신용보증서 원장
+    description: "여신계약에 설정된 신용보증기금(KODIT) 보증서·부동산 담보 유형과 보증비율(85% 기준 등)을 담는 Spanner 원장 노드"
+    source_plane: spanner_federated
+    physical_table: starlight_bank.ont_collaterals
+    graph_view: starlight_bank_ontology.v_node_collateral
+    primary_key: collateral_id
+    expected_rows: 3
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: COLLATERAL_ID_OR_AGENCY
+      match_bind_key: collateral_id
+      gql_match_template: "(col:Collateral {collateral_id: '$CANONICAL_ID'})"
+      planner_instruction: "collateral_id 또는 보증기관 코드(guarantee_agency_code='KODIT')로 직접 MATCH 하거나, LoanContract에서 HAS_COLLATERAL 엣지로 탐색하세요."
+      outgoing_edges: ["HAS_COLLATERAL (incoming)"]
+    properties:
+      - {name: collateral_id, type: STRING, role: pk, description: "담보·보증서 고유 식별 번호 (PK)"}
+      - {name: contract_id, type: STRING, role: fk, description: "피담보 여신계약 번호 (FK -> LoanContract.contract_id)"}
+      - {name: customer_id, type: STRING, role: fk, description: "담보 제공 차주 번호 (FK -> Customer.customer_id)"}
+      - {name: collateral_type_code, type: STRING, role: filter, description: "담보 유형 코드 (CREDIT_GUARANTEE_CERT 신용보증서, REAL_ESTATE_TRUST_1ST 부동산신탁1순위)"}
+      - {name: guarantee_agency_code, type: STRING, role: filter, description: "보증서 발급 기관 코드 (KODIT 신용보증기금, NONE 해당없음)"}
+      - {name: guarantee_ratio_pct, type: FLOAT64, role: filter, description: "보증기관 책임 보증비율 또는 담보인정비율 (%, 내규 제18조 85% 이상 요건 기준)"}
+      - {name: appraised_collateral_krw, type: INT64, role: attribute, description: "담보 감정평가액 또는 보증 인정 금액 (원)"}
+
+  - class_label: DelinquencyEvent
+    layer: LDM
+    korean_name: 연체·대손상각(특수채권) 이벤트 원장
+    description: "여신계좌별 연체일수·연체원리금·대손상각 특수채권 편입 여부를 기록하는 Spanner 이벤트 노드"
+    source_plane: spanner_federated
+    physical_table: starlight_bank.ont_delinquency_events
+    graph_view: starlight_bank_ontology.v_node_delinquency_event
+    primary_key: event_id
+    expected_rows: 7
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: DELINQUENCY_EVENT_ID
+      match_bind_key: event_id
+      gql_match_template: "(del:DelinquencyEvent {event_id: '$CANONICAL_ID'})"
+      planner_instruction: "event_id 또는 write_off_yn 필터로 직접 MATCH 하거나, LoanContract에서 HAS_DELINQUENCY 엣지로 탐색하세요. 공시 연체율은 write_off_yn='N' & overdue_days>=30, EWS 실질연체율은 write_off_yn='Y' 포함 및 overdue_days>=10입니다."
+      outgoing_edges: ["HAS_DELINQUENCY (incoming)"]
+    properties:
+      - {name: event_id, type: STRING, role: pk, description: "연체·상각 이벤트 고유 번호 (PK)"}
+      - {name: contract_id, type: STRING, role: fk, description: "연체 발생 여신계약 번호 (FK -> LoanContract.contract_id)"}
+      - {name: customer_id, type: STRING, role: fk, description: "연체 차주 고객 번호 (FK -> Customer.customer_id)"}
+      - {name: overdue_days, type: INT64, role: filter, description: "연체 경과 일수 (10일 이상 EWS, 30일 이상 공시연체, 90일 이상 고정이하 기준)"}
+      - {name: overdue_principal_krw, type: INT64, role: attribute, description: "연체 원금 또는 대손상각 특수채권 미회수 원금 잔액 (원)"}
+      - {name: overdue_interest_krw, type: INT64, role: attribute, description: "미수 연체 이자 금액 (원)"}
+      - {name: write_off_yn, type: STRING, role: filter, description: "회계상 대손상각 특수채권 편입 여부 (Y: 공시 제외·EWS 포함 / N: 대차대조표 내 연체)"}
+
+  - class_label: RateCutRequest
+    layer: LDM
+    korean_name: 금리인하요구권 신청·심사 원장
+    description: "차주의 금리인하요구 신청 사유(특허 취득 등)·신용등급 변동·심사 결과(승인/거절)를 기록하는 Spanner 노드"
+    source_plane: spanner_federated
+    physical_table: starlight_bank.ont_rate_cut_requests
+    graph_view: starlight_bank_ontology.v_node_rate_cut_request
+    primary_key: request_id
+    expected_rows: 2
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: RATE_CUT_REQUEST_ID
+      match_bind_key: request_id
+      gql_match_template: "(rc:RateCutRequest {request_id: '$CANONICAL_ID'})"
+      planner_instruction: "request_id 또는 application_reason_code로 직접 MATCH 하거나, LoanContract에서 HAS_RATE_CUT_REQUEST 엣지로 탐색하고 EVALUATED_UNDER_PROVISION으로 내규 제25조② 및 모범규준과 대조하세요."
+      outgoing_edges: ["EVALUATED_UNDER_PROVISION"]
+    properties:
+      - {name: request_id, type: STRING, role: pk, description: "금리인하요구권 신청 고유 번호 (PK)"}
+      - {name: contract_id, type: STRING, role: fk, description: "신청 대상 여신계약 번호 (FK -> LoanContract.contract_id)"}
+      - {name: customer_id, type: STRING, role: fk, description: "신청 차주 고객 번호 (FK -> Customer.customer_id)"}
+      - {name: request_dt, type: DATE, role: attribute, description: "금리인하요구 신청 일자"}
+      - {name: application_reason_code, type: STRING, role: filter, description: "신청 사유 코드 (PATENT_ACQUISITION_STANDALONE 단독특허 vs PATENT_AND_RATING_UPGRADE 특허+등급상승)"}
+      - {name: patent_reg_no, type: STRING, role: attribute, description: "제출된 특허권 등록번호"}
+      - {name: credit_rating_before, type: STRING, role: attribute, description: "금리인하 신청 직전 내부 신용등급"}
+      - {name: credit_rating_after, type: STRING, role: attribute, description: "금리인하 심사 시점 재평가 내부 신용등급"}
+      - {name: yoy_revenue_growth_pct, type: FLOAT64, role: attribute, description: "전년 동기 대비 매출액 증가율 (%)"}
+      - {name: review_status_code, type: STRING, role: filter, description: "심사 처리 결과 코드 (APPROVED 인하승인 vs REJECTED 거절)"}
+      - {name: approved_cut_bp, type: INT64, role: attribute, description: "승인된 금리인하 폭 (bp, 1bp = 0.01%p)"}
+
+  - class_label: ExceptionApproval
+    layer: LDM
+    korean_name: 여신 예외승인 결재 원장
+    description: "기한이익상실(EOD) 유예 및 채권재조정 건전성 예외분류에 대한 본부 여신심사역 결재·문서화 증적 노드"
+    source_plane: spanner_federated
+    physical_table: starlight_bank.ont_exception_approvals
+    graph_view: starlight_bank_ontology.v_node_exception_approval
+    primary_key: approval_id
+    expected_rows: 3
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: EXCEPTION_APPROVAL_ID
+      match_bind_key: approval_id
+      gql_match_template: "(ea:ExceptionApproval {approval_id: '$CANONICAL_ID'})"
+      planner_instruction: "approval_id 또는 approver_role_code로 직접 MATCH 하거나, LoanContract에서 HAS_EXCEPTION_APPROVAL 엣지로 탐색하여 본부 여신심사역(HQ_SENIOR_CREDIT_OFFICER)의 승인(APPROVED) 및 문서화 여부를 확인하세요."
+      outgoing_edges: ["HAS_EXCEPTION_APPROVAL (incoming)"]
+    properties:
+      - {name: approval_id, type: STRING, role: pk, description: "예외승인 결재 건 고유 번호 (PK)"}
+      - {name: contract_id, type: STRING, role: fk, description: "결재 대상 여신계약 번호 (FK -> LoanContract.contract_id)"}
+      - {name: customer_id, type: STRING, role: fk, description: "결재 대상 차주 번호 (FK -> Customer.customer_id)"}
+      - {name: approval_type_code, type: STRING, role: filter, description: "예외 결재 유형 코드 (EOD_DEFERRAL_AND_PRECAUTIONARY_RETENTION 등)"}
+      - {name: approval_status, type: STRING, role: filter, description: "결재 최종 상태 (APPROVED 승인완료 vs REJECTED 반려)"}
+      - {name: approver_role_code, type: STRING, role: filter, description: "전결 승인권자 직책 코드 (HQ_SENIOR_CREDIT_OFFICER 본부 여신심사역 등)"}
+      - {name: approval_dt, type: DATE, role: attribute, description: "예외승인 결재 완료 및 판단근거 문서화 일자"}
+
+# ===========================================================================
+# 2. EDGE DEFINITIONS (15종: ONT 8 [LDM 7 + CTX↔LDM 1] + Bridge 3 + LEX 4)
+# ===========================================================================
+edge_definitions:
+  - {edge_label: SCOPES_PORTFOLIO, description: "부서·업무목적 맥락(BusinessContext)이 산출·심사·감리 시 관할하는 실시간 여신계약(LoanContract) 포트폴리오 스코프를 동적 연결하는 온톨로지 내부 엣지 (대차대조표 내 여신 vs 상각특수채권 포함 EWS)", source_class: BusinessContext, source_key: context_id, target_class: LoanContract, target_key: contract_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_scopes_portfolio}
+  - {edge_label: BORROWED_BY, description: "여신계약이 어느 기업 차주에게 실행되었는지 연결하는 엣지", source_class: LoanContract, source_key: customer_id, target_class: Customer, target_key: customer_id, cardinality: "N:1", view_name: starlight_bank_ontology.v_edge_borrowed_by}
+  - {edge_label: OF_PRODUCT, description: "여신계약이 어느 여신 금융상품으로 체결되었는지 연결하는 엣지", source_class: LoanContract, source_key: product_code, target_class: FinancialProduct, target_key: product_code, cardinality: "N:1", view_name: starlight_bank_ontology.v_edge_of_product}
+  - {edge_label: HAS_COLLATERAL, description: "여신계약에 설정된 담보 및 신용보증기금 보증서를 연결하는 엣지", source_class: LoanContract, source_key: contract_id, target_class: Collateral, target_key: contract_id, cardinality: "1:N", view_name: starlight_bank_ontology.v_edge_has_collateral}
+  - {edge_label: HAS_DELINQUENCY, description: "여신계약에서 발생한 연체 및 대손상각 특수채권 이벤트를 연결하는 엣지", source_class: LoanContract, source_key: contract_id, target_class: DelinquencyEvent, target_key: contract_id, cardinality: "1:N", view_name: starlight_bank_ontology.v_edge_has_delinquency}
+  - {edge_label: HAS_RATE_CUT_REQUEST, description: "여신계약에 대해 접수된 금리인하요구권 신청·심사 내역을 연결하는 엣지", source_class: LoanContract, source_key: contract_id, target_class: RateCutRequest, target_key: contract_id, cardinality: "1:N", view_name: starlight_bank_ontology.v_edge_has_rate_cut_request}
+  - {edge_label: HAS_EXCEPTION_APPROVAL, description: "여신계약의 기한이익상실 유예 등 본부 예외승인 결재 내역을 연결하는 엣지", source_class: LoanContract, source_key: contract_id, target_class: ExceptionApproval, target_key: contract_id, cardinality: "1:N", view_name: starlight_bank_ontology.v_edge_has_exception_approval}
+  - {edge_label: HAS_WORKOUT_HISTORY, description: "여신계약의 채권재조정·워크아웃·회생절차 상환 및 증자 이력을 연결하는 엣지", source_class: LoanContract, source_key: contract_id, target_class: WorkoutHistory, target_key: contract_id, cardinality: "1:N", view_name: starlight_bank_ontology.v_edge_has_workout_history}
+  - {edge_label: INVOKES_PROVISION, description: "부서·업무목적 맥락(BusinessContext)과 KC Glossary 용어(term_key) 조합에 따라 호출할 법령·내규 조문을 분기하는 브리지 엣지", source_class: BusinessContext, source_key: context_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_invokes_provision}
+  - {edge_label: GOVERNED_BY_CRITERIA, description: "실시간 Spanner 여신계약의 구조적 범위(기업여신·연체·워크아웃·상품유형)에 따라 심사 관할 조문을 동적 연결하는 순수 SQL View 엣지 (정답 미유출)", source_class: LoanContract, source_key: contract_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_governed_by_criteria}
+  - {edge_label: EVALUATED_UNDER_PROVISION, description: "실시간 Spanner 금리인하요구 신청 건을 심사 관할 모범규준 및 당행 내규 조문과 동적 연결하는 순수 SQL View 엣지", source_class: RateCutRequest, source_key: request_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_evaluated_under_provision}
+  - {edge_label: PART_OF_DOCUMENT, description: "174개 개별 조문이 어느 원본 법령·내규 문서(10종)에 속하는지 연결하는 엣지", source_class: Provision, source_key: doc_id, target_class: SourceDocument, target_key: doc_id, cardinality: "N:1", view_name: starlight_bank_ontology.v_edge_part_of_document}
+  - {edge_label: HAS_EXCEPTION_PROVISO, description: "원칙 조문(본칙)에서 단서·예외·특례 조문으로 분기하는 법령 내부 엣지", source_class: Provision, source_key: base_slot_id, target_class: Provision, target_key: proviso_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_has_exception_proviso}
+  - {edge_label: DELEGATES_TO_INTERNAL, description: "상위 감독규정·모범규준이 별빛은행 자체 내규 조문으로 세부 기준을 위임·구체화하는 엣지", source_class: Provision, source_key: external_slot_id, target_class: Provision, target_key: internal_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_delegates_to_internal}
+  - {edge_label: CONFLICTS_BY_SECTOR, description: "시중은행 기업여신 규정과 상호저축은행(타업권)·가계여신 규정 간의 오적용 방지 대조 엣지", source_class: Provision, source_key: bank_slot_id, target_class: Provision, target_key: distractor_slot_id, cardinality: "M:N", view_name: starlight_bank_ontology.v_edge_conflicts_by_sector}
+
+# ===========================================================================
+# 3. CANDIDATE CLASSES (향후 확장 후보 - CQ18 데이터 공백 검증을 위해 현재 미구축)
+# ===========================================================================
+candidate_classes:
+  - class_label: BankCapitalLedger
+    korean_name: 은행 자기자본(BIS 기본자본) 원장
+    status: intentionally_absent_for_cq18
+    rationale: "감독규정 제26조제1항제6호(거액익스포져 한도: 기본자본의 25% 이내) 판정에 필요하나, CQ18의 '데이터 부재(Absence) 감지' 평가를 위해 물리 테이블을 비워두고 Provision(제26조)의 missing_schema_columns='tier1_capital'로 표현함."
+  - class_label: CounterpartyGroup
+    korean_name: 통제·경제적 의존관계 거래상대방 그룹
+    status: intentionally_absent_for_cq18
+    rationale: "단일 차주가 아닌 연계 거래상대방 그룹 합산 익스포져 산출에 필요하나, CQ18의 데이터 공백 판정 시나리오를 위해 후보 클래스로만 정의함."

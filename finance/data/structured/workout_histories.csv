@@ -1,0 +1,4 @@
+workout_id,contract_id,customer_id,workout_start_dt,consecutive_normal_repay_months,new_equity_paid_in_krw,legal_proceeding_code
+WKO_LN_2026_0001,LN_2026_0001,CUST_0001,2025-08-01,7,5000000000,CORP_RESTRUCT_ACT_WORKOUT
+WKO_LN_2026_0002,LN_2026_0002,CUST_0002,2025-11-15,2,0,REHAB_ACT_ART180_2_DIP
+WKO_LN_2026_0003,LN_2026_0003,CUST_0003,2025-12-01,0,0,NONE

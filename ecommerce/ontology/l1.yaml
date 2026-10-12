@@ -1,0 +1,398 @@
+# ---------------------------------------------------------------------------
+# ecommerce/ontology/l1.yaml — K마켙 이커머스 온톨로지 L1 Knowledge Graph 선언적 매니페스트 (SSOT)
+#
+# 대상 데이터세트: kmarket_ontology
+# 대상 그래프명:   kmarket_ontology.ecommerce_graph
+#
+# 핵심 아키텍처 불변식:
+#   1. Node Classes (총 11종 = LDM 8 + CTX 1 + LEX 2)
+#      - LDM (8): Customer, Product, BrandVendorContract (BQ Native 3종)
+#                 OrderItem(★주문·정산·반품 허브), Order, InventoryItem,
+#                 UserBehaviorEvent, CampaignException (Spanner Federated ont_* 5종)
+#      - CTX (1): BusinessContext (6개 본부/업무목적 해석 분기 앵커)
+#      - LEX (2): SourceDocument (10건) + Provision (36건) = 총 46개 OKF & KC 1:1 매핑
+#   2. 한 사실은 한 곳에만 둔다 (Single Source of Governance):
+#      - 문서의 유효 상태(status: stable/verified vs deprecated)와 대체 문서 체인(superseded_by)은
+#        Dataplex Knowledge Catalog의 okf Aspect에만 두며, BigQuery Provision 노드는
+#        불변 슬롯 식별자(provision_slot_id)와 kc_entry_id만 보유한다.
+#   3. 정답 유출 금지 (C00 / G04_no_leakage) 및 실시간성 보장:
+#      - GOVERNED_BY_CRITERIA 및 EVALUATED_UNDER_PROVISION 엣지는 실시간 SQL View로 정의하며,
+#        쿠폰 분담금 50% 캡 초과 흡수액이나 마진 가드레일 통과 여부를 원장에 미리 계산해 넣지 않는다.
+#   4. Dataplex Business Glossary (term_key) 연동:
+#      - INVOKES_PROVISION 엣지의 term_key는 Dataplex Glossary(`kmarket-ecommerce-glossary`)의
+#        Term ID와 1:1 매핑되어 동일 용어('쿠폰 할인', '마진율', '반품 가능 기간')를 본부별로 분기한다.
+# ---------------------------------------------------------------------------
+
+meta:
+  name: kmarket_ecommerce_ontology
+  version: 1.0.0
+  updated_at: "2026-10-03"
+  company_name: "K마켙 (K-Market)"
+  source_dataset: kmarket_ecommerce
+  ontology_dataset: kmarket_ontology
+  property_graph_name: kmarket_ontology.ecommerce_graph
+  alias_table: kmarket_ontology.ont_entity_aliases
+  kc_entry_group: ecommerce-okf
+  kc_glossary_id: kmarket-ecommerce-glossary
+  kc_anchor_aspect_type: ontology-class-anchors
+  bq_objectref_connection: us-central1.okf-gcs-conn
+  counts:
+    node_classes: 11
+    edge_types: 15
+    glossary_terms: 7
+    lex_total_entries: 46
+    lex_source_documents: 10
+    lex_provisions: 36
+    business_contexts: 6
+
+# ===========================================================================
+# 0. DATAPLEX BUSINESS GLOSSARY TERMS (7종 — INVOKES_PROVISION.term_key와 1:1 매핑)
+# ===========================================================================
+glossary_terms:
+  - term_key: hyper-personalized-reco
+    display_name: "초개인화 추천 · 장바구니 이탈 타겟팅"
+    description: "실시간 행동로그(event_type='cart')와 회원 원장(marketing_opt_in=True) 및 물류 가용재고(available_stock)를 결합하여 품절 시 대체상품(substitute_product_id), 정상재고 시 코디 번들(complementary_product_id)과 등급별 쿠폰(VVIP/VIP 최대 15%)을 제안하는 의사결정 기준"
+    synonyms: ["초개인화 추천", "장바구니 이탈", "장바구니 리마인드", "코디 번들", "대체상품 추천", "타겟팅 쿠폰"]
+  - term_key: margin-guardrail
+    display_name: "실현마진율 산식 · 25% 최저마진 가드레일"
+    description: "프로모션·쿠폰 적용 후 실현마진율((sale_price_krw - cost_krw) / sale_price_krw)을 상시 25.0% 이상으로 유지하도록 강제하는 MD본부 수익성 방어 기준"
+    synonyms: ["마진율", "실현마진율", "최저마진", "25% 가드레일", "역마진 방지", "매출총이익률"]
+  - term_key: clearance-exception
+    display_name: "체화재고(90일+) 클리어런스 · 마진 하한 완화 특례"
+    description: "입고 후 90일 이상 경과(stock_age_days >= 90)하고 가용재고 30개 이상인 체화재고 또는 MD본부 예외승인(CLEARANCE_OVERRIDE / VIP_RETENTION) 보유 상품에 대해 최저마진 하한을 25%에서 10%로 완화하는 특례"
+    synonyms: ["체화재고", "악성재고", "클리어런스", "마진 완화", "10% 마진 하한", "예외승인"]
+  - term_key: promo-cost-sharing
+    display_name: "입점브랜드 판매촉진비용 50% 분담 상한 및 정산"
+    description: "대규모유통업법 제11조제4항 및 정산내규 제3조에 따라 사전 서면약정(signed_promo_agreement=True)이 있더라도 입점브랜드의 쿠폰할인액 분담비율을 최대 50%로 제한(MIN(promo_cost_share_ratio, 0.50))하고 50% 초과분은 K마켙이 의무 흡수하는 기준"
+    synonyms: ["판촉비 분담", "쿠폰 분담금", "50% 상한", "대규모유통업법 제11조", "판촉비 전가 금지", "브랜드 정산"]
+  - term_key: behavioral-privacy-optin
+    display_name: "행태정보 회원 식별 결합 동의(marketing_opt_in) 및 야간 푸시 제한"
+    description: "개보위 맞춤형 광고 가이드라인 제3조 및 정보통신망법 제50조에 따라 회원 식별(user_id) 기반 장바구니 타겟팅 시 marketing_opt_in=True 필수 확인 및 야간(21:00~08:00) 광고성 푸시 전송을 제한하는 기준"
+    synonyms: ["행태정보", "마케팅 수신동의", "marketing_opt_in", "개인정보보호", "야간 푸시 제한"]
+  - term_key: return-withdrawal-eligibility
+    display_name: "청약철회(반품) 가능 기한(7일 vs 90일) 및 반품배송비 귀속"
+    description: "전자상거래법 제17조·제18조 및 CS 내규 제2조에 따른 단순변심(7일 이내, 고객 왕복배송비 6,000원 부담), 표시·광고 및 실측사이즈 상이(90일 이내, 판매자 부담 무상반품), 세탁·착용 훼손(청약철회 제한 거절) 판정 기준 (국내 물류센터 출고 건에 관세청 해외직구 14일/35,000원 고시 적용 금지)"
+    synonyms: ["반품", "청약철회", "단순변심 7일", "표시광고 상이 3개월", "반품배송비", "환불 3영업일"]
+  - term_key: fulfillment-sla-compensation
+    display_name: "물류센터별 출고 SLA(24h/36h/48h) 및 지연 보상 적립금"
+    description: "주문결제 시각(created_at) 대비 출고 시각(shipped_at)이 물류센터별 목표 SLA(김포 24h, 용인 36h, 양산 48h)를 초과한 경우 고객에게 지연보상 적립금 3,000P를 자동 지급하는 기준"
+    synonyms: ["출고 SLA", "출고지연 보상", "물류 SLA", "김포 24시간", "지연보상 3000P"]
+
+# ===========================================================================
+# 1. NODE CLASSES (11종: LDM 8 + CTX 1 + LEX 2)
+# ===========================================================================
+node_classes:
+  - class_label: BusinessContext
+    layer: CTX
+    korean_name: 본부·업무목적 맥락
+    description: "동일 커머스 용어(쿠폰 할인, 마진율, 반품 기한) 호출 시 본부와 업무목적에 따라 적용 법령·내규 조문과 참조 물리 컬럼을 분기하는 맥락 노드"
+    source_plane: bigquery_native
+    physical_table: kmarket_ontology.ctx_business_contexts
+    graph_view: kmarket_ontology.v_node_business_context
+    primary_key: context_id
+    expected_rows: 6
+    kc_anchor_config:
+      anchor_type: ALIAS_INTENT_MAP
+      alias_group: BUSINESS_CONTEXT
+      match_bind_key: context_id
+      gql_match_template: "(ctx:BusinessContext {context_id: '$CANONICAL_ID'})"
+      planner_instruction: "질문의 발화 본부·목적(그로스마케팅/AI추천랩 CRM_GROWTH, MD본부/가격전략실 MD_MERCHANDISING, 파트너상생/정산실 PARTNER_SETTLEMENT, 고객경험/CS심사팀 CX_CS_SUPPORT, 풀필먼트운영실 FULFILLMENT_OPS, 준법감시실 LEGAL_COMPLIANCE)을 정규화하여 시작 노드로 MATCH 하세요."
+      outgoing_edges: ["SCOPES_PORTFOLIO", "INVOKES_PROVISION"]
+    properties:
+      - {name: context_id, type: STRING, role: pk, description: "본부·업무목적 맥락 고유 식별자 (PK, 예: CRM_GROWTH, MD_MERCHANDISING, PARTNER_SETTLEMENT)"}
+      - {name: dept_name, type: STRING, role: label, description: "업무를 주관하는 K마켙 내 본부·부서명"}
+      - {name: purpose_summary, type: STRING, role: attribute, description: "해당 본부의 핵심 의사결정 및 가드레일 점검 목적 요약"}
+      - {name: primary_metric_scope, type: STRING, role: attribute, description: "해당 맥락에서 주로 산출·점검하는 핵심 지표 및 심사 범위"}
+
+  - class_label: SourceDocument
+    layer: LEX
+    korean_name: 이커머스 법령·심사지침·사내내규 원본 문서 루트
+    description: "대규모유통업법·전자상거래법·개보위 행태정보 가이드라인·관세청 해외직구 대조군·K마켙 사내내규 등 10종 원본 문서의 법적 구속력과 적용 범위를 정의하는 루트 노드"
+    source_plane: bigquery_lex_plus_kc
+    physical_table: kmarket_ontology.lex_source_documents
+    graph_view: kmarket_ontology.v_node_source_document
+    primary_key: doc_id
+    expected_rows: 10
+    kc_anchor_config:
+      anchor_type: KC_GOVERNED_LEX_ROOT
+      alias_group: SOURCE_DOCUMENT
+      match_bind_key: doc_id
+      gql_match_template: "(doc:SourceDocument {doc_id: '$CANONICAL_ID'})"
+      planner_instruction: "10개 원본 문서 루트입니다. authority_level(binding/internal/advisory/distractor) 및 applicable_sector(DOMESTIC_ECOMMERCE vs OVERSEAS_DIRECT_CUSTOMS)로 해외직구 통관 교란 규정을 필터링하세요."
+      outgoing_edges: ["PART_OF_DOCUMENT (incoming)"]
+    properties:
+      - {name: doc_id, type: STRING, role: pk, description: "원본 법령·내규 문서 고유 식별자 (PK, DOC_01 ~ DOC_10)"}
+      - {name: doc_code, type: STRING, role: attribute, description: "문서 번호 코드 (01 ~ 10)"}
+      - {name: title, type: STRING, role: label, description: "법령·심사지침·가이드라인·사내내규 문서의 공식 명칭"}
+      - {name: authority_level, type: STRING, role: filter, description: "법적 구속력 구분 (binding 법규 / internal K마켙내규 / advisory 가이드라인 / distractor 타업권교란)"}
+      - {name: applicable_sector, type: STRING, role: filter, description: "규정 적용 거래 영역 (DOMESTIC_ECOMMERCE 국내이커머스 vs OVERSEAS_DIRECT_CUSTOMS 해외직구특송통관)"}
+      - {name: issuing_body, type: STRING, role: attribute, description: "문서 제정·발행 기관명 (공정거래위원회, 개인정보보호위원회, 관세청, 주식회사 K마켙)"}
+      - {name: kc_entry_id, type: STRING, role: kc_ref, description: "Dataplex Knowledge Catalog에 등록된 문서 루트 Entry ID"}
+      - {name: gcs_uri, type: STRING, role: object_ref, description: "GCS에 저장된 OKF 문서 루트 마크다운 파일 경로"}
+
+  - class_label: Provision
+    layer: LEX
+    korean_name: 조문·심사기준·단서·사내내규 조항
+    description: "36개 개별 조문·단서·내규 조항 노드로, 불변 슬롯 ID·KC Entry 참조·참조 물리 컬럼 속성을 보유하며 거버넌스 상태는 KC Aspect에서 검증함"
+    source_plane: bigquery_lex_plus_kc
+    physical_table: kmarket_ontology.lex_provisions
+    graph_view: kmarket_ontology.v_node_provision
+    primary_key: provision_slot_id
+    expected_rows: 36
+    kc_anchor_config:
+      anchor_type: KC_GOVERNED_LEX_NODE
+      alias_group: PROVISION_SYNONYM
+      match_bind_key: provision_slot_id
+      gql_match_template: "(pr:Provision {provision_slot_id: '$CANONICAL_ID'})"
+      planner_instruction: "도달 시 반드시 kc_entry_id로 Dataplex Knowledge Catalog의 okf Aspect를 확인하고, target_columns에 명시된 정형 원장 컬럼을 조회하여 의사결정 산식을 실행하세요."
+      outgoing_edges: ["PART_OF_DOCUMENT", "HAS_EXCEPTION_PROVISO", "DELEGATES_TO_INTERNAL", "CONFLICTS_BY_SECTOR"]
+    properties:
+      - {name: provision_slot_id, type: STRING, role: pk, description: "불변 조문 슬롯 식별자 (PK, canonical_id)"}
+      - {name: doc_id, type: STRING, role: fk, description: "소속 원본 문서 식별자 (FK -> SourceDocument.doc_id)"}
+      - {name: kc_entry_id, type: STRING, role: kc_ref, description: "Dataplex Knowledge Catalog 기준 Entry ID"}
+      - {name: article_no, type: STRING, role: label, description: "조문 번호 (예: 제11조제4항, 제17조제1항, 내규 제3조)"}
+      - {name: title, type: STRING, role: label, description: "조문·심사지침 항목의 제목"}
+      - {name: provision_role, type: STRING, role: filter, description: "조문의 기능적 역할 (BASE_CRITERIA 본칙 / EXCEPTION_PROVISO 단서·특례 / INTERNAL_RULE K마켙내규 / DISTRACTOR_RULE 교란조문)"}
+      - {name: target_columns, type: STRING, role: schema_binding, description: "조문 적용 시 조회해야 하는 정형 원장 테이블.컬럼 목록"}
+      - {name: missing_schema_columns, type: STRING, role: schema_gap, description: "규정상 필요하나 현재 DW에 존재하지 않는 데이터 공백 컬럼"}
+      - {name: gcs_uri, type: STRING, role: object_ref, description: "GCS에 저장된 조문 마크다운 원문 URI"}
+
+  - class_label: OrderItem
+    layer: LDM
+    korean_name: 주문상품 및 쿠폰·반품 명세 원장 (중심 허브)
+    description: "Spanner에서 실시간 조회되는 품목별 주문·정상가·쿠폰할인액·실결제가·반품사유 원장이자 주문·상품·브랜드정산·반품규정이 만나는 중심 허브 노드"
+    source_plane: spanner_federated
+    physical_table: kmarket_ecommerce.ont_order_items
+    graph_view: kmarket_ontology.v_node_order_item
+    primary_key: order_item_id
+    expected_rows: 21
+    kc_anchor_config:
+      anchor_type: CENTRAL_HUB_ANCHOR
+      alias_group: ORDER_ITEM_ID
+      match_bind_key: order_item_id
+      gql_match_template: "(oi:OrderItem {order_item_id: '$CANONICAL_ID'})"
+      planner_instruction: "Spanner 실시간 주문상품 원장이자 쿠폰할인 정산·마진 검증·반품 심사의 중심 허브입니다. BELONGS_TO_ORDER, OF_PRODUCT, GOVERNED_BY_CRITERIA 엣지로 탐색하세요."
+      outgoing_edges: ["BELONGS_TO_ORDER", "OF_PRODUCT", "GOVERNED_BY_CRITERIA"]
+    properties:
+      - {name: order_item_id, type: STRING, role: pk, description: "주문상품 라인 고유 식별자 (PK, OIT-2026-0001 ~ OIT-2026-0021)"}
+      - {name: order_id, type: STRING, role: fk, description: "상위 주문 번호 (FK -> Order.order_id)"}
+      - {name: user_id, type: STRING, role: fk, description: "구매 회원 번호 (FK -> Customer.user_id)"}
+      - {name: product_id, type: STRING, role: fk, description: "주문 상품 번호 (FK -> Product.product_id)"}
+      - {name: inventory_item_id, type: STRING, role: fk, description: "출고 물류 재고 번호 (FK -> InventoryItem.inventory_item_id)"}
+      - {name: status, type: STRING, role: filter, description: "품목 상태 (Complete, Returned, Shipped)"}
+      - {name: retail_price_krw, type: INT64, role: attribute, description: "할인 전 정상 판매가격 (원)"}
+      - {name: coupon_discount_krw, type: INT64, role: attribute, description: "적용된 쿠폰 할인금액 (원, 대규모유통업법 제11조 판매촉진비용 분담 대상)"}
+      - {name: sale_price_krw, type: INT64, role: attribute, description: "고객 실결제가격 (원, retail_price_krw - coupon_discount_krw)"}
+      - {name: campaign_id, type: STRING, role: filter, description: "적용된 프로모션 쿠폰 유형 (JOINT_PROMO, PLATFORM_TIER, NONE)"}
+      - {name: return_reason_code, type: STRING, role: filter, description: "반품 사유 코드 (CHANGE_OF_MIND, SIZE_MISMATCH_SPEC_DIFF, WEAR_AND_WASH_DAMAGE, DEFECTIVE, NONE)"}
+
+  - class_label: Order
+    layer: LDM
+    korean_name: 고객 주문 및 배송·반품 타임스탬프 원장
+    description: "주문 생성·출고·배송완료·반품요청 시각을 관리하여 출고 SLA 위반 및 청약철회 가능 기한(7일/90일)을 판정하는 Spanner 원장 노드"
+    source_plane: spanner_federated
+    physical_table: kmarket_ecommerce.ont_orders
+    graph_view: kmarket_ontology.v_node_order
+    primary_key: order_id
+    expected_rows: 15
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: ORDER_ID
+      match_bind_key: order_id
+      gql_match_template: "(o:Order {order_id: '$CANONICAL_ID'})"
+      planner_instruction: "order_id(예: ORD-2026-0001 ~ ORD-2026-0015)로 직접 MATCH 하거나 OrderItem에서 BELONGS_TO_ORDER로 탐색하여 출고 소요시간(shipped_at - created_at) 및 반품 경과일수(return_requested_at - delivered_at)를 계산하세요."
+      outgoing_edges: ["PLACED_BY_USER"]
+    properties:
+      - {name: order_id, type: STRING, role: pk, description: "주문 고유 번호 (PK, ORD-2026-0001 ~ ORD-2026-0015)"}
+      - {name: user_id, type: STRING, role: fk, description: "주문 회원 번호 (FK -> Customer.user_id)"}
+      - {name: status, type: STRING, role: filter, description: "주문 전체 처리 상태 (Complete, Returned, Shipped)"}
+      - {name: created_at, type: STRING, role: filter, description: "주문 및 결제 완료 시각 (출고 SLA 기산 시점)"}
+      - {name: shipped_at, type: STRING, role: attribute, description: "물류센터 실제 출고 시각"}
+      - {name: delivered_at, type: STRING, role: filter, description: "고객 배송완료 시각 (청약철회 7일/90일 기산 시점)"}
+      - {name: return_requested_at, type: STRING, role: filter, description: "고객 반품·청약철회 신청 시각"}
+      - {name: num_of_item, type: INT64, role: attribute, description: "주문 내 총 상품 품목 수"}
+
+  - class_label: Customer
+    layer: LDM
+    korean_name: K마켙 회원 및 개인정보·마케팅 동의 마스터
+    description: "회원의 멤버십 등급(VIP/GOLD/SILVER/WELCOME), 마케팅 및 맞춤형 추천 수신동의(marketing_opt_in), 선호 스타일을 관리하는 BigQuery 마스터 노드"
+    source_plane: bigquery_native
+    physical_table: kmarket_ecommerce.users
+    graph_view: kmarket_ontology.v_node_customer
+    primary_key: user_id
+    expected_rows: 60
+    kc_anchor_config:
+      anchor_type: ALIAS_TABLE_LOOKUP
+      alias_group: USER_NAME_OR_ID
+      match_bind_key: user_id
+      gql_match_template: "(u:Customer {user_id: '$CANONICAL_ID'})"
+      planner_instruction: "회원 ID(USR-1001 ~ USR-1060) 또는 회원명('김서연'->USR-1001, '박준혁'->USR-1002, '이수빈'->USR-1003, '최현우'->USR-1004, '정하윤'->USR-1005, '한지민'->USR-1006 등)으로 정규화하여 marketing_opt_in 및 membership_tier를 확인하세요."
+      outgoing_edges: ["PLACED_BY_USER (incoming)"]
+    properties:
+      - {name: user_id, type: STRING, role: pk, description: "회원 고유 식별자 (PK, USR-1001 ~ USR-1060)"}
+      - {name: user_name, type: STRING, role: label, description: "회원 성명"}
+      - {name: age, type: INT64, role: attribute, description: "회원 연령"}
+      - {name: gender, type: STRING, role: attribute, description: "성별 (F/M)"}
+      - {name: city, type: STRING, role: attribute, description: "거주 도시"}
+      - {name: membership_tier, type: STRING, role: filter, description: "멤버십 등급 (VIP, GOLD, SILVER, WELCOME — 내규 제4조 등급별 최대 할인쿠폰 한도 기준)"}
+      - {name: marketing_opt_in, type: BOOL, role: filter, description: "개인정보 마케팅 및 맞춤형 추천 활용 동의 여부 (True/False — 개보위 가이드라인 제3조 및 내규 제2조 필수 검증 컬럼)"}
+      - {name: primary_category, type: STRING, role: attribute, description: "최근 주력 선호 스타일 태그"}
+      - {name: traffic_source, type: STRING, role: attribute, description: "주 유입 채널"}
+      - {name: created_at, type: STRING, role: attribute, description: "회원 가입 일자"}
+
+  - class_label: Product
+    layer: LDM
+    korean_name: 전시 상품 및 코디·대체상품 마스터
+    description: "상품의 카테고리·입점브랜드·매입원가(cost_krw)·정상판매가(retail_price_krw)·코디번들 연관상품(complementary_product_id)·품절대체상품(substitute_product_id)을 정의하는 마스터 노드"
+    source_plane: bigquery_native
+    physical_table: kmarket_ecommerce.products
+    graph_view: kmarket_ontology.v_node_product
+    primary_key: product_id
+    expected_rows: 30
+    kc_anchor_config:
+      anchor_type: ALIAS_TABLE_LOOKUP
+      alias_group: PRODUCT_NAME_OR_ID
+      match_bind_key: product_id
+      gql_match_template: "(p:Product {product_id: '$CANONICAL_ID'})"
+      planner_instruction: "상품 ID(PRD-3001 ~ PRD-3030) 또는 상품명('아틀리에 캐시미어 발마칸 코트 블랙'->PRD-3001, '아틀리에 메리노울 터틀넥 니트 아이보리'->PRD-3002 등)으로 매칭하고 SUPPLIED_BY_BRAND, STOCKED_AT_INVENTORY, HAS_CAMPAIGN_EXCEPTION 엣지를 탐색하세요."
+      outgoing_edges: ["SUPPLIED_BY_BRAND", "STOCKED_AT_INVENTORY", "HAS_CAMPAIGN_EXCEPTION"]
+    properties:
+      - {name: product_id, type: STRING, role: pk, description: "상품 고유 코드 (PK, PRD-3001 ~ PRD-3030)"}
+      - {name: sku_code, type: STRING, role: attribute, description: "표준 SKU 관리 코드"}
+      - {name: product_name, type: STRING, role: label, description: "전시 상품 한글 명칭"}
+      - {name: category, type: STRING, role: filter, description: "상품 카테고리 (Outerwear, Tops & Tees, Jeans, Accessories, Swim, Intimates, Active)"}
+      - {name: department, type: STRING, role: attribute, description: "상품 사업부문 (Women, Men, Unisex)"}
+      - {name: brand_id, type: STRING, role: fk, description: "공급 입점브랜드 코드 (FK -> BrandVendorContract.brand_id)"}
+      - {name: cost_krw, type: INT64, role: attribute, description: "상품 매입원가 (원 — 실현마진율 산식의 분자 차감 기준)"}
+      - {name: retail_price_krw, type: INT64, role: attribute, description: "할인 전 정상 판매가격 (원)"}
+      - {name: style_tags, type: STRING, role: attribute, description: "스타일 속성 태그"}
+      - {name: complementary_product_id, type: STRING, role: fk, description: "크로스셀 코디 번들 추천 대상 보완 상품 ID (내규 제3조제2항)"}
+      - {name: substitute_product_id, type: STRING, role: fk, description: "주상품 품절(available_stock==0) 시 전환 추천할 대체 상품 ID (내규 제3조제1항)"}
+      - {name: return_policy_tag, type: STRING, role: filter, description: "반품정책 태그 (STANDARD 일반, HYGIENE_RESTRICTED 위생제한)"}
+      - {name: is_active, type: BOOL, role: filter, description: "전시 판매 활성 여부"}
+
+  - class_label: BrandVendorContract
+    layer: LDM
+    korean_name: 입점브랜드 거래계약 및 판촉분담 마스터
+    description: "입점브랜드(납품업자)의 거래형태(특약매입/직매입/위수탁), 계약서상 판촉비 분담비율(promo_cost_share_ratio), 사전 판촉약정 체결 여부(signed_promo_agreement)를 관리하는 마스터 노드"
+    source_plane: bigquery_native
+    physical_table: kmarket_ecommerce.brand_vendor_contracts
+    graph_view: kmarket_ontology.v_node_brand_vendor_contract
+    primary_key: brand_id
+    expected_rows: 8
+    kc_anchor_config:
+      anchor_type: ALIAS_TABLE_LOOKUP
+      alias_group: BRAND_NAME_OR_ID
+      match_bind_key: brand_id
+      gql_match_template: "(b:BrandVendorContract {brand_id: '$CANONICAL_ID'})"
+      planner_instruction: "브랜드 ID(BRD-01 ~ BRD-08) 또는 브랜드명('아틀리에누아르'->BRD-01, '어반트랙'->BRD-02, '마린블루'->BRD-03, '메종드실크'->BRD-04, '노르딕아웃도어'->BRD-05, '소울데님'->BRD-06 등)으로 매칭하여 promo_cost_share_ratio와 signed_promo_agreement를 확인하세요."
+      outgoing_edges: ["SUPPLIED_BY_BRAND (incoming)"]
+    properties:
+      - {name: brand_id, type: STRING, role: pk, description: "입점브랜드 고유 코드 (PK, BRD-01 ~ BRD-08)"}
+      - {name: brand_name, type: STRING, role: label, description: "입점브랜드(납품업자) 명칭"}
+      - {name: contract_type, type: STRING, role: filter, description: "대규모유통업법상 거래형태 (특약매입, 위수탁, 직매입)"}
+      - {name: commission_rate, type: FLOAT64, role: attribute, description: "기본 판매수수료율"}
+      - {name: promo_cost_share_ratio, type: FLOAT64, role: filter, description: "계약서상 약정된 판매촉진비용(쿠폰할인) 브랜드 분담비율 (대규모유통업법 제11조제4항에 따라 정산 시 최대 0.50으로 캡 적용)"}
+      - {name: signed_promo_agreement, type: BOOL, role: filter, description: "사전 서면 판매촉진약정 체결 여부 (True/False — 미체결 시 브랜드 분담 0원)"}
+      - {name: min_margin_guardrail, type: FLOAT64, role: attribute, description: "브랜드별 기본 마진 가드레일 기준"}
+      - {name: return_shipping_fee_krw, type: INT64, role: attribute, description: "표준 왕복 반품배송비 (원, 기본 6,000원)"}
+      - {name: sla_ship_hours, type: INT64, role: filter, description: "파트너 계약 기준 출고 SLA 시간 (24h 또는 48h)"}
+
+  - class_label: InventoryItem
+    layer: LDM
+    korean_name: 풀필먼트 물류센터 재고 및 출고 SLA 원장
+    description: "물류센터(DC-ICN 김포/인천, DC-YIN 용인, DC-BUS 양산/부산)별 실시간 가용재고(available_stock), 입고 후 체화일수(stock_age_days), 재고상태(stock_status)를 관리하는 Spanner 원장 노드"
+    source_plane: spanner_federated
+    physical_table: kmarket_ecommerce.ont_inventory_items
+    graph_view: kmarket_ontology.v_node_inventory_item
+    primary_key: inventory_item_id
+    expected_rows: 32
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: INVENTORY_OR_CENTER
+      match_bind_key: inventory_item_id
+      gql_match_template: "(inv:InventoryItem {inventory_item_id: '$CANONICAL_ID'})"
+      planner_instruction: "Product에서 STOCKED_AT_INVENTORY 엣지로 탐색하여 available_stock(0이면 품절->대체상품 추천), stock_age_days(90일 이상이면 체화재고 10% 마진 완화 대상), stock_status(AVAILABLE/RESERVED/RETURN_INSPECTION/OUT_OF_STOCK)를 확인하세요."
+      outgoing_edges: ["STOCKED_AT_INVENTORY (incoming)"]
+    properties:
+      - {name: inventory_item_id, type: STRING, role: pk, description: "물류 재고 원장 고유 번호 (PK, INV-1001 ~ INV-1032)"}
+      - {name: product_id, type: STRING, role: fk, description: "대상 상품 코드 (FK -> Product.product_id)"}
+      - {name: distribution_center, type: STRING, role: filter, description: "풀필먼트 물류센터 코드 (DC-ICN 김포/인천, DC-YIN 용인, DC-BUS 양산/부산)"}
+      - {name: available_stock, type: INT64, role: filter, description: "현재 가용/보관 재고 수량 (개)"}
+      - {name: stock_age_days, type: INT64, role: filter, description: "물류센터 입고 후 경과 일수 (일 — 90일 이상 시 내규 제3조 체화재고 분류 기준)"}
+      - {name: inbound_date, type: STRING, role: attribute, description: "물류센터 입고 일자"}
+      - {name: stock_status, type: STRING, role: filter, description: "재고 상태 (AVAILABLE, RESERVED, RETURN_INSPECTION, OUT_OF_STOCK)"}
+
+  - class_label: UserBehaviorEvent
+    layer: LDM
+    korean_name: 실시간 고객 행동로그(장바구니·조회·결제) 원장
+    description: "회원의 웹·앱 상품 조회(product), 장바구니 담기(cart), 결제완료(purchase) 세션 이벤트를 실시간 기록하는 Spanner 행동로그 노드"
+    source_plane: spanner_federated
+    physical_table: kmarket_ecommerce.ont_events
+    graph_view: kmarket_ontology.v_node_user_behavior_event
+    primary_key: event_id
+    expected_rows: 11
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: EVENT_ID_OR_TYPE
+      match_bind_key: event_id
+      gql_match_template: "(ev:UserBehaviorEvent {event_id: '$CANONICAL_ID'})"
+      planner_instruction: "event_type='cart' 후 미결제 이탈 세션을 탐지하고, LOGGED_EVENT_ON_PRODUCT 및 EVALUATED_UNDER_PROVISION 엣지를 통해 회원 동의(marketing_opt_in)와 재고·마진 가드레일을 결합 추론하세요."
+      outgoing_edges: ["LOGGED_EVENT_ON_PRODUCT", "EVALUATED_UNDER_PROVISION"]
+    properties:
+      - {name: event_id, type: STRING, role: pk, description: "행동로그 이벤트 고유 번호 (PK, EVT-5001 ~ EVT-5011)"}
+      - {name: user_id, type: STRING, role: fk, description: "행동 발생 회원 번호 (FK -> Customer.user_id, 미결제 이탈 세션 100% 회원 식별 보장)"}
+      - {name: session_id, type: STRING, role: filter, description: "웹·앱 접속 세션 식별자"}
+      - {name: sequence_number, type: INT64, role: attribute, description: "세션 내 이벤트 순번"}
+      - {name: product_id, type: STRING, role: fk, description: "조회·장바구니 대상 상품 코드 (FK -> Product.product_id)"}
+      - {name: event_type, type: STRING, role: filter, description: "행동 이벤트 유형 (product 상세조회, cart 장바구니담기, purchase 결제완료)"}
+      - {name: traffic_source, type: STRING, role: attribute, description: "유입 채널 (Instagram, YouTube, Organic, Email, Kakao)"}
+      - {name: created_at, type: STRING, role: filter, description: "이벤트 발생 시각"}
+
+  - class_label: CampaignException
+    layer: LDM
+    korean_name: 프로모션·마진 가드레일·반품검수 예외승인 결재 원장
+    description: "체화재고 마진완화(CLEARANCE_MARGIN), VIP 코디번들 마진완화(VIP_RETENTION), 납품업자 자발적 판촉행사 신청(VENDOR_VOLUNTARY_PROMO), 위생반품 홀로그램 검수(RETURN_HYGIENE) 결재 원장 노드"
+    source_plane: spanner_federated
+    physical_table: kmarket_ecommerce.ont_campaign_exceptions
+    graph_view: kmarket_ontology.v_node_campaign_exception
+    primary_key: exception_id
+    expected_rows: 7
+    kc_anchor_config:
+      anchor_type: DIRECT_OR_HUB_ANCHOR
+      alias_group: EXCEPTION_ID
+      match_bind_key: exception_id
+      gql_match_template: "(ce:CampaignException {exception_id: '$CANONICAL_ID'})"
+      planner_instruction: "Product에서 HAS_CAMPAIGN_EXCEPTION 엣지로 탐색하여 status=='ACTIVE'인지 확인하세요. REJECTED 또는 EXPIRED 건은 마진 완화나 50% 초과 판촉비 분담 근거로 사용할 수 없습니다."
+      outgoing_edges: ["HAS_CAMPAIGN_EXCEPTION (incoming)"]
+    properties:
+      - {name: exception_id, type: STRING, role: pk, description: "캠페인 예외승인 고유 번호 (PK, EXC-KM-2026-01 ~ EXC-KM-2026-07)"}
+      - {name: exception_type, type: STRING, role: filter, description: "예외 유형 (CLEARANCE_MARGIN, VIP_RETENTION, VENDOR_VOLUNTARY_PROMO, RETURN_HYGIENE)"}
+      - {name: product_id, type: STRING, role: fk, description: "예외 적용 상품 코드 (FK -> Product.product_id)"}
+      - {name: item_id, type: STRING, role: fk, description: "예외 적용 주문상품 코드 (FK -> OrderItem.order_item_id)"}
+      - {name: approved_margin_floor, type: FLOAT64, role: filter, description: "예외 승인된 최저 실현마진율 하한 (예: 0.10 = 10.0%, 0.12 = 12.0%)"}
+      - {name: hologram_tag_intact_yn, type: STRING, role: filter, description: "위생제한 상품 반품 시 홀로그램 실링 택 보존 여부 (Y/N)"}
+      - {name: vendor_voluntary_req_yn, type: STRING, role: filter, description: "입점사 자발적·차별화 행사 공식 요청서 제출 여부 (Y/N)"}
+      - {name: approved_by_role, type: STRING, role: attribute, description: "심사·결재권자 부서/직책 (MD상품본부장, 준법감시팀장, CS총괄실장, 마케팅총괄실장)"}
+      - {name: status, type: STRING, role: filter, description: "결재 상태 (ACTIVE 유효승인, REJECTED 기각, EXPIRED 만료)"}
+      - {name: valid_until, type: STRING, role: filter, description: "예외승인 결재 일자"}
+
+# ===========================================================================
+# 2. EDGE DEFINITIONS (15종: ONT 8 + Bridge 3 + LEX 4)
+# ===========================================================================
+edge_definitions:
+  - {edge_label: SCOPES_PORTFOLIO, description: "본부·업무목적 맥락(BusinessContext)이 관할하는 실시간 주문상품(OrderItem) 및 프로모션 심사 대상을 연결하는 엣지", source_class: BusinessContext, source_key: context_id, target_class: OrderItem, target_key: order_item_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_scopes_portfolio}
+  - {edge_label: BELONGS_TO_ORDER, description: "개별 주문상품 라인(OrderItem)이 속한 상위 주문 헤더(Order)를 연결하는 엣지", source_class: OrderItem, source_key: order_id, target_class: Order, target_key: order_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_belongs_to_order}
+  - {edge_label: PLACED_BY_USER, description: "주문(Order)을 결제·생성한 K마켙 회원(Customer)을 연결하는 엣지", source_class: Order, source_key: user_id, target_class: Customer, target_key: user_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_placed_by_user}
+  - {edge_label: OF_PRODUCT, description: "주문상품 라인(OrderItem)이 참조하는 전시 상품 마스터(Product)를 연결하는 엣지", source_class: OrderItem, source_key: product_id, target_class: Product, target_key: product_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_of_product}
+  - {edge_label: SUPPLIED_BY_BRAND, description: "전시 상품(Product)을 공급하는 입점브랜드 및 판촉분담 계약(BrandVendorContract)을 연결하는 엣지", source_class: Product, source_key: brand_id, target_class: BrandVendorContract, target_key: brand_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_supplied_by_brand}
+  - {edge_label: STOCKED_AT_INVENTORY, description: "전시 상품(Product)의 물류센터별 실시간 가용재고·체화일수·출고 SLA 원장(InventoryItem)을 연결하는 엣지", source_class: Product, source_key: product_id, target_class: InventoryItem, target_key: product_id, cardinality: "1:N", view_name: kmarket_ontology.v_edge_stocked_at_inventory}
+  - {edge_label: LOGGED_EVENT_ON_PRODUCT, description: "고객의 실시간 행동로그(UserBehaviorEvent: cart/view/purchase)가 발생한 대상 상품(Product)을 연결하는 엣지", source_class: UserBehaviorEvent, source_key: product_id, target_class: Product, target_key: product_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_logged_event_on_product}
+  - {edge_label: HAS_CAMPAIGN_EXCEPTION, description: "전시 상품(Product) 및 입점브랜드에 부여된 마진 하한 완화·자발적 행사 예외승인 결재(CampaignException)를 연결하는 엣지", source_class: Product, source_key: product_id, target_class: CampaignException, target_key: product_id, cardinality: "1:N", view_name: kmarket_ontology.v_edge_has_campaign_exception}
+  - {edge_label: INVOKES_PROVISION, description: "본부·업무목적 맥락(BusinessContext)과 KC Glossary 용어(term_key) 조합에 따라 호출할 법령·내규 조문(Provision)을 분기하는 브리지 엣지", source_class: BusinessContext, source_key: context_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_invokes_provision}
+  - {edge_label: GOVERNED_BY_CRITERIA, description: "실시간 주문상품(OrderItem)의 쿠폰정산·마진검증·반품심사·출고SLA에 적용되는 관할 조문(Provision)을 동적 연결하는 SQL View 엣지", source_class: OrderItem, source_key: order_item_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_governed_by_criteria}
+  - {edge_label: EVALUATED_UNDER_PROVISION, description: "실시간 장바구니 이탈 등 고객 행동로그(UserBehaviorEvent) 기반 초개인화 추천·타겟팅 쿠폰 발급 시 준수할 개인정보·마진·재고 조문(Provision)을 연결하는 엣지", source_class: UserBehaviorEvent, source_key: event_id, target_class: Provision, target_key: provision_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_evaluated_under_provision}
+  - {edge_label: PART_OF_DOCUMENT, description: "36개 개별 조문(Provision)이 어느 원본 법령·가이드라인·내규 문서(SourceDocument 10종)에 속하는지 연결하는 엣지", source_class: Provision, source_key: doc_id, target_class: SourceDocument, target_key: doc_id, cardinality: "N:1", view_name: kmarket_ontology.v_edge_part_of_document}
+  - {edge_label: HAS_EXCEPTION_PROVISO, description: "원칙 조문(판촉비 50% 상한, 상시 25% 마진, 단순변심 7일)에서 단서·특례 조문(자발적 차별화 행사, 90일 체화재고 10% 마진 완화, 표시·광고 상이 90일 무상반품)으로 분기하는 법령 내부 엣지", source_class: Provision, source_key: base_slot_id, target_class: Provision, target_key: proviso_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_has_exception_proviso}
+  - {edge_label: DELEGATES_TO_INTERNAL, description: "상위 법령·심사지침·가이드라인(PDF 01~05)이 K마켙 사내 운영내규(PDF 07~10)로 세부 산식과 운영절차를 위임·구체화하는 엣지", source_class: Provision, source_key: external_slot_id, target_class: Provision, target_key: internal_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_delegates_to_internal}
+  - {edge_label: CONFLICTS_BY_SECTOR, description: "국내 풀필먼트 통신판매 청약철회 규정(전자상거래법 제17조·제18조)과 관세청 해외직구 특송통관 고시(14일·35,000원 반송수수료 대조군) 간의 오적용 방지 대조 엣지", source_class: Provision, source_key: ecommerce_slot_id, target_class: Provision, target_key: distractor_slot_id, cardinality: "M:N", view_name: kmarket_ontology.v_edge_conflicts_by_sector}

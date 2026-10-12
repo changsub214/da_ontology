@@ -1,0 +1,4185 @@
+{
+ "generated_at": "2026-09-28T03:47:15+00:00",
+ "source": "ontology/cq/competency_questions.yaml",
+ "stores": {
+  "bigquery": "finance-ontology-changseop.starlight_bank (ont_* = Spanner federated, Data Boost)",
+  "spanner": "finance-cs/starlight_bank"
+ },
+ "summary": {
+  "CQ-G1_quote": {
+   "pass": 59,
+   "total": 59
+  },
+  "CQ-G2_columns": {
+   "pass": 40,
+   "total": 40
+  },
+  "CQ-G3_queries": {
+   "pass": 26,
+   "total": 26
+  },
+  "CQ-G4_triangle": {
+   "pass": 20,
+   "total": 20
+  },
+  "CQ-G5_no_leakage": {
+   "pass": 1,
+   "total": 1
+  },
+  "CQ-G6_coverage": {
+   "pass": 1,
+   "total": 1
+  },
+  "CQ-G7_parity": {
+   "pass": 5,
+   "total": 5
+  },
+  "CQ-G8_graph_labels": {
+   "pass": 20,
+   "total": 20
+  }
+ },
+ "negative_controls": {
+  "NC1_fake_quote→CQ-G1": true,
+  "NC2_fake_column→CQ-G2": true,
+  "NC3_wrong_expect→CQ-G3": true,
+  "NC4_stale_graph_label→CQ-G8": true
+ },
+ "result": "PASS",
+ "gates": {
+  "CQ-G1_quote": [
+   {
+    "cq": "CQ01",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "건전성분류별로 각각 산출된 금액"
+   },
+   {
+    "cq": "CQ01",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "그 차액을 매 결산시(분기별 가결산을 포함한다)마다 대손준비금으로 적"
+   },
+   {
+    "cq": "CQ01",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 1"
+   },
+   {
+    "cq": "CQ02",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "\"고정\"분류 자산의 100분의 20 이상"
+   },
+   {
+    "cq": "CQ02",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "제180조제2항에 따라 은행이 우선하여 변제받을 권리가 인정되는 자산(이하 \"우선변제자산\"이라 한다)은 10"
+   },
+   {
+    "cq": "CQ02",
+    "doc": "02",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "3월 이상 연체대출채권을 보유하고 있는 거래처에 대한 자산중 회수예상가액 해"
+   },
+   {
+    "cq": "CQ03",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "\"요주의\"분류 자산의 100분의 7 이상"
+   },
+   {
+    "cq": "CQ03",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "\"회수의문\"분류 자산의 100분의 50 이상. 다만, 우선변제자산은 100분의 25 이상"
+   },
+   {
+    "cq": "CQ03",
+    "doc": "02",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "「기업구조조정 촉진법」제18조제2항 및 「채무자 회생 및 파산에 관한 법률」"
+   },
+   {
+    "cq": "CQ04",
+    "doc": "01",
+    "page": 19,
+    "ok": true,
+    "found_on_pages": [
+     19
+    ],
+    "quote": "\"정상\", \"요주의\", \"고정\", \"회수의문\", \"추정손실\"의 5단계로 분류하고"
+   },
+   {
+    "cq": "CQ04",
+    "doc": "08",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "CR은 [총대손충당금 잔액/부실채권(고정이하여신)] × 100으로 계산하는데"
+   },
+   {
+    "cq": "CQ04",
+    "doc": "08",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "2023년 말 현재 국내 7개 은행그룹의 CR은 약 158% 수준"
+   },
+   {
+    "cq": "CQ05",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "리스크관리위원회 보고용 고정이하여신비율(은행업감독규정 제27조 및 별표3에 따른 3월 이상 연체 등"
+   },
+   {
+    "cq": "CQ05",
+    "doc": "01",
+    "page": 19,
+    "ok": true,
+    "found_on_pages": [
+     19
+    ],
+    "quote": "\"정상\", \"요주의\", \"고정\", \"회수의문\", \"추정손실\"의 5단계로 분류하고"
+   },
+   {
+    "cq": "CQ06",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "금융감독원 대외공시용 원화대출 연체율(1월 이상 원리금 연체 기준, 대손상각 특수채권 제외)"
+   },
+   {
+    "cq": "CQ06",
+    "doc": "02",
+    "page": 7,
+    "ok": true,
+    "found_on_pages": [
+     7
+    ],
+    "quote": "연체기간은 이자 또는 원금(분할상환금 포함)을 상환하기로 한 약정기일의 다음날"
+   },
+   {
+    "cq": "CQ06",
+    "doc": "07",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "기준 0.24%로 전년 동월말(0.16%) 대비 0.08%p"
+   },
+   {
+    "cq": "CQ07",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "1. 분자: 10일 이상 원리금 연체 기업여신 잔액 + 30일 이상 관리연체 잔액 + 회계상 대손상각 처리되"
+   },
+   {
+    "cq": "CQ07",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "2. 분모: 대차대조표상 원화 기업여신 총잔액 + 대손상각 특수채권 미회수 원금 잔액"
+   },
+   {
+    "cq": "CQ08",
+    "doc": "02",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "고정이하로 분류하지 아니할 수 있다. 다만, 판단근거를 명확히 문서화하여야 한다."
+   },
+   {
+    "cq": "CQ08",
+    "doc": "02",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "거래기업이 6개월 이상(채권재조정을 위한 절차가 개시되어 채권재조정의 조건"
+   },
+   {
+    "cq": "CQ08",
+    "doc": "02",
+    "page": 5,
+    "ok": true,
+    "found_on_pages": [
+     5
+    ],
+    "quote": "증자(출자전환을 포함한다) 등과 같이 채무상환능력을 명확히 개선시키는 사건이 발생한 경우"
+   },
+   {
+    "cq": "CQ09",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "원리금 연체가 1월(30일)을 초과하는 경우 여신관리시스템은 기한이익상실(EOD) 예정"
+   },
+   {
+    "cq": "CQ09",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "본부 여신심사역의 승인(APPROVED)을 득한 경우에는 고정이하"
+   },
+   {
+    "cq": "CQ09",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "신용보증기금(KODIT) 85% 이상 보증서 담보 제공"
+   },
+   {
+    "cq": "CQ10",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "신용보증기금(KODIT) 85% 이상 보증서 담보 제공"
+   },
+   {
+    "cq": "CQ10",
+    "doc": "02",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "보증부 여신은 거래기업 뿐만 아니라 보증인의 채무상환능력을 평가하여 건전성"
+   },
+   {
+    "cq": "CQ11",
+    "doc": "01",
+    "page": 19,
+    "ok": true,
+    "found_on_pages": [
+     19
+    ],
+    "quote": "\"회수의문\" 또는 \"추정손실\"로 분류된 자산(이하 \"부실자산\"이라 한다)을 조기에"
+   },
+   {
+    "cq": "CQ11",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "금융감독원 대외공시용 원화대출 연체율(1월 이상 원리금 연체 기준, 대손상각 특수채권 제외)"
+   },
+   {
+    "cq": "CQ11",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "2. 분모: 대차대조표상 원화 기업여신 총잔액 + 대손상각 특수채권 미회수 원금 잔액"
+   },
+   {
+    "cq": "CQ12",
+    "doc": "05",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "특허권 등의 신규취득"
+   },
+   {
+    "cq": "CQ12",
+    "doc": "05",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "특허 취득 등은 은행이 선택적으로 적용할 수 있도록 조정"
+   },
+   {
+    "cq": "CQ12",
+    "doc": "05",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "금리인하요구 처리결과는 반드시 통보토록 하고 통보시에는"
+   },
+   {
+    "cq": "CQ12",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "단독 취득만으로는 즉각적인 현금흐름 개선이 입증되지 않는 것으로 보아 필수 금리인하 사유에서 제외"
+   },
+   {
+    "cq": "CQ13",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "대금리(pref_rate) 한도는 연 1.20%p, 신속심사 승인 부채비율 상한은 250.0%로 한다"
+   },
+   {
+    "cq": "CQ13",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "법정 의무사항이 아닌 별빛은행 자체 내부 가이드라인이다"
+   },
+   {
+    "cq": "CQ14",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "\"특정일자 체결 대출\" 조회 시 필수 기준 컬럼"
+   },
+   {
+    "cq": "CQ14",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "최종 적용금리(applied_rate) = 기준금리(base_rate) + 가산금리(spread_rate) "
+   },
+   {
+    "cq": "CQ15",
+    "doc": "05",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "대출금리 = 기준금리 + 가산금리 + 가감조정금리(우대금리+전결금리)"
+   },
+   {
+    "cq": "CQ15",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "반드시 기준금리(A), 가산금리(B), 가감조정금리(C)를 각각 분리하여 공시"
+   },
+   {
+    "cq": "CQ15",
+    "doc": "06",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "우대금리를 시계열적으로 비교·분석할 수 있도록 공시항목을 세분화하는"
+   },
+   {
+    "cq": "CQ16",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 1"
+   },
+   {
+    "cq": "CQ16",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "2. 제1호의 규정에도 불구하고 가계자금대출금에 대하여는"
+   },
+   {
+    "cq": "CQ16",
+    "doc": "09",
+    "page": 6,
+    "ok": true,
+    "found_on_pages": [
+     6
+    ],
+    "quote": "충당금 저축은행 0.5% 2% 20% 75% 100%"
+   },
+   {
+    "cq": "CQ16",
+    "doc": "09",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "상호저축은행(79개사)"
+   },
+   {
+    "cq": "CQ17",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "\"회수의문\"분류 자산의 100분의 50 이상. 다만, 우선변제자산은 100분의 25 이상"
+   },
+   {
+    "cq": "CQ17",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "\"회수의문\"분류자산의 100분의 55 이상"
+   },
+   {
+    "cq": "CQ17",
+    "doc": "09",
+    "page": 6,
+    "ok": true,
+    "found_on_pages": [
+     6
+    ],
+    "quote": "적립율 은행 상호금융 1% 10% 20% 55% 100%"
+   },
+   {
+    "cq": "CQ17",
+    "doc": "02",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "3월 이상 12월 미만 연체대출채권을 보유하고 있는 거래처에 대한 자산중 회수"
+   },
+   {
+    "cq": "CQ18",
+    "doc": "01",
+    "page": 16,
+    "ok": true,
+    "found_on_pages": [
+     16
+    ],
+    "quote": "기본자본에 대한 단일 거래상대방 또는 연계된 거래상대방그룹"
+   },
+   {
+    "cq": "CQ18",
+    "doc": "01",
+    "page": 16,
+    "ok": true,
+    "found_on_pages": [
+     16
+    ],
+    "quote": "은행인 경우에는 100분의 20 이하<신설 2024. 1. 18.>"
+   },
+   {
+    "cq": "CQ18",
+    "doc": "04",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "거래상대방별 익스포져를 BIS 기본자본의 25% 이내로 관리토록"
+   },
+   {
+    "cq": "CQ18",
+    "doc": "04",
+    "page": 3,
+    "ok": true,
+    "found_on_pages": [
+     3
+    ],
+    "quote": "24.1.1일부터 시행될 예정이다"
+   },
+   {
+    "cq": "CQ18",
+    "doc": "03",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "거래상대방별 익스포져를 BIS 기본자본의 25% 이내로"
+   },
+   {
+    "cq": "CQ19",
+    "doc": "10",
+    "page": 1,
+    "ok": true,
+    "found_on_pages": [
+     1
+    ],
+    "quote": "2. 대출계약 체결일(contract_dt): 차주와 은행 간 여신거래약정서 서명·날인이 완료되어 법적 효력"
+   },
+   {
+    "cq": "CQ19",
+    "doc": "10",
+    "page": 2,
+    "ok": true,
+    "found_on_pages": [
+     2
+    ],
+    "quote": "3. 자금 실행일(disburse_dt): 실제 대출금이 차주 계좌로 입금된 일자"
+   },
+   {
+    "cq": "CQ20",
+    "doc": "02",
+    "page": 4,
+    "ok": true,
+    "found_on_pages": [
+     4
+    ],
+    "quote": "거래기업이 6개월 이상(채권재조정을 위한 절차가 개시되어 채권재조정의 조건"
+   },
+   {
+    "cq": "CQ20",
+    "doc": "02",
+    "page": 5,
+    "ok": true,
+    "found_on_pages": [
+     5
+    ],
+    "quote": "증자(출자전환을 포함한다) 등과 같이 채무상환능력을 명확히 개선시키는 사건이 발생한 경우"
+   },
+   {
+    "cq": "CQ20",
+    "doc": "01",
+    "page": 20,
+    "ok": true,
+    "found_on_pages": [
+     20
+    ],
+    "quote": "제180조제2항에 따라 은행이 우선하여 변제받을 권리가 인정되는 자산(이하 \"우선변제자산\"이라 한다)은 10"
+   }
+  ],
+  "CQ-G2_columns": [
+   {
+    "cq": "CQ01",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ01",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ02",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ02",
+    "table": "workout_histories",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ03",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ03",
+    "table": "workout_histories",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ04",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ05",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ06",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ06",
+    "table": "ont_delinquency_events",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ07",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ07",
+    "table": "ont_delinquency_events",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ08",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ08",
+    "table": "workout_histories",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ08",
+    "table": "ont_exception_approvals",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ09",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ09",
+    "table": "workout_histories",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ09",
+    "table": "ont_collaterals",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ09",
+    "table": "ont_exception_approvals",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ10",
+    "table": "ont_collaterals",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ11",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ11",
+    "table": "ont_delinquency_events",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ11",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ12",
+    "table": "ont_rate_cut_requests",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ12",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ13",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ13",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ14",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ14",
+    "table": "financial_products",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ15",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ15",
+    "table": "financial_products",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ16",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ16",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ16",
+    "table": "financial_products",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ17",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ18",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ18",
+    "table": "customers",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ19",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ20",
+    "table": "ont_loan_contracts",
+    "ok": true,
+    "missing": []
+   },
+   {
+    "cq": "CQ20",
+    "table": "workout_histories",
+    "ok": true,
+    "missing": []
+   }
+  ],
+  "CQ-G3_queries": [
+   {
+    "cq": "CQ01#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "normal_contracts",
+     "normal_outstanding_krw",
+     "required_min_total_krw",
+     "booked_total_krw",
+     "reserve_topup_krw"
+    ]
+   },
+   {
+    "cq": "CQ01#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 4,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "ksic_section_code",
+     "outstanding_amt",
+     "booked_provision_krw",
+     "gap_krw"
+    ]
+   },
+   {
+    "cq": "CQ02#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "overdue_days",
+     "rehab_priority_claim_yn",
+     "legal_proceeding_code",
+     "min_rate_pct",
+     "required_min_krw",
+     "booked_provision_krw"
+    ]
+   },
+   {
+    "cq": "CQ03#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "asset_classification",
+     "rehab_priority_claim_yn",
+     "legal_proceeding_code",
+     "required_min_krw",
+     "booked_provision_krw"
+    ]
+   },
+   {
+    "cq": "CQ04#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "total_allowance_krw",
+     "npl_krw",
+     "coverage_ratio_pct"
+    ]
+   },
+   {
+    "cq": "CQ05#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "npl_krw",
+     "on_bs_total_krw",
+     "npl_ratio_pct"
+    ]
+   },
+   {
+    "cq": "CQ06#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "delinquent_1m_krw",
+     "on_bs_total_krw",
+     "official_delinquency_pct"
+    ]
+   },
+   {
+    "cq": "CQ07#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "ews_10d_krw",
+     "written_off_principal_krw",
+     "on_bs_total_krw",
+     "ews_ratio_pct"
+    ]
+   },
+   {
+    "cq": "CQ08#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "contract_id",
+     "asset_classification",
+     "overdue_days",
+     "consecutive_normal_repay_months",
+     "new_equity_paid_in_krw",
+     "cond1_6m_repay",
+     "cond2_equity",
+     "approval_type_code",
+     "approval_status",
+     "approver_role_code",
+     "approval_dt"
+    ]
+   },
+   {
+    "cq": "CQ09#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 3,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "overdue_days",
+     "art18_eligible",
+     "approval_status",
+     "eod_action"
+    ]
+   },
+   {
+    "cq": "CQ10#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 3,
+    "columns": [
+     "contract_id",
+     "collateral_type_code",
+     "guarantee_agency_code",
+     "guarantee_ratio_pct",
+     "appraised_collateral_krw",
+     "meets_art18_guarantee"
+    ]
+   },
+   {
+    "cq": "CQ11#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "ksic_section_code",
+     "credit_rating",
+     "asset_classification",
+     "account_status",
+     "overdue_days",
+     "write_off_yn",
+     "outstanding_amt",
+     "booked_provision_krw"
+    ]
+   },
+   {
+    "cq": "CQ12#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "request_id",
+     "borrower_name",
+     "application_reason_code",
+     "credit_rating_before",
+     "credit_rating_after",
+     "yoy_revenue_growth_pct",
+     "rating_upgraded",
+     "review_status_code",
+     "approved_cut_bp"
+    ]
+   },
+   {
+    "cq": "CQ13#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 0,
+    "columns": [
+     "contract_id",
+     "pref_rate",
+     "debt_ratio_pct"
+    ]
+   },
+   {
+    "cq": "CQ13#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "contract_id",
+     "pref_rate",
+     "debt_ratio_pct"
+    ]
+   },
+   {
+    "cq": "CQ14#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "product_name",
+     "contracts",
+     "amount_krw",
+     "avg_applied_rate"
+    ]
+   },
+   {
+    "cq": "CQ14#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "contracts",
+     "avg_applied_rate",
+     "wrong_date_column_hits"
+    ]
+   },
+   {
+    "cq": "CQ15#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 4,
+    "columns": [
+     "product_name",
+     "base_rate_benchmark",
+     "contracts",
+     "a_base",
+     "b_spread",
+     "c_adjust",
+     "applied",
+     "identity_violations"
+    ]
+   },
+   {
+    "cq": "CQ16#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "min_rate_pct",
+     "contracts"
+    ]
+   },
+   {
+    "cq": "CQ16#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "non_corporate_contracts"
+    ]
+   },
+   {
+    "cq": "CQ17#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 2,
+    "columns": [
+     "contract_id",
+     "borrower_name",
+     "overdue_days",
+     "rehab_priority_claim_yn",
+     "asset_classification",
+     "doubtful_min_rate_pct"
+    ]
+   },
+   {
+    "cq": "CQ18#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "customer_id",
+     "borrower_name",
+     "exposure_krw",
+     "tier1_needed_for_25pct_krw"
+    ]
+   },
+   {
+    "cq": "CQ18#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "capital_or_group_columns"
+    ]
+   },
+   {
+    "cq": "CQ19#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 3,
+    "columns": [
+     "basis",
+     "contracts",
+     "amount_krw"
+    ]
+   },
+   {
+    "cq": "CQ19#2",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "month_crossing_contracts"
+    ]
+   },
+   {
+    "cq": "CQ20#1",
+    "ok": true,
+    "errors": [],
+    "row_count": 1,
+    "columns": [
+     "contract_id",
+     "consecutive_normal_repay_months",
+     "new_equity_paid_in_krw",
+     "cond2_survives",
+     "current_booked_krw",
+     "if_substandard_min_krw",
+     "delta_krw",
+     "naive_delta_krw"
+    ]
+   }
+  ],
+  "CQ-G4_triangle": [
+   {
+    "cq": "CQ01",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ02",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ03",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ04",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ05",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ06",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ07",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ08",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ09",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ10",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ11",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ12",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ13",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ14",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ15",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ16",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ17",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ18",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ19",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "cq": "CQ20",
+    "ok": true,
+    "errors": []
+   }
+  ],
+  "CQ-G5_no_leakage": [
+   {
+    "ok": true,
+    "leaks": []
+   }
+  ],
+  "CQ-G6_coverage": [
+   {
+    "ok": true,
+    "errors": [],
+    "themes": {
+     "A": 4,
+     "B": 3,
+     "C": 4,
+     "D": 4,
+     "E": 2,
+     "F": 3
+    },
+    "pdfs_used": 10,
+    "tables_used": [
+     "customers",
+     "financial_products",
+     "ont_collaterals",
+     "ont_delinquency_events",
+     "ont_exception_approvals",
+     "ont_loan_contracts",
+     "ont_rate_cut_requests",
+     "workout_histories"
+    ]
+   }
+  ],
+  "CQ-G7_parity": [
+   {
+    "table": "loan_contracts",
+    "bq_ont": 100,
+    "spanner": 100,
+    "ok": true
+   },
+   {
+    "table": "collaterals",
+    "bq_ont": 3,
+    "spanner": 3,
+    "ok": true
+   },
+   {
+    "table": "delinquency_events",
+    "bq_ont": 7,
+    "spanner": 7,
+    "ok": true
+   },
+   {
+    "table": "rate_cut_requests",
+    "bq_ont": 2,
+    "spanner": 2,
+    "ok": true
+   },
+   {
+    "table": "exception_approvals",
+    "bq_ont": 3,
+    "spanner": 3,
+    "ok": true
+   }
+  ],
+  "CQ-G8_graph_labels": [
+   {
+    "cq": "CQ01",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "BusinessContext",
+     "LoanContract",
+     "Customer"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "HAS_EXCEPTION_PROVISO",
+     "SCOPES_PORTFOLIO",
+     "BORROWED_BY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ02",
+    "ok": true,
+    "nodes": [
+     "LoanContract",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "WorkoutHistory"
+    ],
+    "edges": [
+     "GOVERNED_BY_CRITERIA",
+     "HAS_EXCEPTION_PROVISO",
+     "HAS_WORKOUT_HISTORY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ03",
+    "ok": true,
+    "nodes": [
+     "LoanContract",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "WorkoutHistory"
+    ],
+    "edges": [
+     "GOVERNED_BY_CRITERIA",
+     "HAS_EXCEPTION_PROVISO",
+     "HAS_WORKOUT_HISTORY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ04",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "SourceDocument",
+     "BusinessContext",
+     "LoanContract",
+     "Provision"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "PART_OF_DOCUMENT",
+     "SCOPES_PORTFOLIO",
+     "GOVERNED_BY_CRITERIA"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ05",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "BusinessContext",
+     "LoanContract"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "DELEGATES_TO_INTERNAL",
+     "SCOPES_PORTFOLIO"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ06",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "SourceDocument",
+     "BusinessContext",
+     "LoanContract",
+     "DelinquencyEvent"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "CONFLICTS_BY_SECTOR",
+     "PART_OF_DOCUMENT",
+     "SCOPES_PORTFOLIO",
+     "HAS_DELINQUENCY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ07",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "BusinessContext",
+     "LoanContract",
+     "DelinquencyEvent"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "SCOPES_PORTFOLIO",
+     "HAS_DELINQUENCY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ08",
+    "ok": true,
+    "nodes": [
+     "Customer",
+     "LoanContract",
+     "Provision",
+     "LoanContract",
+     "WorkoutHistory",
+     "LoanContract",
+     "ExceptionApproval"
+    ],
+    "edges": [
+     "BORROWED_BY",
+     "GOVERNED_BY_CRITERIA",
+     "HAS_WORKOUT_HISTORY",
+     "HAS_EXCEPTION_APPROVAL"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ09",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "WorkoutHistory",
+     "LoanContract",
+     "Collateral",
+     "LoanContract",
+     "ExceptionApproval"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "HAS_EXCEPTION_PROVISO",
+     "HAS_WORKOUT_HISTORY",
+     "HAS_COLLATERAL",
+     "HAS_EXCEPTION_APPROVAL"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ10",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "LoanContract",
+     "Collateral"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "GOVERNED_BY_CRITERIA",
+     "HAS_COLLATERAL"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ11",
+    "ok": true,
+    "nodes": [
+     "LoanContract",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "DelinquencyEvent",
+     "LoanContract",
+     "Customer"
+    ],
+    "edges": [
+     "GOVERNED_BY_CRITERIA",
+     "DELEGATES_TO_INTERNAL",
+     "HAS_DELINQUENCY",
+     "BORROWED_BY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ12",
+    "ok": true,
+    "nodes": [
+     "Customer",
+     "LoanContract",
+     "RateCutRequest",
+     "Provision",
+     "Provision"
+    ],
+    "edges": [
+     "BORROWED_BY",
+     "HAS_RATE_CUT_REQUEST",
+     "EVALUATED_UNDER_PROVISION",
+     "DELEGATES_TO_INTERNAL"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ13",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "LoanContract",
+     "FinancialProduct",
+     "LoanContract",
+     "Customer"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "GOVERNED_BY_CRITERIA",
+     "OF_PRODUCT",
+     "BORROWED_BY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ14",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "LoanContract",
+     "FinancialProduct"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "GOVERNED_BY_CRITERIA",
+     "OF_PRODUCT"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ15",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "FinancialProduct"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "DELEGATES_TO_INTERNAL",
+     "GOVERNED_BY_CRITERIA",
+     "OF_PRODUCT"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ16",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "SourceDocument",
+     "LoanContract",
+     "FinancialProduct"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "CONFLICTS_BY_SECTOR",
+     "PART_OF_DOCUMENT",
+     "OF_PRODUCT"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ17",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "Provision",
+     "Provision",
+     "Provision",
+     "LoanContract",
+     "FinancialProduct"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "HAS_EXCEPTION_PROVISO",
+     "CONFLICTS_BY_SECTOR",
+     "OF_PRODUCT"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ18",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "SourceDocument",
+     "LoanContract",
+     "Customer"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "PART_OF_DOCUMENT",
+     "BORROWED_BY"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ19",
+    "ok": true,
+    "nodes": [
+     "BusinessContext",
+     "Provision",
+     "LoanContract"
+    ],
+    "edges": [
+     "INVOKES_PROVISION",
+     "GOVERNED_BY_CRITERIA"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   },
+   {
+    "cq": "CQ20",
+    "ok": true,
+    "nodes": [
+     "LoanContract",
+     "WorkoutHistory",
+     "LoanContract",
+     "Provision",
+     "LoanContract",
+     "Provision",
+     "Provision"
+    ],
+    "edges": [
+     "HAS_WORKOUT_HISTORY",
+     "GOVERNED_BY_CRITERIA",
+     "GOVERNED_BY_CRITERIA",
+     "HAS_EXCEPTION_PROVISO"
+    ],
+    "bad_nodes": [],
+    "bad_edges": [],
+    "graph_status": "aligned_l1_v1.2"
+   }
+  ]
+ },
+ "measured": {
+  "CQ01#1": {
+   "columns": [
+    "normal_contracts",
+    "normal_outstanding_krw",
+    "required_min_total_krw",
+    "booked_total_krw",
+    "reserve_topup_krw"
+   ],
+   "rows": [
+    {
+     "normal_contracts": 96,
+     "normal_outstanding_krw": 1297500000000,
+     "required_min_total_krw": 11058750000,
+     "booked_total_krw": 11028750000,
+     "reserve_topup_krw": 30000000
+    }
+   ]
+  },
+  "CQ01#2": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "ksic_section_code",
+    "outstanding_amt",
+    "booked_provision_krw",
+    "gap_krw"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_KSIC_L1",
+     "borrower_name": "대양피에프개발(주)",
+     "ksic_section_code": "L",
+     "outstanding_amt": 20000000000,
+     "booked_provision_krw": 170000000,
+     "gap_krw": 10000000
+    },
+    {
+     "contract_id": "LN_2026_KSIC_F1",
+     "borrower_name": "삼호종합건설(주)",
+     "ksic_section_code": "F",
+     "outstanding_amt": 15000000000,
+     "booked_provision_krw": 127500000,
+     "gap_krw": 7500000
+    },
+    {
+     "contract_id": "LN_2026_KSIC_G1",
+     "borrower_name": "한일유통상사(주)",
+     "ksic_section_code": "G",
+     "outstanding_amt": 15000000000,
+     "booked_provision_krw": 127500000,
+     "gap_krw": 7500000
+    },
+    {
+     "contract_id": "LN_2026_KSIC_H1",
+     "borrower_name": "그랜드하모니호텔(주)",
+     "ksic_section_code": "H",
+     "outstanding_amt": 10000000000,
+     "booked_provision_krw": 85000000,
+     "gap_krw": 5000000
+    }
+   ]
+  },
+  "CQ02#1": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "overdue_days",
+    "rehab_priority_claim_yn",
+    "legal_proceeding_code",
+    "min_rate_pct",
+    "required_min_krw",
+    "booked_provision_krw"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0002",
+     "borrower_name": "태성금속공업(주)",
+     "overdue_days": 95,
+     "rehab_priority_claim_yn": "Y",
+     "legal_proceeding_code": "REHAB_ACT_ART180_2_DIP",
+     "min_rate_pct": 10,
+     "required_min_krw": 1000000000,
+     "booked_provision_krw": 2000000000
+    },
+    {
+     "contract_id": "LN_2026_0003",
+     "borrower_name": "극동철강산업(주)",
+     "overdue_days": 95,
+     "rehab_priority_claim_yn": "N",
+     "legal_proceeding_code": "NONE",
+     "min_rate_pct": 20,
+     "required_min_krw": 2000000000,
+     "booked_provision_krw": 2000000000
+    }
+   ]
+  },
+  "CQ03#1": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "asset_classification",
+    "rehab_priority_claim_yn",
+    "legal_proceeding_code",
+    "required_min_krw",
+    "booked_provision_krw"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0001",
+     "borrower_name": "별빛정밀(주)",
+     "asset_classification": "PRECAUTIONARY",
+     "rehab_priority_claim_yn": "Y",
+     "legal_proceeding_code": "CORP_RESTRUCT_ACT_WORKOUT",
+     "required_min_krw": 700000000,
+     "booked_provision_krw": 700000000
+    }
+   ]
+  },
+  "CQ04#1": {
+   "columns": [
+    "total_allowance_krw",
+    "npl_krw",
+    "coverage_ratio_pct"
+   ],
+   "rows": [
+    {
+     "total_allowance_krw": 15728750000,
+     "npl_krw": 20000000000,
+     "coverage_ratio_pct": 78.6
+    }
+   ]
+  },
+  "CQ05#1": {
+   "columns": [
+    "npl_krw",
+    "on_bs_total_krw",
+    "npl_ratio_pct"
+   ],
+   "rows": [
+    {
+     "npl_krw": 20000000000,
+     "on_bs_total_krw": 1327500000000,
+     "npl_ratio_pct": 1.51
+    }
+   ]
+  },
+  "CQ06#1": {
+   "columns": [
+    "delinquent_1m_krw",
+    "on_bs_total_krw",
+    "official_delinquency_pct"
+   ],
+   "rows": [
+    {
+     "delinquent_1m_krw": 30000000000,
+     "on_bs_total_krw": 1327500000000,
+     "official_delinquency_pct": 2.26
+    }
+   ]
+  },
+  "CQ07#1": {
+   "columns": [
+    "ews_10d_krw",
+    "written_off_principal_krw",
+    "on_bs_total_krw",
+    "ews_ratio_pct"
+   ],
+   "rows": [
+    {
+     "ews_10d_krw": 45000000000,
+     "written_off_principal_krw": 8500000000,
+     "on_bs_total_krw": 1327500000000,
+     "ews_ratio_pct": 4.0
+    }
+   ]
+  },
+  "CQ08#1": {
+   "columns": [
+    "contract_id",
+    "asset_classification",
+    "overdue_days",
+    "consecutive_normal_repay_months",
+    "new_equity_paid_in_krw",
+    "cond1_6m_repay",
+    "cond2_equity",
+    "approval_type_code",
+    "approval_status",
+    "approver_role_code",
+    "approval_dt"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0001",
+     "asset_classification": "PRECAUTIONARY",
+     "overdue_days": 45,
+     "consecutive_normal_repay_months": 7,
+     "new_equity_paid_in_krw": 5000000000,
+     "cond1_6m_repay": true,
+     "cond2_equity": true,
+     "approval_type_code": "EOD_DEFERRAL_REVIEW",
+     "approval_status": "APPROVED",
+     "approver_role_code": "HQ_SENIOR_CREDIT_OFFICER",
+     "approval_dt": "2026-02-25"
+    }
+   ]
+  },
+  "CQ09#1": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "overdue_days",
+    "art18_eligible",
+    "approval_status",
+    "eod_action"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0001",
+     "borrower_name": "별빛정밀(주)",
+     "overdue_days": 45,
+     "art18_eligible": true,
+     "approval_status": "APPROVED",
+     "eod_action": "EOD_DEFERRED"
+    },
+    {
+     "contract_id": "LN_2026_0002",
+     "borrower_name": "태성금속공업(주)",
+     "overdue_days": 95,
+     "art18_eligible": false,
+     "approval_status": "REJECTED",
+     "eod_action": "EOD_NOTICE"
+    },
+    {
+     "contract_id": "LN_2026_0003",
+     "borrower_name": "극동철강산업(주)",
+     "overdue_days": 95,
+     "art18_eligible": false,
+     "approval_status": "REJECTED",
+     "eod_action": "EOD_NOTICE"
+    }
+   ]
+  },
+  "CQ10#1": {
+   "columns": [
+    "contract_id",
+    "collateral_type_code",
+    "guarantee_agency_code",
+    "guarantee_ratio_pct",
+    "appraised_collateral_krw",
+    "meets_art18_guarantee"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0001",
+     "collateral_type_code": "CREDIT_GUARANTEE_CERT",
+     "guarantee_agency_code": "KODIT",
+     "guarantee_ratio_pct": 90.0,
+     "appraised_collateral_krw": 9000000000,
+     "meets_art18_guarantee": true
+    },
+    {
+     "contract_id": "LN_2026_0002",
+     "collateral_type_code": "CREDIT_GUARANTEE_CERT",
+     "guarantee_agency_code": "KODIT",
+     "guarantee_ratio_pct": 70.0,
+     "appraised_collateral_krw": 7000000000,
+     "meets_art18_guarantee": false
+    },
+    {
+     "contract_id": "LN_2026_KSIC_L1",
+     "collateral_type_code": "REAL_ESTATE_MORTGAGE",
+     "guarantee_agency_code": "FIRST_LIEN_TRUST",
+     "guarantee_ratio_pct": 60.0,
+     "appraised_collateral_krw": 12000000000,
+     "meets_art18_guarantee": false
+    }
+   ]
+  },
+  "CQ11#1": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "ksic_section_code",
+    "credit_rating",
+    "asset_classification",
+    "account_status",
+    "overdue_days",
+    "write_off_yn",
+    "outstanding_amt",
+    "booked_provision_krw"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2025_WRITEOFF_01",
+     "borrower_name": "성진해운물류(주)",
+     "ksic_section_code": "I",
+     "credit_rating": "D",
+     "asset_classification": "ESTIMATED_LOSS",
+     "account_status": "WRITTEN_OFF_SPECIAL_CLAIM",
+     "overdue_days": 210,
+     "write_off_yn": "Y",
+     "outstanding_amt": 8500000000,
+     "booked_provision_krw": 8500000000
+    }
+   ]
+  },
+  "CQ12#1": {
+   "columns": [
+    "request_id",
+    "borrower_name",
+    "application_reason_code",
+    "credit_rating_before",
+    "credit_rating_after",
+    "yoy_revenue_growth_pct",
+    "rating_upgraded",
+    "review_status_code",
+    "approved_cut_bp"
+   ],
+   "rows": [
+    {
+     "request_id": "RCR_2026_01",
+     "borrower_name": "에이펙스세미콘(주)",
+     "application_reason_code": "PATENT_ACQUISITION",
+     "credit_rating_before": "BBB",
+     "credit_rating_after": "BBB",
+     "yoy_revenue_growth_pct": 1.2,
+     "rating_upgraded": false,
+     "review_status_code": "REJECTED",
+     "approved_cut_bp": 0
+    },
+    {
+     "request_id": "RCR_2026_02",
+     "borrower_name": "네오바이오텍(주)",
+     "application_reason_code": "PATENT_ACQUISITION",
+     "credit_rating_before": "BBB",
+     "credit_rating_after": "BBB+",
+     "yoy_revenue_growth_pct": 35.0,
+     "rating_upgraded": true,
+     "review_status_code": "APPROVED",
+     "approved_cut_bp": 35
+    }
+   ]
+  },
+  "CQ13#1": {
+   "columns": [
+    "contract_id",
+    "pref_rate",
+    "debt_ratio_pct"
+   ],
+   "rows": []
+  },
+  "CQ13#2": {
+   "columns": [
+    "contract_id",
+    "pref_rate",
+    "debt_ratio_pct"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0213_01",
+     "pref_rate": 1.2,
+     "debt_ratio_pct": 162.0
+    },
+    {
+     "contract_id": "LN_2026_0213_05",
+     "pref_rate": 1.2,
+     "debt_ratio_pct": 195.0
+    }
+   ]
+  },
+  "CQ14#1": {
+   "columns": [
+    "product_name",
+    "contracts",
+    "amount_krw",
+    "avg_applied_rate"
+   ],
+   "rows": [
+    {
+     "product_name": "별빛 TCB 기술혁신 운전자금",
+     "contracts": 5,
+     "amount_krw": 4500000000,
+     "avg_applied_rate": 4.68
+    },
+    {
+     "product_name": "별빛 프라임 중견기업 운전자금",
+     "contracts": 3,
+     "amount_krw": 9000000000,
+     "avg_applied_rate": 5.05
+    }
+   ]
+  },
+  "CQ14#2": {
+   "columns": [
+    "contracts",
+    "avg_applied_rate",
+    "wrong_date_column_hits"
+   ],
+   "rows": [
+    {
+     "contracts": 8,
+     "avg_applied_rate": 4.82,
+     "wrong_date_column_hits": 0
+    }
+   ]
+  },
+  "CQ15#1": {
+   "columns": [
+    "product_name",
+    "base_rate_benchmark",
+    "contracts",
+    "a_base",
+    "b_spread",
+    "c_adjust",
+    "applied",
+    "identity_violations"
+   ],
+   "rows": [
+    {
+     "product_name": "별빛 프라임 중견기업 운전자금",
+     "base_rate_benchmark": "FINANCIAL_BOND_6M",
+     "contracts": 89,
+     "a_base": 3.408,
+     "b_spread": 2.211,
+     "c_adjust": -0.716,
+     "applied": 4.903,
+     "identity_violations": 0
+    },
+    {
+     "product_name": "별빛 TCB 기술혁신 운전자금",
+     "base_rate_benchmark": "KORIBOR_3M",
+     "contracts": 5,
+     "a_base": 3.4,
+     "b_spread": 2.44,
+     "c_adjust": -1.16,
+     "applied": 4.68,
+     "identity_violations": 0
+    },
+    {
+     "product_name": "별빛 프로젝트·시설기업자금",
+     "base_rate_benchmark": "FINANCIAL_BOND_1Y",
+     "contracts": 4,
+     "a_base": 3.55,
+     "b_spread": 2.325,
+     "c_adjust": -0.35,
+     "applied": 5.525,
+     "identity_violations": 0
+    },
+    {
+     "product_name": "별빛 기업구조조정·회생운전자금",
+     "base_rate_benchmark": "FINANCIAL_BOND_1Y",
+     "contracts": 2,
+     "a_base": 3.45,
+     "b_spread": 2.35,
+     "c_adjust": -0.6,
+     "applied": 5.2,
+     "identity_violations": 0
+    }
+   ]
+  },
+  "CQ16#1": {
+   "columns": [
+    "min_rate_pct",
+    "contracts"
+   ],
+   "rows": [
+    {
+     "min_rate_pct": 0.85,
+     "contracts": 92
+    },
+    {
+     "min_rate_pct": 0.9,
+     "contracts": 4
+    }
+   ]
+  },
+  "CQ16#2": {
+   "columns": [
+    "non_corporate_contracts"
+   ],
+   "rows": [
+    {
+     "non_corporate_contracts": 0
+    }
+   ]
+  },
+  "CQ17#1": {
+   "columns": [
+    "contract_id",
+    "borrower_name",
+    "overdue_days",
+    "rehab_priority_claim_yn",
+    "asset_classification",
+    "doubtful_min_rate_pct"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0002",
+     "borrower_name": "태성금속공업(주)",
+     "overdue_days": 95,
+     "rehab_priority_claim_yn": "Y",
+     "asset_classification": "SUBSTANDARD",
+     "doubtful_min_rate_pct": 25
+    },
+    {
+     "contract_id": "LN_2026_0003",
+     "borrower_name": "극동철강산업(주)",
+     "overdue_days": 95,
+     "rehab_priority_claim_yn": "N",
+     "asset_classification": "SUBSTANDARD",
+     "doubtful_min_rate_pct": 50
+    }
+   ]
+  },
+  "CQ18#1": {
+   "columns": [
+    "customer_id",
+    "borrower_name",
+    "exposure_krw",
+    "tier1_needed_for_25pct_krw"
+   ],
+   "rows": [
+    {
+     "customer_id": "CUST_0004",
+     "borrower_name": "대양피에프개발(주)",
+     "exposure_krw": 20000000000,
+     "tier1_needed_for_25pct_krw": 80000000000
+    }
+   ]
+  },
+  "CQ18#2": {
+   "columns": [
+    "capital_or_group_columns"
+   ],
+   "rows": [
+    {
+     "capital_or_group_columns": 0
+    }
+   ]
+  },
+  "CQ19#1": {
+   "columns": [
+    "basis",
+    "contracts",
+    "amount_krw"
+   ],
+   "rows": [
+    {
+     "basis": "contract_dt",
+     "contracts": 8,
+     "amount_krw": 13500000000
+    },
+    {
+     "basis": "disburse_dt",
+     "contracts": 0,
+     "amount_krw": 0
+    },
+    {
+     "basis": "reg_dt",
+     "contracts": 6,
+     "amount_krw": 7000000000
+    }
+   ]
+  },
+  "CQ19#2": {
+   "columns": [
+    "month_crossing_contracts"
+   ],
+   "rows": [
+    {
+     "month_crossing_contracts": 0
+    }
+   ]
+  },
+  "CQ20#1": {
+   "columns": [
+    "contract_id",
+    "consecutive_normal_repay_months",
+    "new_equity_paid_in_krw",
+    "cond2_survives",
+    "current_booked_krw",
+    "if_substandard_min_krw",
+    "delta_krw",
+    "naive_delta_krw"
+   ],
+   "rows": [
+    {
+     "contract_id": "LN_2026_0001",
+     "consecutive_normal_repay_months": 7,
+     "new_equity_paid_in_krw": 5000000000,
+     "cond2_survives": true,
+     "current_booked_krw": 700000000,
+     "if_substandard_min_krw": 1000000000,
+     "delta_krw": 300000000,
+     "naive_delta_krw": 1300000000
+    }
+   ]
+  }
+ },
+ "spec": {
+  "meta": {
+   "version": "1.1.0",
+   "created": "2026-09-26",
+   "updated": "2026-09-27",
+   "owner": "finance_ontology",
+   "status": "approved",
+   "theme_allocation": {
+    "A": 4,
+    "B": 3,
+    "C": 4,
+    "D": 4,
+    "E": 2,
+    "F": 3
+   },
+   "themes": {
+    "A": "건전성 분류 · 대손충당금 최소적립",
+    "B": "부서별 연체율 정의 분기 (NPL / 공시 / EWS)",
+    "C": "예외 · 특례 (별표3 라목 · 우선변제자산 · EOD 유예 · 특수채권)",
+    "D": "금리 (A+B+C · 금리인하요구권 재량 · 전결 상한 · 기준일자)",
+    "E": "타 업권 · 타 여신유형 규정 혼입 차단",
+    "F": "규정 개정 · 데이터 공백 · 조건 변경 영향도"
+   },
+   "cq_types": {
+    "lookup": "단일 사실 조회이나 용어·컬럼 선택이 규정에 의해 결정됨",
+    "multi_hop": "규정 → 단서 → 마스터 → 원장 등 3홉 이상 연결 필요",
+    "exception_path": "원칙 조항과 예외·단서·재량 조항을 함께 평가해야 정답",
+    "context_branch": "같은 용어가 부서/목적(BusinessContext)에 따라 다른 규정·컬럼으로 분기",
+    "impact": "규정·조건 변경 시 영향받는 계약·금액을 역추적",
+    "absence": "'해당 없음 / 데이터 없음' 이 정답 — 부재를 정확히 말해야 함"
+   },
+   "required_tables": [
+    "ont_loan_contracts",
+    "ont_collaterals",
+    "ont_delinquency_events",
+    "ont_rate_cut_requests",
+    "ont_exception_approvals",
+    "customers",
+    "financial_products",
+    "workout_histories"
+   ],
+   "legacy_scenario_review": {
+    "S1": {
+     "verdict": "realistic_but_leading",
+     "action": "CQ05·06·07 로 부서별 분리 재작성 (질문에 3개 정의를 미리 나열하지 않음)"
+    },
+    "S2": {
+     "verdict": "leading",
+     "action": "질문이 KSIC F·G·H·L 과 '정상'을 미리 알려줌 → CQ01 '정상 여신 대손준비금 추가 적립 필요?' 로 재작성 (실측 결과 장부 0.85% 적립으로 3,000만 원 부족이 실제로 드러남)"
+    },
+    "S3": {
+     "verdict": "realistic_but_leading",
+     "action": "CQ02·03·08·20 으로 분해 (고정 적립 / 우선변제 감경 범위 / 라목 특례 / 특례 철회 영향)"
+    },
+    "S4": {
+     "verdict": "realistic",
+     "action": "CQ14 로 유지 (단, 핵심 난점은 Text-to-SQL 컬럼 선택이지 GraphRAG 고유 강점은 아님을 명시)"
+    },
+    "S5": {
+     "verdict": "realistic",
+     "action": "CQ12 로 유지 + 거절 사유 통보 의무(05 p.4 ②) 추가"
+    },
+    "S6": {
+     "verdict": "not_business_question",
+     "action": "폐기 — PDF 해시 무결성은 고객 현업 질문이 아니라 플랫폼 검증 항목 (게이트로 이관)"
+    }
+   }
+  },
+  "business_contexts": {
+   "RISK_MGMT": {
+    "dept": "리스크관리부",
+    "purpose": "건전성 분류 · 대손충당금/대손준비금 · 리스크관리위원회 보고"
+   },
+   "DISCLOSURE": {
+    "dept": "재무기획부(공시)",
+    "purpose": "금융감독원 대외공시 지표 산출"
+   },
+   "CREDIT_MGMT": {
+    "dept": "여신관리팀",
+    "purpose": "조기경보(EWS) · 사후관리 · 기한이익상실(EOD) 운영"
+   },
+   "CREDIT_REVIEW": {
+    "dept": "기업여신심사부",
+    "purpose": "채권재조정 · 예외 승인 심사"
+   },
+   "BRANCH": {
+    "dept": "영업점(RM)",
+    "purpose": "금리 산정 · 금리인하요구 응대 · 신규 실적"
+   },
+   "COMPLIANCE": {
+    "dept": "준법감시부",
+    "purpose": "규정 준수 점검 · 개정 영향도 · 공시 적정성"
+   }
+  },
+  "sources": {
+   "01": {
+    "file": "01_FSC_은행업감독규정_전문_2025_07.pdf",
+    "authority": "binding"
+   },
+   "02": {
+    "file": "02_LAW_은행업감독규정_별표3_자산건전성분류기준.pdf",
+    "authority": "binding"
+   },
+   "03": {
+    "file": "03_FSC_은행업감독규정_및_시행세칙_개정_규제영향분석서.pdf",
+    "authority": "advisory"
+   },
+   "04": {
+    "file": "04_FSC_은행업감독규정_개정안_규정변경예고_거액익스포져.pdf",
+    "authority": "advisory"
+   },
+   "05": {
+    "file": "05_FSC_KFB_은행권_대출금리_산정체계_개선방안.pdf",
+    "authority": "advisory"
+   },
+   "06": {
+    "file": "06_FSC_제7차_은행권_금리산정체계_정비방향.pdf",
+    "authority": "advisory"
+   },
+   "07": {
+    "file": "07_NARS_합리적인_금리산정을_위한_정책동향_및_쟁점.pdf",
+    "authority": "advisory"
+   },
+   "08": {
+    "file": "08_KIF_국내은행그룹_대손충당금_적립률_비교와_시사점.pdf",
+    "authority": "advisory"
+   },
+   "09": {
+    "file": "09_DISTRACTOR_상호저축은행업감독규정_규제영향분석서.pdf",
+    "authority": "distractor"
+   },
+   "10": {
+    "file": "10_SYNTHETIC_별빛은행_기업여신심사_및_금리운영_내규.pdf",
+    "authority": "internal"
+   }
+  },
+  "cqs": [
+   {
+    "id": "CQ01",
+    "theme": "A",
+    "cq_type": "multi_hop",
+    "question": "이번 분기 결산에서 '정상' 여신에 대해 대손준비금을 추가로 쌓아야 해? 쌓아야 하면 얼마고, 어느 계좌 때문이야?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "정상 원칙(0.85%) 뒤에 붙은 업종 단서(F·G·H·L 0.9%)를 읽고, 차주 마스터의 KSIC 로 원장 계좌를 골라, 건전성분류별 합계를 장부 충당금과 비교해야 한다. 질문에는 업종도 계좌도 없다.",
+    "trap": "0.85% 만 적용하면 '추가 적립 없음' 으로 오답. 가계 1.0%(제29조①2호)를 가져오면 과다 산출.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항 본문",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "건전성분류별로 각각 산출된 금액"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항 본문",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "그 차액을 매 결산시(분기별 가결산을 포함한다)마다 대손준비금으로 적"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호가목 단서",
+      "authority": "binding",
+      "role": "exception",
+      "quote": "한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 100분의 0.9 이상"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "customer_id",
+       "outstanding_amt",
+       "asset_classification",
+       "booked_provision_krw",
+       "account_status"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "borrower_name",
+       "ksic_section_code"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "WITH n AS (\n  SELECT l.contract_id, l.outstanding_amt, l.booked_provision_krw,\n         DIV(l.outstanding_amt * IF(c.ksic_section_code IN ('F','G','H','L'), 90, 85), 10000) AS required_min_krw\n  FROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\n  WHERE l.asset_classification = 'NORMAL' AND l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM')\nSELECT COUNT(*) AS normal_contracts, SUM(outstanding_amt) AS normal_outstanding_krw,\n       SUM(required_min_krw) AS required_min_total_krw, SUM(booked_provision_krw) AS booked_total_krw,\n       GREATEST(SUM(required_min_krw) - SUM(booked_provision_krw), 0) AS reserve_topup_krw\nFROM n\n",
+      "expect": {
+       "scalar": {
+        "reserve_topup_krw": 30000000
+       }
+      }
+     },
+     {
+      "sql": "SELECT l.contract_id, c.borrower_name, c.ksic_section_code, l.outstanding_amt, l.booked_provision_krw,\n       DIV(l.outstanding_amt * 90, 10000) - l.booked_provision_krw AS gap_krw\nFROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\nWHERE l.asset_classification = 'NORMAL'\n  AND l.booked_provision_krw < DIV(l.outstanding_amt * IF(c.ksic_section_code IN ('F','G','H','L'), 90, 85), 10000)\nORDER BY gap_krw DESC\n",
+      "expect": {
+       "exact_rows": 4,
+       "sum": {
+        "gap_krw": 30000000
+       },
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_KSIC_L1",
+         "gap_krw": 10000000
+        },
+        {
+         "contract_id": "LN_2026_KSIC_H1",
+         "gap_krw": 5000000
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "추가 적립 필요 — 3,000만 원. F·G·H·L 4개 차주(대양피에프개발 L 200억, 삼호종합건설 F 150억, 한일유통상사 G 150억, 그랜드하모니호텔 H 100억)가 장부상 0.85% 로만 적립돼 있어 단서 기준 0.9% 대비 각 1,000만/750만/750만/500만 원 부족. 정상 분류 합계 기준 차액이 제29조① 에 따라 대손준비금 대상.",
+    "graph_path": "(:BusinessContext{context_id:'RISK_MGMT'})-[:INVOKES_PROVISION{term_key:'provision-criteria'}]->(:Provision{art_029})-[:HAS_EXCEPTION_PROVISO]->(:Provision{art_029_1_1_a_proviso}) ; (:BusinessContext{context_id:'RISK_MGMT'})-[:SCOPES_PORTFOLIO]->(:LoanContract{asset_classification:'NORMAL'})-[:BORROWED_BY]->(:Customer{ksic_section_code IN ('F','G','H','L')})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S2"
+   },
+   {
+    "id": "CQ02",
+    "theme": "A",
+    "cq_type": "exception_path",
+    "question": "'고정'으로 분류된 여신들 법정 최소 충당금이 얼마야? 지금 장부에 쌓인 것과 비교하면 부족해, 남아?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "고정 20% 원칙에 우선변제자산 10% 단서가 붙고, 어떤 계좌가 우선변제자산인지는 원장 플래그와 회생·워크아웃 이력에서 확인해야 한다.",
+    "trap": "두 계좌 모두 20% 로 계산(40억 필요)하거나 둘 다 10% 로 감경(20억).",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호다목",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "\"고정\"분류 자산의 100분의 20 이상"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호다목 단서",
+      "authority": "binding",
+      "role": "exception",
+      "quote": "제180조제2항에 따라 은행이 우선하여 변제받을 권리가 인정되는 자산(이하 \"우선변제자산\"이라 한다)은 100분의 10 이상"
+     },
+     {
+      "doc": "02",
+      "page": 1,
+      "locator": "별표3 1.다②",
+      "authority": "binding",
+      "role": "definition",
+      "quote": "3월 이상 연체대출채권을 보유하고 있는 거래처에 대한 자산중 회수예상가액 해"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "borrower_name",
+       "overdue_days",
+       "outstanding_amt",
+       "asset_classification",
+       "rehab_priority_claim_yn",
+       "booked_provision_krw",
+       "account_status"
+      ]
+     },
+     {
+      "table": "workout_histories",
+      "source_store": "bigquery",
+      "columns": [
+       "contract_id",
+       "legal_proceeding_code"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.borrower_name, l.overdue_days, l.rehab_priority_claim_yn,\n       IFNULL(w.legal_proceeding_code, 'NONE') AS legal_proceeding_code,\n       IF(l.rehab_priority_claim_yn = 'Y', 10, 20) AS min_rate_pct,\n       DIV(l.outstanding_amt * IF(l.rehab_priority_claim_yn = 'Y', 10, 20), 100) AS required_min_krw,\n       l.booked_provision_krw\nFROM {ds}.ont_loan_contracts l LEFT JOIN {ds}.workout_histories w USING (contract_id)\nWHERE l.asset_classification = 'SUBSTANDARD' AND l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\nORDER BY l.contract_id\n",
+      "expect": {
+       "exact_rows": 2,
+       "sum": {
+        "required_min_krw": 3000000000,
+        "booked_provision_krw": 4000000000
+       },
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_0002",
+         "min_rate_pct": 10,
+         "legal_proceeding_code": "REHAB_ACT_ART180_2_DIP"
+        },
+        {
+         "contract_id": "LN_2026_0003",
+         "min_rate_pct": 20
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "최소 30억 원(태성금속 10억 = 회생법 제180조② 우선변제자산 10% + 극동철강 20억 = 원칙 20%). 장부 40억 원이라 10억 원 초과 적립 — 고정 분류에 대한 대손준비금 추가 적립 없음. (최소기준 '이상' 규정이므로 초과 적립 자체는 위반 아님)",
+    "graph_path": "(:LoanContract{asset_classification:'SUBSTANDARD'})-[:GOVERNED_BY_CRITERIA]->(:Provision{art_029})-[:HAS_EXCEPTION_PROVISO]->(:Provision{art_029_priority_claim_proviso}) ; (:LoanContract)-[:HAS_WORKOUT_HISTORY]->(:WorkoutHistory{legal_proceeding_code:'REHAB_ACT_ART180_2_DIP'})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S3"
+   },
+   {
+    "id": "CQ03",
+    "theme": "A",
+    "cq_type": "exception_path",
+    "question": "별빛정밀도 기촉법 워크아웃 들어간 우선변제자산이잖아. 그럼 충당금도 절반만 쌓아도 되는 거지?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "우선변제자산 감경 단서는 고정·회수의문·추정손실 목에만 붙어 있고 '요주의' 목에는 없다. 예외의 **적용 범위**를 판정해야 한다.",
+    "trap": "우선변제자산이면 무조건 1/2 감경한다고 일반화 → 3.5억 원으로 과소 산출.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호나목",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "\"요주의\"분류 자산의 100분의 7 이상"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호라목",
+      "authority": "binding",
+      "role": "exception",
+      "quote": "\"회수의문\"분류 자산의 100분의 50 이상. 다만, 우선변제자산은 100분의 25 이상"
+     },
+     {
+      "doc": "02",
+      "page": 3,
+      "locator": "별표3 2.바⑤",
+      "authority": "binding",
+      "role": "definition",
+      "quote": "「기업구조조정 촉진법」제18조제2항 및 「채무자 회생 및 파산에 관한 법률」"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "borrower_name",
+       "asset_classification",
+       "rehab_priority_claim_yn",
+       "outstanding_amt",
+       "booked_provision_krw"
+      ]
+     },
+     {
+      "table": "workout_histories",
+      "source_store": "bigquery",
+      "columns": [
+       "contract_id",
+       "legal_proceeding_code"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.borrower_name, l.asset_classification, l.rehab_priority_claim_yn, w.legal_proceeding_code,\n       DIV(l.outstanding_amt * 7, 100) AS required_min_krw, l.booked_provision_krw\nFROM {ds}.ont_loan_contracts l JOIN {ds}.workout_histories w USING (contract_id)\nWHERE l.contract_id = 'LN_2026_0001'\n",
+      "expect": {
+       "scalar": {
+        "asset_classification": "PRECAUTIONARY",
+        "rehab_priority_claim_yn": "Y",
+        "legal_proceeding_code": "CORP_RESTRUCT_ACT_WORKOUT",
+        "required_min_krw": 700000000,
+        "booked_provision_krw": 700000000
+       }
+      }
+     }
+    ],
+    "answer": "아니다. 별빛정밀은 '요주의' 분류이고 제29조①1호나목(요주의 7%)에는 우선변제자산 단서가 없다. 최소 7억 원(100억 × 7%) 그대로이며 장부 7억 원과 일치. 감경은 고정(10%)·회수의문(25%)·추정손실(50%)로 떨어졌을 때만 적용.",
+    "graph_path": "(:LoanContract{contract_id:'LN_2026_0001', asset_classification:'PRECAUTIONARY'})-[:GOVERNED_BY_CRITERIA]->(:Provision{art_029})-[:HAS_EXCEPTION_PROVISO]->(:Provision{art_029_priority_claim_proviso}) ; (:LoanContract)-[:HAS_WORKOUT_HISTORY]->(:WorkoutHistory{legal_proceeding_code:'CORP_RESTRUCT_ACT_WORKOUT'})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S3"
+   },
+   {
+    "id": "CQ04",
+    "theme": "A",
+    "cq_type": "multi_hop",
+    "question": "우리 은행 대손충당금 적립률(coverage ratio)이 몇 %야? 국내 은행그룹들이랑 비교하면 어느 수준이야?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "CR 정의(총대손충당금 ÷ 고정이하여신)는 연구 브리프에 있고, 분모인 '고정이하'는 감독규정 5단계 분류에서 오며, 상각 특수채권은 대차대조표 밖이라 제외해야 한다.",
+    "trap": "연체율이나 '정상 0.85%' 같은 적립'률'(최소적립비율)과 혼동. 상각채권 85억을 분모·분자에 포함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 19,
+      "locator": "제27조제1항",
+      "authority": "binding",
+      "role": "definition",
+      "quote": "\"정상\", \"요주의\", \"고정\", \"회수의문\", \"추정손실\"의 5단계로 분류하고"
+     },
+     {
+      "doc": "08",
+      "page": 1,
+      "locator": "KIF 금융브리프 34-05 p.8",
+      "authority": "advisory",
+      "role": "definition",
+      "quote": "CR은 [총대손충당금 잔액/부실채권(고정이하여신)] × 100으로 계산하는데"
+     },
+     {
+      "doc": "08",
+      "page": 2,
+      "locator": "KIF 금융브리프 34-05 p.9",
+      "authority": "advisory",
+      "role": "context",
+      "quote": "2023년 말 현재 국내 7개 은행그룹의 CR은 약 158% 수준"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "outstanding_amt",
+       "asset_classification",
+       "booked_provision_krw",
+       "account_status"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT SUM(booked_provision_krw) AS total_allowance_krw,\n       SUM(IF(asset_classification IN ('SUBSTANDARD','DOUBTFUL','ESTIMATED_LOSS'), outstanding_amt, 0)) AS npl_krw,\n       ROUND(100 * SUM(booked_provision_krw) /\n             SUM(IF(asset_classification IN ('SUBSTANDARD','DOUBTFUL','ESTIMATED_LOSS'), outstanding_amt, 0)), 1) AS coverage_ratio_pct\nFROM {ds}.ont_loan_contracts\nWHERE account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\n",
+      "expect": {
+       "scalar": {
+        "npl_krw": 20000000000,
+        "total_allowance_krw": 15728750000,
+        "coverage_ratio_pct": 78.6
+       }
+      }
+     }
+    ],
+    "answer": "78.6% (총대손충당금 157.29억 ÷ 고정이하 200억, 상각 특수채권 제외). KIF 브리프 기준 국내 7개 은행그룹 158%(2023말), 시중은행그룹 132.2%(2024.3Q) 대비 크게 낮다 — 정상여신 0.85% 적립이 대부분이고 고정이하 2건이 20%대 적립에 그치기 때문. (연구 브리프는 advisory: 비교 참고치이며 규제 기준 아님)",
+    "graph_path": "(:BusinessContext{context_id:'RISK_MGMT'})-[:INVOKES_PROVISION{term_key:'provision-criteria'}]->(:Provision)-[:PART_OF_DOCUMENT]->(:SourceDocument{doc_id:'DOC_08_KIF_PROVISION'}) ; (:BusinessContext{context_id:'RISK_MGMT'})-[:SCOPES_PORTFOLIO]->(:LoanContract)-[:GOVERNED_BY_CRITERIA]->(:Provision{art_027})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ05",
+    "theme": "B",
+    "cq_type": "context_branch",
+    "question": "다음 주 리스크관리위원회에 올릴 기업여신 부실(고정이하) 비율 뽑아줘.",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "'연체율' 계열 지표 중 리스크위원회 보고용은 연체일수가 아니라 **건전성 분류**(고정·회수의문·추정손실) 기준이다. 채권재조정 특례로 요주의가 된 45일 연체 건과 상각 특수채권은 빠져야 한다.",
+    "trap": "30일/90일 연체 기준으로 계산하거나, 상각 특수채권 85억을 포함.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조①",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "리스크관리위원회 보고용 고정이하여신비율(은행업감독규정 제27조 및 별표3에 따른 3월 이상 연체 등"
+     },
+     {
+      "doc": "01",
+      "page": 19,
+      "locator": "제27조제1항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "\"정상\", \"요주의\", \"고정\", \"회수의문\", \"추정손실\"의 5단계로 분류하고"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "outstanding_amt",
+       "asset_classification",
+       "account_status"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT SUM(IF(asset_classification IN ('SUBSTANDARD','DOUBTFUL','ESTIMATED_LOSS'), outstanding_amt, 0)) AS npl_krw,\n       SUM(outstanding_amt) AS on_bs_total_krw,\n       ROUND(100 * SUM(IF(asset_classification IN ('SUBSTANDARD','DOUBTFUL','ESTIMATED_LOSS'), outstanding_amt, 0)) / SUM(outstanding_amt), 2) AS npl_ratio_pct\nFROM {ds}.ont_loan_contracts WHERE account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\n",
+      "expect": {
+       "scalar": {
+        "npl_krw": 20000000000,
+        "on_bs_total_krw": 1327500000000,
+        "npl_ratio_pct": 1.51
+       }
+      }
+     }
+    ],
+    "answer": "1.51% (고정이하 200억 ÷ 대차대조표 기업여신 1조 3,275억). 별빛정밀 100억(45일 연체·요주의)과 상각 특수채권 85억은 제외.",
+    "graph_path": "(:BusinessContext{context_id:'RISK_MGMT'})-[:INVOKES_PROVISION{term_key:'delinquency-rate'}]->(:Provision{art_027})-[:DELEGATES_TO_INTERNAL]->(:Provision{internal_art_14_ews_delinquency}) ; (:BusinessContext{context_id:'RISK_MGMT'})-[:SCOPES_PORTFOLIO]->(:LoanContract)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S1"
+   },
+   {
+    "id": "CQ06",
+    "theme": "B",
+    "cq_type": "context_branch",
+    "question": "금감원 공시에 들어갈 원화대출 연체율은 얼마로 나가? 리스크위원회 숫자랑 왜 달라?",
+    "business_context": {
+     "id": "DISCLOSURE"
+    },
+    "why_hard": "공시용은 '1월 이상 원리금 연체' + '대손상각 특수채권 제외' 기준. 국회입법조사처 브리프의 '가계대출 연체율 0.24%' 같은 외부 수치를 섞으면 안 된다.",
+    "trap": "가계대출 연체율(0.24%)이나 저축은행 2개월 기준을 인용. 건전성 분류 기준(1.51%)을 그대로 보고.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조①",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "금융감독원 대외공시용 원화대출 연체율(1월 이상 원리금 연체 기준, 대손상각 특수채권 제외)"
+     },
+     {
+      "doc": "02",
+      "page": 7,
+      "locator": "별표3 7.나 연체기간 기산",
+      "authority": "binding",
+      "role": "definition",
+      "quote": "연체기간은 이자 또는 원금(분할상환금 포함)을 상환하기로 한 약정기일의 다음날"
+     },
+     {
+      "doc": "07",
+      "page": 2,
+      "locator": "NARS 제2071호 (3) 연체율",
+      "authority": "advisory",
+      "role": "distractor",
+      "quote": "기준 0.24%로 전년 동월말(0.16%) 대비 0.08%p"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "outstanding_amt",
+       "account_status"
+      ]
+     },
+     {
+      "table": "ont_delinquency_events",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "overdue_days",
+       "write_off_yn"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "WITH d AS (SELECT contract_id, MAX(overdue_days) AS od FROM {ds}.ont_delinquency_events WHERE write_off_yn = 'N' GROUP BY contract_id)\nSELECT SUM(IF(d.od >= 30, l.outstanding_amt, 0)) AS delinquent_1m_krw,\n       SUM(l.outstanding_amt) AS on_bs_total_krw,\n       ROUND(100 * SUM(IF(d.od >= 30, l.outstanding_amt, 0)) / SUM(l.outstanding_amt), 2) AS official_delinquency_pct\nFROM {ds}.ont_loan_contracts l LEFT JOIN d USING (contract_id)\nWHERE l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\n",
+      "expect": {
+       "scalar": {
+        "delinquent_1m_krw": 30000000000,
+        "official_delinquency_pct": 2.26
+       }
+      }
+     }
+    ],
+    "answer": "2.26% (1개월 이상 연체 300억 ÷ 1조 3,275억). 리스크위원회 1.51% 와의 차이는 별빛정밀 100억 — 45일 연체라 공시 연체율에는 들어가지만, 별표3 라목 특례로 '요주의' 분류라 고정이하 비율에서는 빠진다. 가계대출 0.24%(NARS)는 타 여신유형 수치로 무관.",
+    "graph_path": "(:BusinessContext{context_id:'DISCLOSURE'})-[:INVOKES_PROVISION{term_key:'delinquency-rate'}]->(:Provision{internal_art_14_ews_delinquency})-[:CONFLICTS_BY_SECTOR]->(:Provision{nars_02_dsr})-[:PART_OF_DOCUMENT]->(:SourceDocument{doc_id:'DOC_07_NARS_RATE'}) ; (:BusinessContext{context_id:'DISCLOSURE'})-[:SCOPES_PORTFOLIO]->(:LoanContract)-[:HAS_DELINQUENCY]->(:DelinquencyEvent{write_off_yn:'N'})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S1"
+   },
+   {
+    "id": "CQ07",
+    "theme": "B",
+    "cq_type": "context_branch",
+    "question": "여신관리팀 조기경보 기준으로 실질 연체율 몇 %야? 공시 수치보다 왜 이렇게 높아?",
+    "business_context": {
+     "id": "CREDIT_MGMT"
+    },
+    "why_hard": "EWS 실질관리 연체율은 당행 내규에만 정의돼 있고, 10일 이상 연체 + 상각 특수채권을 분자·분모 **모두**에 넣는다. 공시 기준과 정반대로 특수채권을 포함.",
+    "trap": "공시 기준(30일, 특수채권 제외)으로 계산하거나, 분자에만 특수채권을 넣고 분모에는 빠뜨림.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조②1호",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "1. 분자: 10일 이상 원리금 연체 기업여신 잔액 + 30일 이상 관리연체 잔액 + 회계상 대손상각 처리되어 특수"
+     },
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조②2호",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "2. 분모: 대차대조표상 원화 기업여신 총잔액 + 대손상각 특수채권 미회수 원금 잔액"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "outstanding_amt",
+       "account_status"
+      ]
+     },
+     {
+      "table": "ont_delinquency_events",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "overdue_days",
+       "overdue_principal_krw",
+       "write_off_yn"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "WITH d AS (SELECT contract_id, MAX(overdue_days) AS od FROM {ds}.ont_delinquency_events WHERE write_off_yn = 'N' GROUP BY contract_id),\n     wo AS (SELECT SUM(overdue_principal_krw) AS wo_principal FROM {ds}.ont_delinquency_events WHERE write_off_yn = 'Y')\nSELECT SUM(IF(d.od >= 10, l.outstanding_amt, 0)) AS ews_10d_krw, ANY_VALUE(wo.wo_principal) AS written_off_principal_krw,\n       SUM(l.outstanding_amt) AS on_bs_total_krw,\n       ROUND(100 * (SUM(IF(d.od >= 10, l.outstanding_amt, 0)) + ANY_VALUE(wo.wo_principal)) / (SUM(l.outstanding_amt) + ANY_VALUE(wo.wo_principal)), 2) AS ews_ratio_pct\nFROM {ds}.ont_loan_contracts l LEFT JOIN d USING (contract_id) CROSS JOIN wo\nWHERE l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\n",
+      "expect": {
+       "scalar": {
+        "ews_10d_krw": 45000000000,
+        "written_off_principal_krw": 8500000000,
+        "ews_ratio_pct": 4.0
+       }
+      }
+     }
+    ],
+    "answer": "4.00% ((10일 이상 연체 450억 + 상각 특수채권 85억) ÷ (1조 3,275억 + 85억)). 공시 2.26% 대비 차이는 18일 연체 3건(150억)과 특수채권 85억. ※ 내규 산식의 '30일 이상 관리연체 잔액'은 10일 이상 집합의 부분집합이므로 중복 가산하지 않는 해석을 채택(해석 주석).",
+    "graph_path": "(:BusinessContext{context_id:'CREDIT_MGMT'})-[:INVOKES_PROVISION{term_key:'delinquency-rate'}]->(:Provision{internal_art_14_ews_delinquency}) ; (:BusinessContext{context_id:'CREDIT_MGMT'})-[:SCOPES_PORTFOLIO]->(:LoanContract)-[:HAS_DELINQUENCY]->(:DelinquencyEvent)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S1"
+   },
+   {
+    "id": "CQ08",
+    "theme": "C",
+    "cq_type": "exception_path",
+    "question": "별빛정밀 채권재조정 중인데 고정이하로 안 떨어뜨리고 요주의로 둔 근거가 뭐야? 감사 때 문제 없을까?",
+    "business_context": {
+     "id": "CREDIT_REVIEW"
+    },
+    "why_hard": "별표3 3.라목의 두 요건(①6개월 이상 연속 이행 ②증자 등 상환능력 개선 사건) 중 하나 + '판단근거 문서화' 단서를 원장·워크아웃 이력·예외승인 기록과 각각 대조해야 한다.",
+    "trap": "채권재조정여신 = 고정이하 로 일반화하거나, 문서화 의무(단서)를 누락.",
+    "evidence": [
+     {
+      "doc": "02",
+      "page": 4,
+      "locator": "별표3 3.라목 본문·단서",
+      "authority": "binding",
+      "role": "exception",
+      "quote": "고정이하로 분류하지 아니할 수 있다. 다만, 판단근거를 명확히 문서화하여야 한다."
+     },
+     {
+      "doc": "02",
+      "page": 4,
+      "locator": "별표3 3.라목①",
+      "authority": "binding",
+      "role": "condition",
+      "quote": "거래기업이 6개월 이상(채권재조정을 위한 절차가 개시되어 채권재조정의 조건"
+     },
+     {
+      "doc": "02",
+      "page": 5,
+      "locator": "별표3 3.라목②",
+      "authority": "binding",
+      "role": "condition",
+      "quote": "증자(출자전환을 포함한다) 등과 같이 채무상환능력을 명확히 개선시키는 사건이 발생한 경우"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "asset_classification",
+       "overdue_days"
+      ]
+     },
+     {
+      "table": "workout_histories",
+      "source_store": "bigquery",
+      "columns": [
+       "contract_id",
+       "consecutive_normal_repay_months",
+       "new_equity_paid_in_krw"
+      ]
+     },
+     {
+      "table": "ont_exception_approvals",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "approval_type_code",
+       "approval_status",
+       "approver_role_code",
+       "approval_dt"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.asset_classification, l.overdue_days, w.consecutive_normal_repay_months, w.new_equity_paid_in_krw,\n       (w.consecutive_normal_repay_months >= 6) AS cond1_6m_repay, (w.new_equity_paid_in_krw > 0) AS cond2_equity,\n       a.approval_type_code, a.approval_status, a.approver_role_code, CAST(a.approval_dt AS STRING) AS approval_dt\nFROM {ds}.ont_loan_contracts l\nJOIN {ds}.workout_histories w USING (contract_id)\nLEFT JOIN {ds}.ont_exception_approvals a USING (contract_id)\nWHERE l.contract_id = 'LN_2026_0001'\n",
+      "expect": {
+       "scalar": {
+        "asset_classification": "PRECAUTIONARY",
+        "cond1_6m_repay": true,
+        "cond2_equity": true,
+        "approval_status": "APPROVED",
+        "approval_dt": "2026-02-25"
+       }
+      }
+     }
+    ],
+    "answer": "근거: 별표3 3.라목 — ① 7개월 연속 정상 이행(≥6개월), ② 유상증자 50억 원 납입, 두 요건 모두 충족. 단서의 '판단근거 문서화'는 2026-02-25 본부 여신심사역(HQ_SENIOR_CREDIT_OFFICER) EOD 유예 승인 기록으로 확인. 45일 연체 자체는 별표3 1.나② 상 요주의 구간이라 분류 결과와도 일치.",
+    "graph_path": "(:Customer{customer_id:'CUST_0001'})<-[:BORROWED_BY]-(:LoanContract{contract_id:'LN_2026_0001'})-[:GOVERNED_BY_CRITERIA]->(:Provision{annex3_item_03_ra_restructured_exemption}) ; (:LoanContract)-[:HAS_WORKOUT_HISTORY]->(:WorkoutHistory) ; (:LoanContract)-[:HAS_EXCEPTION_APPROVAL]->(:ExceptionApproval{approval_status:'APPROVED'})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S3"
+   },
+   {
+    "id": "CQ09",
+    "theme": "C",
+    "cq_type": "multi_hop",
+    "question": "연체 30일 넘은 기업여신 중에 기한이익상실(EOD) 바로 처리해야 하는 차주랑 유예할 수 있는 차주 나눠줘. 지금 결재 결과가 내규랑 맞아?",
+    "business_context": {
+     "id": "CREDIT_MGMT"
+    },
+    "why_hard": "내규 제16조(30일 초과 → EOD 예정 통지)에 제18조 유예 특례가 겹친다. 유예는 '각 호의 요건'(①6개월 이행·증자·신보 85%+ 보증 중 하나 AND ②우선변제자산) + 본부 여신심사역 승인이 모두 필요.",
+    "trap": "회생법 우선변제자산이면 무조건 유예(태성금속 오판), 또는 보증비율 70% 를 요건 충족으로 봄.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제16조①",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "원리금 연체가 1월(30일)을 초과하는 경우 여신관리시스템은 기한이익상실(EOD) 예정"
+     },
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제18조 본문",
+      "authority": "internal",
+      "role": "exception",
+      "quote": "본부 여신심사역의 승인(APPROVED)을 득한 경우에는 고정이하"
+     },
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제18조1호",
+      "authority": "internal",
+      "role": "condition",
+      "quote": "신용보증기금(KODIT) 85% 이상 보증서 담보 제공"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "borrower_name",
+       "overdue_days",
+       "rehab_priority_claim_yn",
+       "account_status"
+      ]
+     },
+     {
+      "table": "workout_histories",
+      "source_store": "bigquery",
+      "columns": [
+       "contract_id",
+       "consecutive_normal_repay_months",
+       "new_equity_paid_in_krw"
+      ]
+     },
+     {
+      "table": "ont_collaterals",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "guarantee_agency_code",
+       "guarantee_ratio_pct"
+      ]
+     },
+     {
+      "table": "ont_exception_approvals",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "approval_status"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.borrower_name, l.overdue_days,\n       ((IFNULL(w.consecutive_normal_repay_months, 0) >= 6 OR IFNULL(w.new_equity_paid_in_krw, 0) > 0\n         OR (c.guarantee_agency_code = 'KODIT' AND c.guarantee_ratio_pct >= 85))\n        AND l.rehab_priority_claim_yn = 'Y') AS art18_eligible,\n       IFNULL(a.approval_status, 'NONE') AS approval_status,\n       IF(a.approval_status = 'APPROVED', 'EOD_DEFERRED', 'EOD_NOTICE') AS eod_action\nFROM {ds}.ont_loan_contracts l\nLEFT JOIN {ds}.workout_histories w USING (contract_id)\nLEFT JOIN {ds}.ont_collaterals c USING (contract_id)\nLEFT JOIN {ds}.ont_exception_approvals a USING (contract_id)\nWHERE l.overdue_days > 30 AND l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\nORDER BY l.contract_id\n",
+      "expect": {
+       "exact_rows": 3,
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_0001",
+         "art18_eligible": true,
+         "eod_action": "EOD_DEFERRED"
+        },
+        {
+         "contract_id": "LN_2026_0002",
+         "art18_eligible": false,
+         "eod_action": "EOD_NOTICE"
+        },
+        {
+         "contract_id": "LN_2026_0003",
+         "art18_eligible": false,
+         "eod_action": "EOD_NOTICE"
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "30일 초과 3건. 유예: 별빛정밀(요건 ①·② 충족 + 승인). EOD 통지: 태성금속(②우선변제자산은 충족하나 ①불충족 — 2개월 이행·증자 0·신보 보증 70% < 85%), 극동철강(①②모두 불충족). 결재 결과 3건 모두 내규와 일치. ※ '각 호의 요건을 충족'을 AND 로 해석(해석 주석).",
+    "graph_path": "(:BusinessContext{context_id:'CREDIT_MGMT'})-[:INVOKES_PROVISION{term_key:'eod-deferral'}]->(:Provision{internal_art_16_eod_notice_rule})-[:HAS_EXCEPTION_PROVISO]->(:Provision{internal_art_18_workout_kodit_waiver}) ; (:LoanContract)-[:HAS_WORKOUT_HISTORY]->(:WorkoutHistory) ; (:LoanContract)-[:HAS_COLLATERAL]->(:Collateral) ; (:LoanContract)-[:HAS_EXCEPTION_APPROVAL]->(:ExceptionApproval)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ10",
+    "theme": "C",
+    "cq_type": "lookup",
+    "question": "담보 잡혀 있는 여신 중에 EOD 유예 요건(보증서 기준)을 채우는 건 어느 거야?",
+    "business_context": {
+     "id": "CREDIT_REVIEW"
+    },
+    "why_hard": "내규 제18조 요건은 '신용보증기금(KODIT) 85% 이상 **보증서**'. 부동산 담보(신탁 1순위)나 70% 보증서는 해당하지 않는다. 담보 유형·기관·비율 세 컬럼을 동시에 판정.",
+    "trap": "담보가 있으면 충족, 또는 담보가액 비율만 보고 판단.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제18조1호",
+      "authority": "internal",
+      "role": "condition",
+      "quote": "신용보증기금(KODIT) 85% 이상 보증서 담보 제공"
+     },
+     {
+      "doc": "02",
+      "page": 3,
+      "locator": "별표3 2.바①",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "보증부 여신은 거래기업 뿐만 아니라 보증인의 채무상환능력을 평가하여 건전성"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_collaterals",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "collateral_type_code",
+       "guarantee_agency_code",
+       "guarantee_ratio_pct",
+       "appraised_collateral_krw"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT contract_id, collateral_type_code, guarantee_agency_code, guarantee_ratio_pct, appraised_collateral_krw,\n       (collateral_type_code = 'CREDIT_GUARANTEE_CERT' AND guarantee_agency_code = 'KODIT' AND guarantee_ratio_pct >= 85) AS meets_art18_guarantee\nFROM {ds}.ont_collaterals ORDER BY contract_id\n",
+      "expect": {
+       "exact_rows": 3,
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_0001",
+         "meets_art18_guarantee": true
+        },
+        {
+         "contract_id": "LN_2026_0002",
+         "meets_art18_guarantee": false
+        },
+        {
+         "contract_id": "LN_2026_KSIC_L1",
+         "meets_art18_guarantee": false
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "1건 — 별빛정밀(신보 보증서 90%). 태성금속은 신보 보증서지만 70% 로 미달, 대양피에프개발은 부동산 담보(신탁 1순위 60%)라 보증서 요건과 무관. 별표3 2.바①에 따라 보증부 여신은 보증인 능력 반영 분류가 '가능'(재량)하다는 점은 별개.",
+    "graph_path": "(:BusinessContext{context_id:'CREDIT_REVIEW'})-[:INVOKES_PROVISION{term_key:'eod-deferral'}]->(:Provision{internal_art_18_workout_kodit_waiver})<-[:GOVERNED_BY_CRITERIA]-(:LoanContract)-[:HAS_COLLATERAL]->(:Collateral{guarantee_agency_code:'KODIT'})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ11",
+    "theme": "C",
+    "cq_type": "context_branch",
+    "question": "상각 처리한 성진해운물류 건은 규정대로 처리된 거야? 그리고 연체율 지표들엔 이게 들어가, 빠져?",
+    "business_context": {
+     "id": "COMPLIANCE"
+    },
+    "why_hard": "부실자산 조기상각 의무(제27조④)와, 상각 특수채권을 공시 연체율은 **제외**·EWS 는 **포함**하는 내규 제14조의 상반된 취급을 한 번에 답해야 한다.",
+    "trap": "상각 = 장부에서 완전 소멸 → 모든 지표에서 제외, 또는 모든 지표에 포함.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 19,
+      "locator": "제27조제4항",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "\"회수의문\" 또는 \"추정손실\"로 분류된 자산(이하 \"부실자산\"이라 한다)을 조기에"
+     },
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조①",
+      "authority": "internal",
+      "role": "exception",
+      "quote": "금융감독원 대외공시용 원화대출 연체율(1월 이상 원리금 연체 기준, 대손상각 특수채권 제외)"
+     },
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제14조②2호",
+      "authority": "internal",
+      "role": "exception",
+      "quote": "2. 분모: 대차대조표상 원화 기업여신 총잔액 + 대손상각 특수채권 미회수 원금 잔액"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "borrower_name",
+       "asset_classification",
+       "account_status",
+       "outstanding_amt",
+       "booked_provision_krw"
+      ]
+     },
+     {
+      "table": "ont_delinquency_events",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "overdue_days",
+       "write_off_yn"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "ksic_section_code",
+       "credit_rating"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.borrower_name, c.ksic_section_code, c.credit_rating, l.asset_classification, l.account_status,\n       d.overdue_days, d.write_off_yn, l.outstanding_amt, l.booked_provision_krw\nFROM {ds}.ont_loan_contracts l JOIN {ds}.ont_delinquency_events d USING (contract_id)\nJOIN {ds}.customers c ON c.customer_id = l.customer_id\nWHERE d.write_off_yn = 'Y'\n",
+      "expect": {
+       "exact_rows": 1,
+       "must_contain": [
+        {
+         "contract_id": "LN_2025_WRITEOFF_01",
+         "asset_classification": "ESTIMATED_LOSS",
+         "account_status": "WRITTEN_OFF_SPECIAL_CLAIM",
+         "overdue_days": 210,
+         "booked_provision_krw": 8500000000
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "규정 부합: 210일 연체 '추정손실' → 제27조④ 부실자산 조기상각 원칙대로 상각(특수채권 편입), 충당금 100%(85억). 지표 취급: 리스크 고정이하비율·공시 연체율 = 제외(대차대조표 밖·내규 제14조①), 여신관리팀 EWS = 분자·분모 모두 포함(내규 제14조②). ※ KSIC I(운수업)이라 F·G·H·L 단서와 무관.",
+    "graph_path": "(:LoanContract{account_status:'WRITTEN_OFF_SPECIAL_CLAIM'})-[:GOVERNED_BY_CRITERIA]->(:Provision{art_027})-[:DELEGATES_TO_INTERNAL]->(:Provision{internal_art_14_ews_delinquency}) ; (:LoanContract)-[:HAS_DELINQUENCY]->(:DelinquencyEvent{write_off_yn:'Y'}) ; (:LoanContract)-[:BORROWED_BY]->(:Customer)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ12",
+    "theme": "D",
+    "cq_type": "exception_path",
+    "question": "에이펙스세미콘이 특허 땄다고 금리인하요구 했는데 우리가 거절했잖아. 고객이 '특허 취득은 금리인하 사유로 정해져 있다'고 항의하는데, 거절이 맞아? 뭐라고 통보해야 해?",
+    "business_context": {
+     "id": "BRANCH"
+    },
+    "why_hard": "금융당국 개선방안 표에는 '특허권 등의 신규취득'이 기업대출 인하 사유로 나열돼 있지만, 같은 쪽 ④항 단서로 은행 선택 적용이 가능하고, 당행 내규 제25조②가 그 재량을 '단독 특허 제외'로 행사했다. 또한 거절 시 구체적 사유 통보 의무가 있다.",
+    "trap": "표의 사유 목록만 읽고 '인하 의무' 로 답함. 통보 의무 누락.",
+    "evidence": [
+     {
+      "doc": "05",
+      "page": 4,
+      "locator": "Ⅱ-1-나 기업대출 사유 표",
+      "authority": "advisory",
+      "role": "distractor",
+      "quote": "특허권 등의 신규취득"
+     },
+     {
+      "doc": "05",
+      "page": 4,
+      "locator": "Ⅱ-1-나 ④",
+      "authority": "advisory",
+      "role": "exception",
+      "quote": "특허 취득 등은 은행이 선택적으로 적용할 수 있도록 조정"
+     },
+     {
+      "doc": "05",
+      "page": 4,
+      "locator": "Ⅱ-1-나 ②",
+      "authority": "advisory",
+      "role": "rule",
+      "quote": "금리인하요구 처리결과는 반드시 통보토록 하고 통보시에는"
+     },
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제25조②",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "단독 취득만으로는 즉각적인 현금흐름 개선이 입증되지 않는 것으로 보아 필수 금리인하 사유에서 제외"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_rate_cut_requests",
+      "source_store": "spanner",
+      "columns": [
+       "request_id",
+       "customer_id",
+       "application_reason_code",
+       "credit_rating_before",
+       "credit_rating_after",
+       "yoy_revenue_growth_pct",
+       "review_status_code",
+       "approved_cut_bp"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "borrower_name"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT r.request_id, c.borrower_name, r.application_reason_code, r.credit_rating_before, r.credit_rating_after,\n       r.yoy_revenue_growth_pct, (r.credit_rating_after != r.credit_rating_before) AS rating_upgraded,\n       r.review_status_code, r.approved_cut_bp\nFROM {ds}.ont_rate_cut_requests r JOIN {ds}.customers c USING (customer_id)\nORDER BY r.request_id\n",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "borrower_name": "에이펙스세미콘(주)",
+         "rating_upgraded": false,
+         "review_status_code": "REJECTED",
+         "approved_cut_bp": 0
+        },
+        {
+         "borrower_name": "네오바이오텍(주)",
+         "rating_upgraded": true,
+         "review_status_code": "APPROVED",
+         "approved_cut_bp": 35
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "거절 적법. 개선방안 ④항이 특허 취득을 은행 선택 적용 사유로 조정했고, 당행 내규 제25조②는 단독 특허를 필수 인하 사유에서 제외(재무 개선·신용등급 상승 동반 시에만 인하). 에이펙스세미콘은 등급 BBB→BBB 불변·매출 +1.2% 로 동반 요건 미충족. 같은 날 특허+등급 상승(BBB→BBB+)한 네오바이오텍은 35bp 인하 승인 — 일관됨. 통보: 개선방안 ②에 따라 처리결과와 '구체적 사유'(단독 특허, 신용등급·재무상태 개선 미확인)를 반드시 통보.",
+    "graph_path": "(:Customer{customer_id:'CUST_0008'})<-[:BORROWED_BY]-(:LoanContract)-[:HAS_RATE_CUT_REQUEST]->(:RateCutRequest)-[:EVALUATED_UNDER_PROVISION]->(:Provision{rate_reform_sec_2_1_b_patent_discretion})-[:DELEGATES_TO_INTERNAL]->(:Provision{internal_art_25_tcb_and_patent_exclusion})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S5"
+   },
+   {
+    "id": "CQ13",
+    "theme": "D",
+    "cq_type": "absence",
+    "question": "TCB 기술혁신 운전자금 계약 중에 영업점장 전결 한도를 넘겨서 우대금리를 준 건이나, 부채비율 기준 넘는 차주 있어?",
+    "business_context": {
+     "id": "COMPLIANCE"
+    },
+    "why_hard": "전결 상한(1.20%p)·부채비율 상한(250%)은 법정 기준이 아니라 당행 내규에만 있다. 정답은 '위반 0건'이며, 상한에 딱 걸린 계약(경계값)을 구분해서 말해야 한다.",
+    "trap": "법정 의무처럼 서술하거나, 상한 = 위반으로 오판(>= vs >).",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제25조①",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "대금리(pref_rate) 한도는 연 1.20%p, 신속심사 승인 부채비율 상한은 250.0%로 한다"
+     },
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제25조① 괄호",
+      "authority": "internal",
+      "role": "context",
+      "quote": "법정 의무사항이 아닌 별빛은행 자체 내부 가이드라인이다"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "customer_id",
+       "product_code",
+       "pref_rate"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "debt_ratio_pct"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, l.pref_rate, c.debt_ratio_pct\nFROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\nWHERE l.product_code = 'PROD_TCB_WORKING' AND (l.pref_rate > 1.20 OR c.debt_ratio_pct > 250.0)\n",
+      "expect": {
+       "exact_rows": 0
+      }
+     },
+     {
+      "sql": "SELECT l.contract_id, l.pref_rate, c.debt_ratio_pct\nFROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\nWHERE l.product_code = 'PROD_TCB_WORKING' AND l.pref_rate >= 1.20\nORDER BY l.contract_id\n",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_0213_01"
+        },
+        {
+         "contract_id": "LN_2026_0213_05"
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "위반 0건. TCB 5건 모두 우대금리 ≤ 1.20%p·부채비율 ≤ 250%. 단 LN_2026_0213_01·_05 두 건은 우대금리가 정확히 상한(1.20%p)이라 추가 우대 여지 없음. 이 기준은 금융당국 법정 기준이 아니라 당행 내부 가이드라인(내규 제25조① 괄호).",
+    "graph_path": "(:BusinessContext{context_id:'COMPLIANCE'})-[:INVOKES_PROVISION{term_key:'loan-rate'}]->(:Provision{internal_art_25_tcb_and_patent_exclusion})<-[:GOVERNED_BY_CRITERIA]-(:LoanContract)-[:OF_PRODUCT]->(:FinancialProduct{product_code:'PROD_TCB_WORKING'}) ; (:LoanContract)-[:BORROWED_BY]->(:Customer)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ14",
+    "theme": "D",
+    "cq_type": "lookup",
+    "question": "2월 13일에 나간 대출들 평균 금리가 얼마였고, 제일 많이 팔린 상품은 뭐야?",
+    "business_context": {
+     "id": "BRANCH"
+    },
+    "why_hard": "'나간 대출'의 기준일(등록·체결·실행) 중 내규는 특정일자 조회 시 **체결일**을 필수 기준으로 정한다. '평균 금리'는 우대 차감 후 적용금리, '제일 많이'는 건수와 금액 1위가 다르다.",
+    "trap": "reg_dt/disburse_dt 로 조회(0건), base_rate 평균 보고, 건수·금액 1위 혼동. (Text-to-SQL 성격이 강함 — GraphRAG 고유 강점 아님)",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제21조①2호",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "\"특정일자 체결 대출\" 조회 시 필수 기준 컬럼"
+     },
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제22조①",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "최종 적용금리(applied_rate) = 기준금리(base_rate) + 가산금리(spread_rate) + 가감조정금리(△우대금리"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "product_code",
+       "reg_dt",
+       "contract_dt",
+       "disburse_dt",
+       "applied_rate",
+       "contract_amt"
+      ]
+     },
+     {
+      "table": "financial_products",
+      "source_store": "bigquery",
+      "columns": [
+       "product_code",
+       "product_name"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT p.product_name, COUNT(*) AS contracts, SUM(l.contract_amt) AS amount_krw, ROUND(AVG(l.applied_rate), 2) AS avg_applied_rate\nFROM {ds}.ont_loan_contracts l JOIN {ds}.financial_products p USING (product_code)\nWHERE l.contract_dt = DATE '2026-02-13'\nGROUP BY p.product_name ORDER BY contracts DESC\n",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "product_name": "별빛 TCB 기술혁신 운전자금",
+         "contracts": 5,
+         "amount_krw": 4500000000
+        },
+        {
+         "product_name": "별빛 프라임 중견기업 운전자금",
+         "contracts": 3,
+         "amount_krw": 9000000000
+        }
+       ]
+      }
+     },
+     {
+      "sql": "SELECT COUNT(*) AS contracts, ROUND(AVG(applied_rate), 2) AS avg_applied_rate,\n       (SELECT COUNT(*) FROM {ds}.ont_loan_contracts WHERE reg_dt = DATE '2026-02-13' OR disburse_dt = DATE '2026-02-13') AS wrong_date_column_hits\nFROM {ds}.ont_loan_contracts WHERE contract_dt = DATE '2026-02-13'\n",
+      "expect": {
+       "scalar": {
+        "contracts": 8,
+        "avg_applied_rate": 4.82,
+        "wrong_date_column_hits": 0
+       }
+      }
+     }
+    ],
+    "answer": "체결일 기준 8건, 평균 적용금리 4.82%. 건수 1위 = 별빛 TCB 기술혁신 운전자금(5건·45억), 금액 1위 = 별빛 프라임 중견기업 운전자금(3건·90억). 등록일·실행일로 조회하면 0건.",
+    "graph_path": "(:BusinessContext{context_id:'BRANCH'})-[:INVOKES_PROVISION{term_key:'base-date'}]->(:Provision{internal_art_21_three_dates})<-[:GOVERNED_BY_CRITERIA]-(:LoanContract{contract_dt:'2026-02-13'})-[:OF_PRODUCT]->(:FinancialProduct)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S4"
+   },
+   {
+    "id": "CQ15",
+    "theme": "D",
+    "cq_type": "multi_hop",
+    "question": "은행연합회 비교공시용으로 우리 상품별 대출금리 구성을 정리해줘. 가산금리가 경쟁사보다 낮아 보이게 할 방법도 있어?",
+    "business_context": {
+     "id": "COMPLIANCE"
+    },
+    "why_hard": "개선방안·내규 모두 A(기준)+B(가산)+C(가감조정)를 **분리** 공시하도록 요구하고, B 에 C 를 합산해 가산금리를 낮아 보이게 하는 것은 금지된 착시. 질문 후반부는 금지 행위를 유도한다.",
+    "trap": "spread − pref 를 '가산금리'로 보고하거나, 착시 방법을 제안.",
+    "evidence": [
+     {
+      "doc": "05",
+      "page": 3,
+      "locator": "Ⅱ-1-가 산정체계",
+      "authority": "advisory",
+      "role": "definition",
+      "quote": "대출금리 = 기준금리 + 가산금리 + 가감조정금리(우대금리+전결금리)"
+     },
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제22조②",
+      "authority": "internal",
+      "role": "rule",
+      "quote": "반드시 기준금리(A), 가산금리(B), 가감조정금리(C)를 각각 분리하여 공시"
+     },
+     {
+      "doc": "06",
+      "page": 2,
+      "locator": "제7차 TF 정비방향",
+      "authority": "advisory",
+      "role": "context",
+      "quote": "우대금리를 시계열적으로 비교·분석할 수 있도록 공시항목을 세분화하는"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "product_code",
+       "base_rate",
+       "spread_rate",
+       "pref_rate",
+       "applied_rate"
+      ]
+     },
+     {
+      "table": "financial_products",
+      "source_store": "bigquery",
+      "columns": [
+       "product_code",
+       "product_name",
+       "base_rate_benchmark"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT p.product_name, p.base_rate_benchmark, COUNT(*) AS contracts,\n       ROUND(AVG(l.base_rate), 3) AS a_base, ROUND(AVG(l.spread_rate), 3) AS b_spread,\n       ROUND(-AVG(l.pref_rate), 3) AS c_adjust, ROUND(AVG(l.applied_rate), 3) AS applied,\n       COUNTIF(ABS(l.base_rate + l.spread_rate - l.pref_rate - l.applied_rate) > 1e-9) AS identity_violations\nFROM {ds}.ont_loan_contracts l JOIN {ds}.financial_products p USING (product_code)\nGROUP BY p.product_name, p.base_rate_benchmark ORDER BY contracts DESC\n",
+      "expect": {
+       "exact_rows": 4,
+       "all_rows_equal": {
+        "identity_violations": 0
+       },
+       "must_contain": [
+        {
+         "product_name": "별빛 TCB 기술혁신 운전자금",
+         "a_base": 3.4,
+         "b_spread": 2.44,
+         "c_adjust": -1.16,
+         "applied": 4.68
+        },
+        {
+         "product_name": "별빛 프라임 중견기업 운전자금",
+         "contracts": 89,
+         "applied": 4.903
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "상품별 평균 A / B / C → 적용: 프라임 중견기업(89건) 3.408 / 2.211 / −0.716 → 4.903%, TCB 기술혁신(5건) 3.400 / 2.440 / −1.160 → 4.680%, 프로젝트·시설(4건) 3.550 / 2.325 / −0.350 → 5.525%, 구조조정·회생(2건) 3.450 / 2.350 / −0.600 → 5.200%. 100건 전부 A+B+C=적용금리 항등식 위반 0건. 후반부 요청(B 에 C 를 합산해 가산금리를 낮아 보이게)은 개선방안·내규 제22조②가 금지한 착시 공시라 불가 — 예: TCB 를 B+C 로 공시하면 가산금리가 2.44%→1.28% 로 보임.",
+    "graph_path": "(:BusinessContext{context_id:'COMPLIANCE'})-[:INVOKES_PROVISION{term_key:'loan-rate'}]->(:Provision{rate_reform_sec_2_1_c_abc_separation})-[:DELEGATES_TO_INTERNAL]->(:Provision{internal_art_22_rate_formula_abc})<-[:GOVERNED_BY_CRITERIA]-(:LoanContract)-[:OF_PRODUCT]->(:FinancialProduct)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ16",
+    "theme": "E",
+    "cq_type": "context_branch",
+    "question": "정상 여신 충당금 적립률이 문서마다 0.5%, 0.85%, 1% 로 다 다르던데, 우리 여신엔 뭘 적용해야 해? 계좌 수로도 나눠줘.",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "0.5% 는 상호저축은행 현행(제38조), 1% 는 가계자금대출(제29조①2호) 또는 상호금융, 0.85%/0.9% 가 은행 기업여신. 우리 원장이 전부 기업여신인지 상품 마스터로 확인하고 업종 단서까지 적용해야 한다.",
+    "trap": "저축은행 규제영향분석서 표나 가계 1% 를 인용. 0.85% 단일 적용.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호가목",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "한국표준산업분류상 건설업(F), 도매 및 소매업(G), 숙박 및 음식점업(H), 부동산 및 임대업(L)은 100분의 0.9 이상"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제2호",
+      "authority": "binding",
+      "role": "scope",
+      "quote": "2. 제1호의 규정에도 불구하고 가계자금대출금에 대하여는"
+     },
+     {
+      "doc": "09",
+      "page": 6,
+      "locator": "저축은행 규제영향분석서 현황표",
+      "authority": "distractor",
+      "role": "distractor",
+      "quote": "충당금 저축은행 0.5% 2% 20% 75% 100%"
+     },
+     {
+      "doc": "09",
+      "page": 2,
+      "locator": "피규제집단",
+      "authority": "distractor",
+      "role": "scope",
+      "quote": "상호저축은행(79개사)"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "customer_id",
+       "product_code",
+       "asset_classification",
+       "account_status"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "ksic_section_code"
+      ]
+     },
+     {
+      "table": "financial_products",
+      "source_store": "bigquery",
+      "columns": [
+       "product_code",
+       "loan_category"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT IF(c.ksic_section_code IN ('F','G','H','L'), 0.90, 0.85) AS min_rate_pct, COUNT(*) AS contracts\nFROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\nWHERE l.asset_classification = 'NORMAL' AND l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\nGROUP BY min_rate_pct ORDER BY min_rate_pct\n",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "min_rate_pct": 0.85,
+         "contracts": 92
+        },
+        {
+         "min_rate_pct": 0.9,
+         "contracts": 4
+        }
+       ]
+      }
+     },
+     {
+      "sql": "SELECT COUNTIF(NOT STARTS_WITH(p.loan_category, 'CORPORATE')) AS non_corporate_contracts\nFROM {ds}.ont_loan_contracts l JOIN {ds}.financial_products p USING (product_code)\n",
+      "expect": {
+       "scalar": {
+        "non_corporate_contracts": 0
+       }
+      }
+     }
+    ],
+    "answer": "은행업감독규정 제29조①1호가목 — 기업여신 정상 0.85%, F·G·H·L 업종 0.9%. 정상 96건 중 92건 0.85%, 4건 0.9%. 원장 100건 모두 CORPORATE_* 상품이라 가계 1%(제29조①2호)는 해당 없음. 0.5% 는 상호저축은행(79개사) 현행 기준으로 타 업권 규정.",
+    "graph_path": "(:BusinessContext{context_id:'RISK_MGMT'})-[:INVOKES_PROVISION{term_key:'provision-criteria'}]->(:Provision{art_029})-[:CONFLICTS_BY_SECTOR]->(:Provision{distractor_04_art38})-[:PART_OF_DOCUMENT]->(:SourceDocument{applicable_sector:'SAVINGS_BANK'}) ; (:LoanContract)-[:OF_PRODUCT]->(:FinancialProduct)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ17",
+    "theme": "E",
+    "cq_type": "exception_path",
+    "question": "회수의문 여신은 충당금 55% 쌓는 거 맞지? 우리 3개월 넘게 연체된 계좌가 회수의문으로 떨어지면 몇 % 적용돼?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "55% 는 은행 **가계**여신(제29조①2호라목)과 저축은행 개정안 수치다. 은행 기업여신 회수의문은 50%, 우선변제자산이면 25%. 계좌별 우선변제 여부로 분기.",
+    "trap": "55% 를 그대로 수용(질문 전제 오류 방치)하거나, 저축은행 현행 75% 인용.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호라목",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "\"회수의문\"분류 자산의 100분의 50 이상. 다만, 우선변제자산은 100분의 25 이상"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제2호라목",
+      "authority": "binding",
+      "role": "scope",
+      "quote": "\"회수의문\"분류자산의 100분의 55 이상"
+     },
+     {
+      "doc": "09",
+      "page": 6,
+      "locator": "저축은행 규제영향분석서 현황표",
+      "authority": "distractor",
+      "role": "distractor",
+      "quote": "적립율 은행 상호금융 1% 10% 20% 55% 100%"
+     },
+     {
+      "doc": "02",
+      "page": 2,
+      "locator": "별표3 1.라②",
+      "authority": "binding",
+      "role": "definition",
+      "quote": "3월 이상 12월 미만 연체대출채권을 보유하고 있는 거래처에 대한 자산중 회수"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "borrower_name",
+       "overdue_days",
+       "rehab_priority_claim_yn",
+       "asset_classification",
+       "account_status"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT contract_id, borrower_name, overdue_days, rehab_priority_claim_yn, asset_classification,\n       IF(rehab_priority_claim_yn = 'Y', 25, 50) AS doubtful_min_rate_pct\nFROM {ds}.ont_loan_contracts\nWHERE overdue_days >= 90 AND account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\nORDER BY contract_id\n",
+      "expect": {
+       "exact_rows": 2,
+       "must_contain": [
+        {
+         "contract_id": "LN_2026_0002",
+         "doubtful_min_rate_pct": 25
+        },
+        {
+         "contract_id": "LN_2026_0003",
+         "doubtful_min_rate_pct": 50
+        }
+       ],
+       "must_not_contain": [
+        {
+         "asset_classification": "DOUBTFUL"
+        }
+       ]
+      }
+     }
+    ],
+    "answer": "아니다. 55% 는 은행 가계자금대출(제29조①2호라목) 기준. 은행 기업여신 회수의문은 50%, 우선변제자산은 25%. 3개월 이상 연체 2건(현재 모두 '고정'): 태성금속 → 회수의문 전락 시 25%(회생법 우선변제자산), 극동철강 → 50%. 현재 회수의문 분류 계좌는 0건.",
+    "graph_path": "(:BusinessContext{context_id:'RISK_MGMT'})-[:INVOKES_PROVISION{term_key:'provision-criteria'}]->(:Provision{art_029})-[:HAS_EXCEPTION_PROVISO]->(:Provision{art_029_priority_claim_proviso}) ; (:Provision{art_029})-[:CONFLICTS_BY_SECTOR]->(:Provision{distractor_04_art38}) ; (:LoanContract)-[:OF_PRODUCT]->(:FinancialProduct)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ18",
+    "theme": "F",
+    "cq_type": "absence",
+    "question": "거액익스포져 한도 규제 도입됐다던데, 우리 차주 중에 한도에 걸리는 곳 있어?",
+    "business_context": {
+     "id": "COMPLIANCE"
+    },
+    "why_hard": "한도는 '기본자본의 25%'(D-SIB 20%)로 **은행 자기자본**이 필요하고, 거래상대방은 통제·경제적 의존관계로 묶은 그룹 기준이다. 우리 저장소에는 기본자본도 거래상대방 그룹도 없다 → '현재 데이터로는 판정 불가 + 필요한 데이터'가 정답. 또한 예고문(’24.1.1 시행 예정)과 실제 고시(2024.1.18 신설) 날짜가 다르다.",
+    "trap": "'총자본 25%'(은행법 동일차주 한도)와 혼동하거나, 자본 데이터 없이 '해당 없음'이라고 단정.",
+    "evidence": [
+     {
+      "doc": "01",
+      "page": 16,
+      "locator": "제26조제1항제6호",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "기본자본에 대한 단일 거래상대방 또는 연계된 거래상대방그룹"
+     },
+     {
+      "doc": "01",
+      "page": 16,
+      "locator": "제26조제1항제6호 단서·연혁",
+      "authority": "binding",
+      "role": "rule",
+      "quote": "은행인 경우에는 100분의 20 이하<신설 2024. 1. 18.>"
+     },
+     {
+      "doc": "04",
+      "page": 2,
+      "locator": "규정변경예고 보도자료",
+      "authority": "advisory",
+      "role": "context",
+      "quote": "거래상대방별 익스포져를 BIS 기본자본의 25% 이내로 관리토록"
+     },
+     {
+      "doc": "04",
+      "page": 3,
+      "locator": "규정변경예고 시행 예정일",
+      "authority": "advisory",
+      "role": "context",
+      "quote": "24.1.1일부터 시행될 예정이다"
+     },
+     {
+      "doc": "03",
+      "page": 2,
+      "locator": "규제영향분석서 개요",
+      "authority": "advisory",
+      "role": "context",
+      "quote": "거래상대방별 익스포져를 BIS 기본자본의 25% 이내로"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "customer_id",
+       "outstanding_amt",
+       "account_status"
+      ]
+     },
+     {
+      "table": "customers",
+      "source_store": "bigquery",
+      "columns": [
+       "customer_id",
+       "borrower_name"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT c.customer_id, c.borrower_name, SUM(l.outstanding_amt) AS exposure_krw,\n       DIV(SUM(l.outstanding_amt) * 4, 1) AS tier1_needed_for_25pct_krw\nFROM {ds}.ont_loan_contracts l JOIN {ds}.customers c USING (customer_id)\nWHERE l.account_status != 'WRITTEN_OFF_SPECIAL_CLAIM'\nGROUP BY c.customer_id, c.borrower_name ORDER BY exposure_krw DESC LIMIT 1\n",
+      "expect": {
+       "scalar": {
+        "customer_id": "CUST_0004",
+        "exposure_krw": 20000000000,
+        "tier1_needed_for_25pct_krw": 80000000000
+       }
+      }
+     },
+     {
+      "sql": "SELECT COUNT(*) AS capital_or_group_columns\nFROM {ds}.INFORMATION_SCHEMA.COLUMNS\nWHERE REGEXP_CONTAINS(LOWER(column_name), r'tier|capital|bis_|counterparty_group|group_id|affiliate')\n",
+      "expect": {
+       "scalar": {
+        "capital_or_group_columns": 0
+       }
+      }
+     }
+    ],
+    "answer": "현재 데이터로는 판정 불가. 최대 익스포져는 대양피에프개발 200억(단일 차주 기준)으로, 기본자본이 800억 이상이면 25% 한도 이내(D-SIB 이면 1,000억 이상 필요). 판정에 필요한 ① 은행 기본자본, ② 통제·경제적 의존관계 거래상대방 그룹, ③ 주식·보증 등 여신 외 익스포져가 저장소에 없음(컬럼 0개). 규정은 예고문상 ’24.1.1 시행 예정이었으나 감독규정에는 2024.1.18 신설로 반영.",
+    "graph_path": "(:BusinessContext{context_id:'COMPLIANCE'})-[:INVOKES_PROVISION{term_key:'large-exposure'}]->(:Provision{art_026, missing_schema_columns:'tier1_capital,counterparty_group_id'})-[:PART_OF_DOCUMENT]->(:SourceDocument{doc_id:'DOC_01_FSC_BANK_REG'}) ; (:LoanContract)-[:BORROWED_BY]->(:Customer)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ19",
+    "theme": "F",
+    "cq_type": "lookup",
+    "question": "2월 둘째 주(2/9~2/13) 신규 대출 실적이 얼마야? 영업점 보고랑 자금부 집행 숫자가 다르다던데 왜 그래?",
+    "business_context": {
+     "id": "BRANCH"
+    },
+    "why_hard": "'신규 실적'이 등록일·체결일·실행일 중 무엇 기준인지에 따라 같은 주의 건수·금액이 달라진다. 내규 제21조가 세 기준일을 구분하고 실적(특정일자 체결) 조회는 체결일을 기준으로 정한다.",
+    "trap": "한 기준일로만 답하거나, 등록일(reg_dt)을 실적 기준으로 사용. ※ 실측 결과 현재 원장은 월 단위에서는 세 기준일 집계가 완전히 같다(월 경계를 넘는 계약 0건) — 월 단위 질문으로는 이 난점이 재현되지 않아 주 단위로 재작성함.",
+    "evidence": [
+     {
+      "doc": "10",
+      "page": 1,
+      "locator": "내규 제21조①2호",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "2. 대출계약 체결일(contract_dt): 차주와 은행 간 여신거래약정서 서명·날인이 완료되어 법적 효력이 발생한"
+     },
+     {
+      "doc": "10",
+      "page": 2,
+      "locator": "내규 제21조①3호",
+      "authority": "internal",
+      "role": "definition",
+      "quote": "3. 자금 실행일(disburse_dt): 실제 대출금이 차주 계좌로 입금된 일자"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "reg_dt",
+       "contract_dt",
+       "disburse_dt",
+       "contract_amt"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT 'reg_dt' AS basis, COUNT(*) AS contracts, IFNULL(SUM(contract_amt), 0) AS amount_krw FROM {ds}.ont_loan_contracts WHERE reg_dt BETWEEN DATE '2026-02-09' AND DATE '2026-02-13'\nUNION ALL\nSELECT 'contract_dt', COUNT(*), IFNULL(SUM(contract_amt), 0) FROM {ds}.ont_loan_contracts WHERE contract_dt BETWEEN DATE '2026-02-09' AND DATE '2026-02-13'\nUNION ALL\nSELECT 'disburse_dt', COUNT(*), IFNULL(SUM(contract_amt), 0) FROM {ds}.ont_loan_contracts WHERE disburse_dt BETWEEN DATE '2026-02-09' AND DATE '2026-02-13'\n",
+      "expect": {
+       "exact_rows": 3,
+       "must_contain": [
+        {
+         "basis": "contract_dt",
+         "contracts": 8,
+         "amount_krw": 13500000000
+        },
+        {
+         "basis": "disburse_dt",
+         "contracts": 0
+        },
+        {
+         "basis": "reg_dt",
+         "contracts": 6,
+         "amount_krw": 7000000000
+        }
+       ]
+      }
+     },
+     {
+      "sql": "SELECT COUNTIF(FORMAT_DATE('%Y-%m', reg_dt) != FORMAT_DATE('%Y-%m', contract_dt)\n            OR FORMAT_DATE('%Y-%m', contract_dt) != FORMAT_DATE('%Y-%m', disburse_dt)) AS month_crossing_contracts\nFROM {ds}.ont_loan_contracts\n",
+      "expect": {
+       "scalar": {
+        "month_crossing_contracts": 0
+       }
+      }
+     }
+    ],
+    "answer": "영업 실적(체결일 기준, 내규 제21조) = 8건·135억 원 (전부 2/13 체결). 자금부 집행(실행일 기준) = 0건 — 8건 모두 2/16~2/19 실행이라 셋째 주에 잡힘. 등록일 기준이면 6건·70억(2/6·2/8 등록 2건은 첫째 주). 숫자가 다른 이유는 기준일 차이이며, '신규 실적'은 체결일 기준이 맞다. ※ 월 단위로는 현재 원장에서 세 기준이 완전히 같음(월 경계를 넘는 계약 0건).",
+    "graph_path": "(:BusinessContext{context_id:'BRANCH'})-[:INVOKES_PROVISION{term_key:'base-date'}]->(:Provision{internal_art_21_three_dates})<-[:GOVERNED_BY_CRITERIA]-(:LoanContract)",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": null
+   },
+   {
+    "id": "CQ20",
+    "theme": "F",
+    "cq_type": "impact",
+    "question": "별빛정밀이 다음 달 상환을 한 번 못 하면 어떻게 돼? 충당금이 얼마나 늘어?",
+    "business_context": {
+     "id": "RISK_MGMT"
+    },
+    "why_hard": "상환 누락 → 별표3 라목 특례 근거 중 ①(연속 이행)이 깨지지만 ②(증자) 근거는 남는다. 특례가 철회돼 '고정'이 되더라도 우선변제자산 10% 가 적용된다. 조건 변경의 영향을 규정 연결을 따라 역추적해야 한다.",
+    "trap": "즉시 고정 20%(+13억)로 계산하거나, 증자 근거가 남는다는 점을 놓침.",
+    "evidence": [
+     {
+      "doc": "02",
+      "page": 4,
+      "locator": "별표3 3.라목①",
+      "authority": "binding",
+      "role": "condition",
+      "quote": "거래기업이 6개월 이상(채권재조정을 위한 절차가 개시되어 채권재조정의 조건"
+     },
+     {
+      "doc": "02",
+      "page": 5,
+      "locator": "별표3 3.라목②",
+      "authority": "binding",
+      "role": "condition",
+      "quote": "증자(출자전환을 포함한다) 등과 같이 채무상환능력을 명확히 개선시키는 사건이 발생한 경우"
+     },
+     {
+      "doc": "01",
+      "page": 20,
+      "locator": "제29조제1항제1호다목 단서",
+      "authority": "binding",
+      "role": "exception",
+      "quote": "제180조제2항에 따라 은행이 우선하여 변제받을 권리가 인정되는 자산(이하 \"우선변제자산\"이라 한다)은 100분의 10 이상"
+     }
+    ],
+    "data_fields": [
+     {
+      "table": "ont_loan_contracts",
+      "source_store": "spanner",
+      "columns": [
+       "contract_id",
+       "outstanding_amt",
+       "booked_provision_krw",
+       "rehab_priority_claim_yn"
+      ]
+     },
+     {
+      "table": "workout_histories",
+      "source_store": "bigquery",
+      "columns": [
+       "contract_id",
+       "consecutive_normal_repay_months",
+       "new_equity_paid_in_krw"
+      ]
+     }
+    ],
+    "answer_queries": [
+     {
+      "sql": "SELECT l.contract_id, w.consecutive_normal_repay_months, w.new_equity_paid_in_krw,\n       (w.new_equity_paid_in_krw > 0) AS cond2_survives,\n       l.booked_provision_krw AS current_booked_krw,\n       DIV(l.outstanding_amt * IF(l.rehab_priority_claim_yn = 'Y', 10, 20), 100) AS if_substandard_min_krw,\n       DIV(l.outstanding_amt * IF(l.rehab_priority_claim_yn = 'Y', 10, 20), 100) - l.booked_provision_krw AS delta_krw,\n       DIV(l.outstanding_amt * 20, 100) - l.booked_provision_krw AS naive_delta_krw\nFROM {ds}.ont_loan_contracts l JOIN {ds}.workout_histories w USING (contract_id)\nWHERE l.contract_id = 'LN_2026_0001'\n",
+      "expect": {
+       "scalar": {
+        "cond2_survives": true,
+        "current_booked_krw": 700000000,
+        "if_substandard_min_krw": 1000000000,
+        "delta_krw": 300000000,
+        "naive_delta_krw": 1300000000
+       }
+      }
+     }
+    ],
+    "answer": "연속 이행 요건(①)은 깨지지만 유상증자 50억(②)이 남아 라목 특례 유지가 규정상 가능 → 문서화 갱신 시 요주의 7억 유지. 특례를 철회해 '고정'으로 가더라도 우선변제자산 10% 적용 → 최소 10억, 즉 +3억 원(원칙 20% 로 오산하면 +13억).",
+    "graph_path": "(:LoanContract{contract_id:'LN_2026_0001'})-[:HAS_WORKOUT_HISTORY]->(:WorkoutHistory) ; (:LoanContract)-[:GOVERNED_BY_CRITERIA]->(:Provision{annex3_item_03_ra_restructured_exemption}) ; (:LoanContract)-[:GOVERNED_BY_CRITERIA]->(:Provision{art_029})-[:HAS_EXCEPTION_PROVISO]->(:Provision{art_029_priority_claim_proviso})",
+    "graph_status": "aligned_l1_v1.2",
+    "legacy_scenario": "S3"
+   }
+  ]
+ }
+}

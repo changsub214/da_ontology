@@ -1,0 +1,248 @@
+# ---------------------------------------------------------------------------
+# placement.yaml — 정형 데이터(data/structured/*.csv) 저장소 배치 매니페스트 (제안, 사용자 확인 대기)
+#
+# 원칙 (AGENTS.md 불변식)
+#   1) 한 사실은 한 곳에만: 계정계 원장의 SoT(Source of Truth)는 Spanner 하나.
+#      BigQuery 사본은 "파생 복제본(derived replica)"이며 write 금지.
+#   2) 거버넌스(status/content_class/verified/license)는 Dataplex KC에만.
+#      BQ/Spanner에는 위상(키·엣지·필터)과 ObjectRef 포인터만 둔다.
+#   3) 답안 유출 금지: 시나리오 정답이 담긴 산출물은 어느 저장소에도 올리지 않는다.
+# ---------------------------------------------------------------------------
+
+version: 1.0.0
+status: deployed          # proposed -> approved -> deployed (2026-09-23 실적재 완료)
+project: finance-ontology-changseop
+region: us-central1
+
+targets:
+  spanner:
+    role: "OLTP 계정계 원장 SoT — 단건 조회(agent fact lookup) · 트랜잭션 write(심사/승인 상태 전이) · 강한 일관성"
+    instance: finance-cs            # ※ Spanner 인스턴스 ID 는 밑줄 불가 → finance_cs 가 아닌 finance-cs
+    database: starlight_bank
+    config: regional-us-central1
+    dialect: GoogleSQL
+    compute: 100 PU
+    ddl: sql/spanner_starlight_bank.ddl
+    loaded: "115 rows (loan_contracts 100 + collaterals 3 + delinquency_events 7 + rate_cut_requests 2 + exception_approvals 3)"
+  bigquery:
+    role: "마스터·기준정보 원본 + 분석 + 2-Layer Property Graph"
+    dataset: starlight_bank                 # 표준 데이터셋 (us-central1)
+    external_dataset: starlight_bank_ext    # Spanner 연합 (무복제)
+    write_policy: "연합 테이블은 read-only(문서상 DML 미지원). 마스터/LEX/BRIDGE 만 BQ 가 원본."
+    loaded: "107 rows (customers 100 + financial_products 4 + workout_histories 3) + ont_* 뷰 5종"
+  gcs_kc:
+    role: "비정형 원문/OKF 번들 + 거버넌스 (이미 완료: 226 objects · KC 225 entries)"
+    bucket: gs://finance_okf/okf/
+
+# ===========================================================================
+# 사용자 확정 (2026-09-23)
+#   A1. Spanner = 트랜잭션성 5종만. 마스터·준정적 3종은 BigQuery 단독.
+#   A2. Spanner → BigQuery 는 복제 없이 **Spanner external dataset(연합)** + 실체화.
+#   A3. 그래프 엔진 결합 방식 — 조사 중 (아래 property_graph.open_question 참조)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# A. Spanner `corebank` — 트랜잭션성 원장 5종만 (계정계)
+#    loan_contracts 가 루트, 나머지 4종은 계약에 INTERLEAVE (계약 단위 단일 split 조회)
+#    ※ customers 가 BQ 단독이므로 Spanner 쪽 customer_id 는 FK 가 아닌 논리 참조 키.
+# ---------------------------------------------------------------------------
+spanner_tables:
+  - name: loan_contracts
+    source: data/structured/loan_contracts.csv
+    rows: 100
+    pk: [contract_id]                 # 루트 (customers 가 BQ 에 있으므로 interleave 불가)
+    interleave_in: null
+    logical_ref:
+      customer_id: "bigquery:starlight_bank.customers"
+      product_code: "bigquery:starlight_bank.financial_products"
+    why: "잔액·연체일수·건전성분류·충당금이 실시간 갱신되는 핵심 트랜잭션 원장."
+    hot_columns: [outstanding_amt, overdue_days, asset_classification, booked_provision_krw, account_status]
+  - name: collaterals
+    source: data/structured/collaterals.csv
+    rows: 3
+    pk: [contract_id, collateral_id]
+    interleave_in: loan_contracts
+    why: "보증서 담보 90% → 내규 제18조 EOD 유예 판정. 계약과 동일 split 단건 조회."
+  - name: delinquency_events
+    source: data/structured/delinquency_events.csv
+    rows: 7
+    pk: [contract_id, event_id]
+    interleave_in: loan_contracts
+    why: "일별 append 이벤트. EWS(10/30/90일) 분기 판정의 원천, 쓰기 빈도 최상위."
+  - name: rate_cut_requests
+    source: data/structured/rate_cut_requests.csv
+    rows: 2
+    pk: [contract_id, request_id]
+    interleave_in: loan_contracts
+    why: "금리인하요구 접수→심사→승인/거절 상태 전이 write."
+  - name: exception_approvals
+    source: data/structured/exception_approvals.csv
+    rows: 3
+    pk: [contract_id, approval_id]
+    interleave_in: loan_contracts
+    why: "예외 승인 결재. 결재 직후 Read-Your-Write 강한 일관성 요구."
+
+# ---------------------------------------------------------------------------
+# B-1. BigQuery `finance_ontology` — 마스터·준정적 3종 (BQ 단독 원본, Spanner 미적재)
+# ---------------------------------------------------------------------------
+bigquery_master_tables:
+  - name: customers
+    source: data/structured/customers.csv
+    rows: 100
+    pk: [customer_id]
+    why: "차주 마스터(기준정보). KSIC F/G/H/L 단서 판정 기준, 거래성 갱신 없음."
+  - name: financial_products
+    source: data/structured/financial_products.csv
+    rows: 4
+    pk: [product_code]
+    why: "상품 마스터. 금리 벤치마크·만기 정책 기준정보."
+  - name: workout_histories
+    source: data/structured/workout_histories.csv
+    rows: 3
+    pk: [workout_id]
+    why: "채권재조정·회생 이력(월 단위 갱신). [별표3] 제3호 라목 판정 입력."
+    caveat: "TODO-확인: 워크아웃 진행 중 월 1회 갱신 write 발생 → Spanner 로 옮길 여지 있음."
+
+# ---------------------------------------------------------------------------
+# B-2. BigQuery — Spanner 외부 데이터셋 연합 (무복제·실시간) + 실체화
+# ---------------------------------------------------------------------------
+bigquery_spanner_federation:
+  connection: "projects/finance-ontology-changseop/locations/us-central1/connections/spanner-corebank"
+  external_dataset: starlight_bank_ext      # Spanner 5종이 BQ 테이블처럼 자동 노출 (읽기 전용, 복제 0)
+  exposes: [loan_contracts, collaterals, delinquency_events, rate_cut_requests, exception_approvals]
+  cross_store_join: "starlight_bank_ext.loan_contracts ⋈ starlight_bank.customers — 한 SQL 문에서 Spanner 원장 + BQ 마스터 조인 (데모 하이라이트)"
+  materialization:
+    why: "Property Graph 의 NODE/EDGE 테이블로 연합 테이블을 직접 쓸 수 있는지 공식 문서 확인 필요 → 불가 시 실체화 계층 필요"
+    plan: "`ont_loan_contracts` 등 `ont_*` 실체화(MV 또는 스케줄 쿼리 스냅샷) 위에 CREATE PROPERTY GRAPH"
+    freshness_gate: "실체화 지연(초/분)을 시연 시 명시하고, 단건 실시간 판정은 Spanner 직조회로 처리"
+
+# ---------------------------------------------------------------------------
+# C. BigQuery — Layer LEX (OKF 184 Concepts 파생. Spanner 에는 두지 않음)
+#    본문/거버넌스는 GCS·KC 에만 있고, 여기에는 위상 키 + ObjectRef 포인터만.
+# ---------------------------------------------------------------------------
+bigquery_lex_tables:
+  - name: okf_source_documents
+    est_rows: 10
+    columns: [doc_id, title, section_scope, gcs_object_ref, kc_entry_name, sha256]
+  - name: decision_criteria
+    est_rows: "~140 (본칙 조문)"
+    columns: [criteria_id, doc_id, section_number, base_rule_expr, gcs_object_ref, kc_entry_name]
+  - name: exception_rules
+    est_rows: "~25 (단서·별표·감경 특례)"
+    columns: [exception_id, target_criteria_id, condition_expr, override_value, gcs_object_ref]
+  - name: internal_policies
+    est_rows: "~6 (당행 내규 제14·18·25조 등)"
+    columns: [policy_id, section_number, discretion_rule, ews_threshold_days, gcs_object_ref]
+  - name: cross_sector_rules
+    est_rows: "~3 (저축은행 제38조 distractor)"
+    columns: [distractor_id, sector_domain, conflict_target_sec, blocked_by_kc_aspect]
+
+# ---------------------------------------------------------------------------
+# D. BigQuery — Layer BRIDGE (정형↔비정형 엣지 + 부서 맥락) 및 Property Graph
+# ---------------------------------------------------------------------------
+bigquery_bridge_tables:
+  - name: business_contexts
+    est_rows: 4
+    columns: [context_id, dept_name, purpose_cd, target_metric]
+    note: "리스크관리(90d NPL) / 여신관리(10d EWS) / 준법감시(개정 역추적) / 영업점(체결일·적용금리)"
+  - name: edge_invokes_decision_criteria      # BusinessContext -> DecisionCriteria
+  - name: edge_governed_by_provision          # LoanContract    -> DecisionCriteria
+  - name: edge_triggers_ksic_proviso          # Customer        -> ExceptionRule
+  - name: edge_qualifies_for_exemption        # WorkoutHistory  -> ExceptionRule
+  - name: edge_measured_by_ews_rule           # DelinquencyEvent-> InternalPolicy
+  - name: edge_evaluated_by_internal_policy   # RateCutRequest  -> InternalPolicy
+property_graph:
+  name: finance_graph
+  engine: bigquery
+  node_tables: "ONT(연합 5 + 마스터 3) + LEX 5"
+  edge_tables: "ONT 내부 4 + 브리지 6"
+
+  # -------------------------------------------------------------------------
+  # A3 근거 — 공식 문서 확인 결과 (2026-09-23, cloud.google.com)
+  # -------------------------------------------------------------------------
+  evidence:
+    - id: E1_graph_input_types
+      url: https://cloud.google.com/bigquery/docs/reference/standard-sql/graph-schema-statements
+      quote: "The following types of inputs are supported: Standard tables / External tables / Managed BigLake Iceberg tables / Iceberg REST catalog tables / Views, including authorized views / Non-incremental materialized views. You can't use incremental materialized views tables."
+      impact: "뷰와 **비증분(non-incremental) 실체화 뷰**가 그래프 입력으로 허용됨 → 연합 데이터를 그래프에 넣을 경로가 존재."
+    - id: E2_view_over_external_dataset
+      url: https://cloud.google.com/bigquery/docs/spanner-external-datasets
+      quote: "You can't create a view in an external dataset. However, you can create a view in a standard dataset that's based on a table in an external dataset."
+      impact: "`starlight_bank.ont_loan_contracts` 뷰를 `starlight_bank_ext.loan_contracts` 위에 만들어 그래프 NODE 로 사용 (무복제·실시간)."
+    - id: E3_non_incremental_mv
+      url: https://cloud.google.com/bigquery/docs/spanner-external-datasets
+      quote: "You can create non-incremental materialized views that reference Spanner external dataset tables by using the allow_non_incremental_definition option."
+      impact: "지연 허용 시 `max_staleness` / `refresh_interval_minutes` 로 캐시 계층 구성 가능 (E1 상 그래프 입력 허용 타입)."
+    - id: E4_data_boost_forced
+      url: https://cloud.google.com/bigquery/docs/spanner-external-datasets
+      quote: "Queries against tables in Spanner external datasets use Data Boost by default and it cannot be changed."
+      impact: "OLTP 노드를 잠식하지 않는 대신 **Data Boost 과금 + 추가 권한** 필요. 시연 비용 항목으로 명시할 것."
+    - id: E5_no_dml_no_pk
+      url: https://cloud.google.com/bigquery/docs/spanner-external-datasets
+      quote: "data modification operations (DML) aren't supported. / Primary and foreign keys defined in Spanner database aren't visible in BigQuery. / Only tables from a default Spanner schema are accessible in BigQuery."
+      impact: "① BQ 에서 원장 쓰기 불가(의도한 바). ② PK 가 안 보이므로 `CREATE PROPERTY GRAPH` 에서 **`KEY (...)` 절을 명시**해야 함(기본값은 입력 테이블 PK). ③ Spanner named schema 금지 → 기본 스키마에 생성."
+    - id: E6_federated_readonly
+      url: https://cloud.google.com/bigquery/docs/federated-queries-intro#limitations
+      quote: "Federated queries are read-only. The external query that is executed in the source database must be read-only. Therefore, DML or DDL statements are not supported."
+      impact: "`EXTERNAL_QUERY()` 로 Spanner 에 보낼 수 있는 것은 읽기 전용 문. Spanner GQL(`GRAPH ... MATCH ... RETURN`)도 읽기 전용이지만 **허용 여부가 문서에 명시되어 있지 않음 → 실측 필요**."
+
+  a3_verdict:
+    federated_property_graph: "NO — BigQuery Graph 와 Spanner Graph 를 하나의 그래프로 묶는 '연합 property graph' 기능은 존재하지 않음."
+    one_query_over_live_spanner: "YES — BigQuery GQL **한 문장**으로 Spanner 라이브 데이터를 순회할 수 있음. 경로: Spanner external dataset → 표준 데이터셋의 뷰(E2) 또는 비증분 MV(E3) → 그 위에 CREATE PROPERTY GRAPH(E1). 즉 '엔진 2개 결합'이 아니라 '**BQ 그래프 엔진 하나가 Spanner 저장소를 읽는다**'."
+    graph_table_join_external_query: "NOT DOCUMENTED — 한 SQL 문에서 `GRAPH_TABLE(...)` 결과와 `EXTERNAL_QUERY(...)` 결과를 조인하는 것은 문법상 가능하지만, EXTERNAL_QUERY 에 **Spanner GQL 문자열**을 넣는 것이 지원되는지는 문서 근거 없음 → 시연에 쓰려면 사전 실측 필수."
+    recommendation: "BigQuery Property Graph 단독 + (뷰|비증분 MV) 경유 Spanner 라이브 연결. Spanner Graph 는 '단건 실시간 판정' 데모가 필요할 때만 **별도 쿼리**로 병행하고, '한 쿼리 결합'이라고 주장하지 않는다."
+
+# ---------------------------------------------------------------------------
+# E. 적재 금지 목록 (Do-Not-Load)
+# ---------------------------------------------------------------------------
+do_not_load:
+  - path: data/structured/summary_stats.json
+    reason: "시나리오 정답(ground truth) 포함 → 적재 시 Answer Leakage. 로컬 검증 전용."
+  - path: data/structured/validation_report.json
+    reason: "검증 리포트. 저장소 적재 대상 아님."
+  - path: data/un_data/*.pdf
+    reason: "okf/locations.yaml 에서 okf://source/un_data 는 local_only · upload: forbidden."
+  - field_class: "거버넌스 필드 (status, content_class, verified.*, license)"
+    reason: "Dataplex Knowledge Catalog 단일 소유. BQ/Spanner 중복 금지."
+
+# ---------------------------------------------------------------------------
+# F. 검증 게이트 — 구현 및 실측 결과 (2026-09-23)
+#    실행: tools/load_stores.py verify  /  tools/setup_federation.py --test
+# ---------------------------------------------------------------------------
+gates:
+  - id: G01_rowcount
+    tool: tools/load_stores.py
+    check: "CSV 행수 == 저장소 행수 (Spanner 5종 + BigQuery 3종)"
+    result: "PASS — spanner 100/3/7/2/3, bigquery 100/4/3 (총 222행)"
+  - id: G02_cross_store_refs
+    tool: tools/load_stores.py
+    check: "스토어 간 논리 참조 무결성 (DB FK 로 강제 불가하므로 스크립트가 대조)"
+    result: "PASS — loan_contracts.customer_id/product_code 고아 0, 자식 4종 고아 0, workout_histories(BQ)→loan_contracts(Spanner) 고아 0"
+  - id: G04_no_leakage
+    tool: tools/load_stores.py
+    check: "적재 스키마에 정답 유출 컬럼(governing_pdf/scenario/golden/min_prov_rate/expected_ 등) 0건"
+    result: "PASS — forbidden columns = 0"
+  - id: F01_federated_counts
+    tool: tools/setup_federation.py
+    check: "BigQuery 가 Spanner 를 연합으로 읽은 행수 == Spanner 실제 행수"
+    result: "PASS — ont_* 5종 100/3/7/2/3"
+  - id: F02_cross_store_join
+    tool: tools/setup_federation.py
+    check: "단일 SQL 문에서 Spanner 원장(ont_loan_contracts) ⋈ BigQuery 마스터(customers)"
+    result: "PASS — KSIC F 150억 / G 150억 / H 100억 / L 200억 = 600억 원 (제29조1항1호가목 단서 대상 4개 업종 커버리지 재확인)"
+  - id: G05_graph_reachability
+    status: TODO
+    check: "6대 시나리오 GQL 쿼리가 정답 경로를 반환 (S1~S6)"
+    blocked_by: "LEX 5종 + 브리지 6종 테이블 및 CREATE PROPERTY GRAPH 미구축"
+
+# ---------------------------------------------------------------------------
+# G. 다음 단계
+# ---------------------------------------------------------------------------
+next_steps:
+  - "OKF 184 Concept → LEX 5종 테이블 생성 (본문 없이 위상 + gcs_object_ref + kc_entry_name)"
+  - "business_contexts + 브리지 엣지 6종 생성"
+  - "CREATE PROPERTY GRAPH finance_graph — ont_* 뷰는 Spanner PK 가 안 보이므로 KEY(...) 명시 필수"
+  - "G05 게이트(시나리오 GQL) 구현 및 실행"
+  - "docs/viewer.html · okf_veri_web 에 실제 배치도/실측치 반영 (AGENTS 규칙 0)"
+  - "데모 종료 후 Spanner 인스턴스(finance-cs, 100 PU) 비용 정리 여부 결정"
+

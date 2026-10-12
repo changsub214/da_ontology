@@ -1,0 +1,19 @@
+# locations.yaml — physical bindings for logical `okf://` URIs in ecommerce/okf.
+# Maintained by the K-Market Ontology Platform Team.
+
+distribution:
+  "okf://source/un_data/": local_only
+  "okf://bundle/": publishable
+
+resolvers:
+  "okf://source/un_data/":
+    - scheme: file
+      root: "/home/changseop/finance_ontology/ecommerce/data/un_data/"
+      status: active
+      upload: forbidden
+
+  "okf://bundle/":
+    - scheme: gs
+      root: "gs://kmarket_okf/okf/"
+      status: active
+      verified_by: "tools/sync_gcs.py --verify-only"
